@@ -24,10 +24,18 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.mariadb.jdbc:mariadb-java-client")
+    implementation("com.zaxxer.HikariCP")
     implementation("org.flywaydb:flyway-core")
+
+
+
     developmentOnly("org.springframework.boot:spring-boot-devtools")
+
+
     runtimeOnly("org.mariadb.jdbc:mariadb-java-client")
     providedRuntime("org.springframework.boot:spring-boot-starter-tomcat")
+
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
 
