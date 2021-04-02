@@ -5,6 +5,7 @@ import java.sql.Timestamp;
 
 @MappedSuperclass
 public class BasicEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", unique = true, nullable = false, updatable = false)

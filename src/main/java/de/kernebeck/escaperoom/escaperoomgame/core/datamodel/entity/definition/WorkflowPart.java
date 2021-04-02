@@ -1,6 +1,7 @@
-package de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity;
+package de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.definition;
 
-import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.enumeration.WorkflowPartType;
+import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.BasicEntity;
+import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.definition.enumeration.WorkflowPartType;
 
 import javax.persistence.*;
 import java.util.List;
@@ -27,7 +28,7 @@ public class WorkflowPart extends BasicEntity {
     @JoinColumn(name = "fk_target")
     private List<WorkflowTransition> ingoingTransitions;
 
-    @OneToMany(targetEntity = WorkflowTransition.class, mappedBy = "source", fetch = FetchType.EAGER)
+    @OneToMany(targetEntity = WorkflowTransition.class, fetch = FetchType.EAGER)
     @JoinColumn(name = "fk_source")
     private List<WorkflowTransition> outgoingTransitions;
 

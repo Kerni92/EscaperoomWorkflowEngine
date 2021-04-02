@@ -1,4 +1,6 @@
-package de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity;
+package de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.definition;
+
+import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.BasicEntity;
 
 import javax.persistence.*;
 
@@ -13,12 +15,12 @@ public class WorkflowTransition extends BasicEntity {
     private String description;
 
     @ManyToOne(targetEntity = WorkflowPart.class, fetch = FetchType.EAGER, optional = false)
-    @JoinColumn(name = "id", nullable = false)
-    private WorkflowPart source;
+    @JoinColumn(name = "id", table = "workflowpart", nullable = false)
+    private WorkflowPart sourcePart;
 
     @ManyToOne(targetEntity = WorkflowPart.class, fetch = FetchType.EAGER, optional = false)
-    @JoinColumn(name = "id", nullable = false)
-    private WorkflowPart destination;
+    @JoinColumn(name = "id", table = "workflowpart", nullable = false)
+    private WorkflowPart destinationPart;
 
     public WorkflowTransition() {
         //empty Constructor for Hibernate object initialization
@@ -27,8 +29,8 @@ public class WorkflowTransition extends BasicEntity {
     public WorkflowTransition(String name, String description, WorkflowPart source, WorkflowPart destination) {
         this.name = name;
         this.description = description;
-        this.source = source;
-        this.destination = destination;
+        this.sourcePart = source;
+        this.destinationPart = destination;
     }
 
     public String getName() {
@@ -40,11 +42,11 @@ public class WorkflowTransition extends BasicEntity {
     }
 
     public WorkflowPart getSource() {
-        return source;
+        return sourcePart;
     }
 
     public WorkflowPart getDestination() {
-        return destination;
+        return destinationPart;
     }
 
     public void setName(String name) {
@@ -56,10 +58,10 @@ public class WorkflowTransition extends BasicEntity {
     }
 
     public void setSource(WorkflowPart source) {
-        this.source = source;
+        this.sourcePart = source;
     }
 
     public void setDestination(WorkflowPart destination) {
-        this.destination = destination;
+        this.destinationPart = destination;
     }
 }
