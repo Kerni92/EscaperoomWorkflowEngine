@@ -17,6 +17,9 @@ public class BasicEntity {
     @Column(name = "dbupdatedate", nullable = false)
     private Timestamp dbupdatedate;
 
+    public BasicEntity() {
+        //default constructor for hibernate
+    }
 
     @PrePersist
     public void updateTimestamps() {

@@ -9,7 +9,7 @@ import java.util.List;
 @Table(name = "riddle")
 public class Riddle extends BasicEntity {
 
-    @Column(name = "riddlename")
+    @Column(name = "name")
     private String name;
 
     @Column(name = "sortindex")
@@ -19,14 +19,14 @@ public class Riddle extends BasicEntity {
     private String content;
 
     @ManyToOne
-    @JoinColumn(name = "id")
+    @JoinColumn(name = "fk_workflowpart")
     private WorkflowPart workflowPart;
 
     @OneToMany(targetEntity = RiddleHint.class)
-    @JoinColumn(name = "id")
     private List<RiddleHint> hints;
 
     public Riddle() {
+        super();
         //empty constructor for hibernate
     }
 
@@ -53,6 +53,10 @@ public class Riddle extends BasicEntity {
         return hints;
     }
 
+    public WorkflowPart getWorkflowPart() {
+        return workflowPart;
+    }
+
     public void setName(String riddleName) {
         this.name = riddleName;
     }
@@ -67,5 +71,9 @@ public class Riddle extends BasicEntity {
 
     public void setHints(List<RiddleHint> hints) {
         this.hints = hints;
+    }
+
+    public void setWorkflowPart(WorkflowPart workflowPart) {
+        this.workflowPart = workflowPart;
     }
 }

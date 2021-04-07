@@ -15,14 +15,15 @@ public class WorkflowTransition extends BasicEntity {
     private String description;
 
     @ManyToOne(targetEntity = WorkflowPart.class, fetch = FetchType.EAGER, optional = false)
-    @JoinColumn(name = "id", table = "workflowpart", nullable = false)
+    @JoinColumn(name = "fk_sourcePart")
     private WorkflowPart sourcePart;
 
     @ManyToOne(targetEntity = WorkflowPart.class, fetch = FetchType.EAGER, optional = false)
-    @JoinColumn(name = "id", table = "workflowpart", nullable = false)
+    @JoinColumn(name = "fk_targetPart")
     private WorkflowPart destinationPart;
 
     public WorkflowTransition() {
+        super();
         //empty Constructor for Hibernate object initialization
     }
 

@@ -16,6 +16,7 @@ public class Workflow extends BasicEntity {
     private WorkflowPart workflowStart;
 
     public Workflow() {
+        super();
         //empty constructor for hibernate
     }
 

@@ -4,7 +4,9 @@ import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.BasicEntity;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.definition.enumeration.WorkflowPartType;
 
 import javax.persistence.*;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "workflowpart")
@@ -24,15 +26,16 @@ public class WorkflowPart extends BasicEntity {
     @JoinColumn(name = "fk_workflow", nullable = false)
     private Workflow workflow;
 
-    @OneToMany(targetEntity = WorkflowTransition.class, fetch = FetchType.EAGER)
+    @OneToMany(targetEntity = WorkflowTransition.class, fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     @JoinColumn(name = "fk_target")
-    private List<WorkflowTransition> ingoingTransitions;
+    private Set<WorkflowTransition> ingoingTransitions = new LinkedHashSet<>();
 
-    @OneToMany(targetEntity = WorkflowTransition.class, fetch = FetchType.EAGER)
+    @OneToMany(targetEntity = WorkflowTransition.class, fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     @JoinColumn(name = "fk_source")
-    private List<WorkflowTransition> outgoingTransitions;
+    private Set<WorkflowTransition> outgoingTransitions = new LinkedHashSet<>();
 
     public WorkflowPart() {
+        super();
         //empty constructor for hibernate
     }
 
@@ -41,8 +44,8 @@ public class WorkflowPart extends BasicEntity {
         this.description = description;
         this.partType = partType;
         this.workflow = workflow;
-        this.ingoingTransitions = ingoingTransitions;
-        this.outgoingTransitions = outgoingTransitions;
+        this.ingoingTransitions.addAll(ingoingTransitions);
+        this.outgoingTransitions.addAll(outgoingTransitions);
     }
 
     public String getName() {
@@ -61,11 +64,11 @@ public class WorkflowPart extends BasicEntity {
         return workflow;
     }
 
-    public List<WorkflowTransition> getIngoingTransitions() {
+    public Set<WorkflowTransition> getIngoingTransitions() {
         return ingoingTransitions;
     }
 
-    public List<WorkflowTransition> getOutgoingTransitions() {
+    public Set<WorkflowTransition> getOutgoingTransitions() {
         return outgoingTransitions;
     }
 
@@ -85,11 +88,11 @@ public class WorkflowPart extends BasicEntity {
         this.workflow = workflow;
     }
 
-    public void setIngoingTransitions(List<WorkflowTransition> ingoingTransitions) {
+    public void setIngoingTransitions(Set<WorkflowTransition> ingoingTransitions) {
         this.ingoingTransitions = ingoingTransitions;
     }
 
-    public void setOutgoingTransitions(List<WorkflowTransition> outgoingTransitions) {
+    public void setOutgoingTransitions(Set<WorkflowTransition> outgoingTransitions) {
         this.outgoingTransitions = outgoingTransitions;
     }
 }

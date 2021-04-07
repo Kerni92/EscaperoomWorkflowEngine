@@ -49,15 +49,15 @@ create table if not exists workflowtransition
 -- create entity riddle
 create table if not exists riddle
 (
-    id             bigint(20)   not null auto_increment,
-    dbcreationdate timestamp    not null default current_timestamp,
-    dbupdatedate   timestamp    not null default current_timestamp on update current_timestamp,
-    name           varchar(512) not null,
-    sortindex      int          not null default 0,
-    content        text         not null,
-    fk_workflow    bigint(20)   not null,
+    id              bigint(20)   not null auto_increment,
+    dbcreationdate  timestamp    not null default current_timestamp,
+    dbupdatedate    timestamp    not null default current_timestamp on update current_timestamp,
+    name            varchar(512) not null,
+    sortindex       int          not null default 0,
+    content         text         not null,
+    fk_workflowpart bigint(20)   not null,
     PRIMARY KEY (id),
-    CONSTRAINT riddle_workflowpart FOREIGN KEY (fk_workflow) REFERENCES workflowpart (id) ON DELETE CASCADE
+    CONSTRAINT riddle_workflowpart FOREIGN KEY (fk_workflowpart) REFERENCES workflowpart (id) ON DELETE CASCADE
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_bin;

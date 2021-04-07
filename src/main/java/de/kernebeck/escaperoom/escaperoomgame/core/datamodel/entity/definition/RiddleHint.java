@@ -15,10 +15,16 @@ public class RiddleHint extends BasicEntity {
     private String content;
 
     @ManyToOne
-    @JoinColumn(name = "id")
+    @JoinColumn(name = "fk_riddle")
     private Riddle riddle;
 
+    public RiddleHint() {
+        super();
+        //default construtor for hibnerate
+    }
+
     public RiddleHint(String name, String content, Riddle riddle) {
+        super();
         this.name = name;
         this.content = content;
         this.riddle = riddle;
