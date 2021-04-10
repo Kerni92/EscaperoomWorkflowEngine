@@ -4,6 +4,7 @@ import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.BasicEntity;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.definition.enumeration.WorkflowPartType;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -26,6 +27,10 @@ public class WorkflowPart extends BasicEntity {
     @JoinColumn(name = "fk_workflow", nullable = false)
     private Workflow workflow;
 
+    @OneToMany(targetEntity = Solution.class, fetch = FetchType.EAGER)
+    @JoinColumn(name = "fk_workflowpart")
+    private List<Solution> solutions = new ArrayList<>();
+
     @OneToMany(targetEntity = WorkflowTransition.class, fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     @JoinColumn(name = "fk_target")
     private Set<WorkflowTransition> ingoingTransitions = new LinkedHashSet<>();
@@ -39,13 +44,14 @@ public class WorkflowPart extends BasicEntity {
         //empty constructor for hibernate
     }
 
-    public WorkflowPart(String name, String description, WorkflowPartType partType, Workflow workflow, List<WorkflowTransition> ingoingTransitions, List<WorkflowTransition> outgoingTransitions) {
+    public WorkflowPart(String name, String description, WorkflowPartType partType, Workflow workflow, List<Solution> solutions, Set<WorkflowTransition> ingoingTransitions, Set<WorkflowTransition> outgoingTransitions) {
         this.name = name;
         this.description = description;
         this.partType = partType;
         this.workflow = workflow;
-        this.ingoingTransitions.addAll(ingoingTransitions);
-        this.outgoingTransitions.addAll(outgoingTransitions);
+        this.solutions = solutions;
+        this.ingoingTransitions = ingoingTransitions;
+        this.outgoingTransitions = outgoingTransitions;
     }
 
     public String getName() {
@@ -62,6 +68,10 @@ public class WorkflowPart extends BasicEntity {
 
     public Workflow getWorkflow() {
         return workflow;
+    }
+
+    public List<Solution> getSolutions() {
+        return solutions;
     }
 
     public Set<WorkflowTransition> getIngoingTransitions() {
@@ -94,5 +104,9 @@ public class WorkflowPart extends BasicEntity {
 
     public void setOutgoingTransitions(Set<WorkflowTransition> outgoingTransitions) {
         this.outgoingTransitions = outgoingTransitions;
+    }
+
+    public void setSolutions(List<Solution> solutions) {
+        this.solutions = solutions;
     }
 }

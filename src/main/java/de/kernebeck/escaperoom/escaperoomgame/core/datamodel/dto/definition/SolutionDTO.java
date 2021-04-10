@@ -2,10 +2,8 @@ package de.kernebeck.escaperoom.escaperoomgame.core.datamodel.dto.definition;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-import java.util.List;
-
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class WorkflowPartDTO {
+public class SolutionDTO {
 
     private String name;
 
@@ -13,16 +11,22 @@ public class WorkflowPartDTO {
 
     private String type;
 
-    private String linkIdentifier;
+    private String solution;
 
-    private List<SolutionDTO> solutions;
+    private String solutionOptions;
 
-    private List<RiddleDTO> riddles;
 
-    public WorkflowPartDTO() {
+    public SolutionDTO() {
         //empty constructor for jackson
     }
 
+    public SolutionDTO(String name, String description, String type, String solution, String solutionOptions) {
+        this.name = name;
+        this.description = description;
+        this.type = type;
+        this.solution = solution;
+        this.solutionOptions = solutionOptions;
+    }
 
     public String getName() {
         return name;
@@ -36,12 +40,12 @@ public class WorkflowPartDTO {
         return type;
     }
 
-    public String getLinkIdentifier() {
-        return linkIdentifier;
+    public String getSolution() {
+        return solution;
     }
 
-    public List<RiddleDTO> getRiddles() {
-        return riddles;
+    public String getSolutionOptions() {
+        return solutionOptions;
     }
 
     public void setName(String name) {
@@ -56,11 +60,11 @@ public class WorkflowPartDTO {
         this.type = type;
     }
 
-    public void setLinkIdentifier(String linkIdentifier) {
-        this.linkIdentifier = linkIdentifier;
+    public void setSolution(String solution) {
+        this.solution = solution;
     }
 
-    public void setRiddles(List<RiddleDTO> riddles) {
-        this.riddles = riddles;
+    public void setSolutionOptions(String solutionOptions) {
+        this.solutionOptions = solutionOptions;
     }
 }

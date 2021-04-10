@@ -57,7 +57,7 @@ public class EscaperoomGameImportServiceBean implements EscaperoomGameImportServ
             //second create workflowparts
             for (final WorkflowPartDTO workflowPartDTO : importGame.getWorkflowParts()) {
                 WorkflowPart wp = new WorkflowPart(workflowPartDTO.getName(), workflowPartDTO.getDescription(), WorkflowPartType.fromEnumerationValue(workflowPartDTO.getType()),
-                        workflow, Collections.emptyList(), Collections.emptyList());
+                        workflow, Collections.emptyList(), Collections.emptySet(), Collections.emptySet());
                 wp = workflowPartRepository.save(wp);
                 linkIdentifierToWorkflowpartMap.put(workflowPartDTO.getLinkIdentifier(), wp);
 
