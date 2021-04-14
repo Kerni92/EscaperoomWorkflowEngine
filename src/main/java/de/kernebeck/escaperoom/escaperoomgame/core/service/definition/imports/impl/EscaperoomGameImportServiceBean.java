@@ -1,12 +1,11 @@
 package de.kernebeck.escaperoom.escaperoomgame.core.service.definition.imports.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.dto.definition.RiddleDTO;
-import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.dto.definition.WorkflowDTO;
-import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.dto.definition.WorkflowPartDTO;
-import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.dto.definition.WorkflowTransitionDTO;
+import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.dto.definition.*;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.definition.*;
+import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.definition.enumeration.SolutionType;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.definition.enumeration.WorkflowPartType;
+import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.exception.gameimport.InvalidImportLinkIdentifierException;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.repository.definition.*;
 import de.kernebeck.escaperoom.escaperoomgame.core.service.definition.imports.EscaperoomGameImportService;
 import org.slf4j.Logger;
@@ -28,28 +27,37 @@ public class EscaperoomGameImportServiceBean implements EscaperoomGameImportServ
     private static final Logger LOGGER = LoggerFactory.getLogger(EscaperoomGameImportServiceBean.class);
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
-    @Autowired
-    private WorkflowRepository workflowRepository;
+    private final WorkflowRepository workflowRepository;
+
+    private final WorkflowPartRepository workflowPartRepository;
+
+    private final WorkflowTransitionRepository workflowTransitionRepository;
+
+    private final RiddleRepository riddleRepository;
+
+    private final RiddleHintRepository riddleHintRepository;
+
+    private final SolutionRepository solutionRepository;
 
     @Autowired
-    private WorkflowPartRepository workflowPartRepository;
-
-    @Autowired
-    private WorkflowTransitionRepository workflowTransitionRepository;
-
-    @Autowired
-    private RiddleRepository riddleRepository;
-
-    @Autowired
-    private RiddleHintRepository riddleHintRepository;
+    public EscaperoomGameImportServiceBean(WorkflowRepository workflowRepository, WorkflowPartRepository workflowPartRepository, WorkflowTransitionRepository workflowTransitionRepository, RiddleRepository riddleRepository, RiddleHintRepository riddleHintRepository, SolutionRepository solutionRepository) {
+        this.workflowRepository = workflowRepository;
+        this.workflowPartRepository = workflowPartRepository;
+        this.workflowTransitionRepository = workflowTransitionRepository;
+        this.riddleRepository = riddleRepository;
+        this.riddleHintRepository = riddleHintRepository;
+        this.solutionRepository = solutionRepository;
+    }
 
 
+    @Override
     public boolean createEscaperoomGameFromFile(File file) throws Exception {
+        Workflow workflow = null;
         try {
             final WorkflowDTO importGame = OBJECT_MAPPER.readValue(file, WorkflowDTO.class);
 
             //first create workflowobject
-            Workflow workflow = new Workflow();
+            workflow = new Workflow();
             workflow.setName(importGame.getName());
             workflow = workflowRepository.save(workflow);
 
@@ -75,22 +83,37 @@ public class EscaperoomGameImportServiceBean implements EscaperoomGameImportServ
                         }
                     }
                 }
+
+                //create solutions
+                if (workflowPartDTO.getSolutions() != null && !workflowPartDTO.getSolutions().isEmpty()) {
+                    for (final SolutionDTO solutionDTO : workflowPartDTO.getSolutions()) {
+                        final Solution solution = new Solution(solutionDTO.getName(), solutionDTO.getDescription(), SolutionType.fromEnumerationValue(solutionDTO.getType()), solutionDTO.getSolution(), wp);
+                        solution.setSolutionOptions(solutionDTO.getSolutionOptions());
+                        solutionRepository.save(solution);
+                    }
+                }
             }
 
             //third create transitions
             for (final WorkflowTransitionDTO transitionDTO : importGame.getWorkflowTransitions()) {
                 //validate
                 if (!linkIdentifierToWorkflowpartMap.containsKey(transitionDTO.getLinkIdentifierSourceWorkflowPart()) || !linkIdentifierToWorkflowpartMap.containsKey(transitionDTO.getLinkIdentifierTargetWorkflowPart())) {
-                    throw new Exception(""); //todo build specific exception
+                    //cleanup created objects from db
+                    workflowRepository.delete(workflow);
+                    throw new InvalidImportLinkIdentifierException("Es konnte kein erzeugtes Start oder Ziel Workflowpart Objekt für den Startlinkidentifier " + transitionDTO.getLinkIdentifierSourceWorkflowPart() + " oder den Ziellinkidentifer " + transitionDTO.getLinkIdentifierTargetWorkflowPart() + " gefunden werden. Bitte die Importdefinitionen überprüfen.");
                 }
                 final WorkflowTransition transition = new WorkflowTransition(transitionDTO.getName(), transitionDTO.getDescription(), linkIdentifierToWorkflowpartMap.get(transitionDTO.getLinkIdentifierSourceWorkflowPart()), linkIdentifierToWorkflowpartMap.get(transitionDTO.getLinkIdentifierTargetWorkflowPart()));
                 workflowTransitionRepository.save(transition);
             }
+            return true;
         }
         catch (IOException e) {
+            //ignore inspectoin that value is always != null because something could go wrong while parsing the importfile
+            if (workflow != null) {
+                workflowRepository.delete(workflow);
+            }
             LOGGER.error("Import game of file " + file.getName() + " failed!", e);
         }
-        return true;
-
+        return false;
     }
 }

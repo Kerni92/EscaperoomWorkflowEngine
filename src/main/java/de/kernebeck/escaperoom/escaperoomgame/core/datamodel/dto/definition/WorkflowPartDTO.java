@@ -23,6 +23,14 @@ public class WorkflowPartDTO {
         //empty constructor for jackson
     }
 
+    public WorkflowPartDTO(String name, String description, String type, String linkIdentifier, List<SolutionDTO> solutions, List<RiddleDTO> riddles) {
+        this.name = name;
+        this.description = description;
+        this.type = type;
+        this.linkIdentifier = linkIdentifier;
+        this.solutions = solutions;
+        this.riddles = riddles;
+    }
 
     public String getName() {
         return name;
@@ -44,6 +52,10 @@ public class WorkflowPartDTO {
         return riddles;
     }
 
+    public List<SolutionDTO> getSolutions() {
+        return solutions;
+    }
+
     public void setName(String name) {
         this.name = name;
     }
@@ -62,5 +74,9 @@ public class WorkflowPartDTO {
 
     public void setRiddles(List<RiddleDTO> riddles) {
         this.riddles = riddles;
+    }
+
+    public void setSolutions(List<SolutionDTO> solutions) {
+        this.solutions = solutions;
     }
 }

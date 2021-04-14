@@ -1,13 +1,21 @@
 package de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.definition;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.BasicEntity;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.definition.enumeration.SolutionType;
 
 import javax.persistence.*;
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.Collections;
+import java.util.List;
 
 @Entity
 @Table(name = "solution")
 public class Solution extends BasicEntity {
+
+    private static final ObjectMapper OBJECTMAPPER = new ObjectMapper();
 
     @Column(name = "name")
     private String name;
@@ -34,12 +42,11 @@ public class Solution extends BasicEntity {
         //empty constructor for hibernate
     }
 
-    public Solution(String name, String description, SolutionType type, String solution, String solutionOptions, WorkflowPart workflowPart) {
+    public Solution(String name, String description, SolutionType type, String solution, WorkflowPart workflowPart) {
         this.name = name;
         this.description = description;
         this.type = type;
         this.solution = solution;
-        this.solutionOptions = solutionOptions;
         this.workflowPart = workflowPart;
     }
 
@@ -59,8 +66,17 @@ public class Solution extends BasicEntity {
         return solution;
     }
 
-    public String getSolutionOptions() {
-        return solutionOptions;
+    public List<String> getSolutionOptions() {
+        if (this.solutionOptions != null && !this.solutionOptions.isEmpty()) {
+            try {
+                return OBJECTMAPPER.readValue(new StringReader(this.solutionOptions), new TypeReference<List<String>>() {
+                });
+            }
+            catch (IOException e) {
+                //ignore -> should not happen
+            }
+        }
+        return Collections.emptyList();
     }
 
     public WorkflowPart getWorkflowPart() {
@@ -83,8 +99,13 @@ public class Solution extends BasicEntity {
         this.solution = solution;
     }
 
-    public void setSolutionOptions(String solutionOptions) {
-        this.solutionOptions = solutionOptions;
+    public void setSolutionOptions(List<String> solutionOptions) {
+        try {
+            this.solutionOptions = OBJECTMAPPER.writeValueAsString(solutionOptions);
+        }
+        catch (IOException e) {
+            //ignore -> should not happen
+        }
     }
 
     public void setWorkflowPart(WorkflowPart workflowPart) {

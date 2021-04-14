@@ -2,6 +2,8 @@ package de.kernebeck.escaperoom.escaperoomgame.core.datamodel.dto.definition;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import java.util.List;
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class SolutionDTO {
 
@@ -13,14 +15,14 @@ public class SolutionDTO {
 
     private String solution;
 
-    private String solutionOptions;
+    private List<String> solutionOptions;
 
 
     public SolutionDTO() {
         //empty constructor for jackson
     }
 
-    public SolutionDTO(String name, String description, String type, String solution, String solutionOptions) {
+    public SolutionDTO(String name, String description, String type, String solution, List<String> solutionOptions) {
         this.name = name;
         this.description = description;
         this.type = type;
@@ -44,7 +46,7 @@ public class SolutionDTO {
         return solution;
     }
 
-    public String getSolutionOptions() {
+    public List<String> getSolutionOptions() {
         return solutionOptions;
     }
 
@@ -64,7 +66,7 @@ public class SolutionDTO {
         this.solution = solution;
     }
 
-    public void setSolutionOptions(String solutionOptions) {
+    public void setSolutionOptions(List<String> solutionOptions) {
         this.solutionOptions = solutionOptions;
     }
 }
