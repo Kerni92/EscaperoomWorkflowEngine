@@ -108,7 +108,7 @@ public class EscaperoomGameImportServiceBean implements EscaperoomGameImportServ
             return true;
         }
         catch (IOException e) {
-            //ignore inspectoin that value is always != null because something could go wrong while parsing the importfile
+            //ignore inspection that value is always != null because something could go wrong while parsing the importfile
             if (workflow != null) {
                 workflowRepository.delete(workflow);
             }
