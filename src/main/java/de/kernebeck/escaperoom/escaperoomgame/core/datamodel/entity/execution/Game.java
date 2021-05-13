@@ -39,7 +39,7 @@ public class Game extends BasicEntity {
 
     public Game() {
         super();
-        //empty constructor required for hibernatea
+        //empty constructor required for hibernate
     }
 
     public Game(String gameId, Timestamp lastStartTime, Timestamp lastEndTime, Long totalTime, Workflow workflow) {
