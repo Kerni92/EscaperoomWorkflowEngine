@@ -11,6 +11,7 @@ import java.util.List;
 public class ExecutedWorkflowPart extends BasicEntity {
 
     @ManyToOne
+    @JoinColumn(name = "fk_workflowpart")
     private WorkflowPart finishedPart;
 
     @Column(name = "endtime")

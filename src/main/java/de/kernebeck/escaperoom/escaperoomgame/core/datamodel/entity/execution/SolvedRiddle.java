@@ -10,14 +10,18 @@ import java.util.List;
 @Entity
 public class SolvedRiddle extends BasicEntity {
 
-    @OneToOne
+    @ManyToOne(targetEntity = Riddle.class, fetch = FetchType.LAZY)
+    @JoinColumn(name = "fk_riddle")
     private Riddle riddle;
 
-    @OneToMany
-    @JoinColumn
+    @ManyToMany
+    @JoinTable(name = "solvedriddle_riddlehint",
+            joinColumns = @JoinColumn(name = "fk_riddlehint", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "fk_solvedriddle", referencedColumnName = "id")
+    )
     private List<RiddleHint> usedHints;
 
-    @ManyToOne
+    @ManyToOne(targetEntity = ExecutedWorkflowPart.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "fk_executedworkflowpart")
     private ExecutedWorkflowPart executedWorkflowPart;
 

@@ -6,8 +6,7 @@ create table if not exists workflow
     dbupdatedate         timestamp    not null default current_timestamp on update current_timestamp,
     name                 varchar(512) not null,
     fk_workflowstartpart bigint(20)            default null,
-    PRIMARY KEY (id),
-    KEY fk_workflowstartpart (fk_workflowstartpart)
+    PRIMARY KEY (id)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_bin;
@@ -28,6 +27,10 @@ create table if not exists workflowpart
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_bin;
+
+-- add constraint to fk_workflowpart to table workflow
+alter table workflow
+    ADD CONSTRAINT workflow_fk_workflowstartpart FOREIGN KEY (fk_workflowstartpart) REFERENCES workflowpart (id);
 
 -- create entity workflowtransition
 create table if not exists workflowtransition

@@ -2,10 +2,10 @@ package de.kernebeck.escaperoom.escaperoomgame.core.service.definition.imports.i
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.dto.definition.*;
+import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.dto.imports.WorkflowImportResult;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.definition.*;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.definition.enumeration.SolutionType;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.definition.enumeration.WorkflowPartType;
-import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.exception.gameimport.InvalidImportLinkIdentifierException;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.repository.definition.*;
 import de.kernebeck.escaperoom.escaperoomgame.core.service.definition.imports.EscaperoomGameImportService;
 import org.slf4j.Logger;
@@ -14,11 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.io.*;
+import java.util.*;
 
 @Service
 @Transactional
@@ -49,12 +46,22 @@ public class EscaperoomGameImportServiceBean implements EscaperoomGameImportServ
         this.solutionRepository = solutionRepository;
     }
 
+    @Override
+    public WorkflowImportResult createEscaperoomgameFromFile(File file) {
+        try {
+            return createEscaperoomGameFromReader(new FileReader(file));
+        }
+        catch (FileNotFoundException e) {
+            return new WorkflowImportResult(false, Collections.singletonList("Die angegebene Datei " + file.getAbsolutePath() + " zum importieren existiert auf dem Dateisystem nicht!"));
+        }
+    }
 
     @Override
-    public boolean createEscaperoomGameFromFile(File file) throws Exception {
+    public WorkflowImportResult createEscaperoomGameFromReader(Reader reader) {
+        final List<String> errorMessages = new ArrayList<>();
         Workflow workflow = null;
         try {
-            final WorkflowDTO importGame = OBJECT_MAPPER.readValue(file, WorkflowDTO.class);
+            final WorkflowDTO importGame = OBJECT_MAPPER.readValue(reader, WorkflowDTO.class);
 
             //first create workflowobject
             workflow = new Workflow();
@@ -100,20 +107,19 @@ public class EscaperoomGameImportServiceBean implements EscaperoomGameImportServ
                 if (!linkIdentifierToWorkflowpartMap.containsKey(transitionDTO.getLinkIdentifierSourceWorkflowPart()) || !linkIdentifierToWorkflowpartMap.containsKey(transitionDTO.getLinkIdentifierTargetWorkflowPart())) {
                     //cleanup created objects from db
                     workflowRepository.delete(workflow);
-                    throw new InvalidImportLinkIdentifierException("Es konnte kein erzeugtes Start oder Ziel Workflowpart Objekt für den Startlinkidentifier " + transitionDTO.getLinkIdentifierSourceWorkflowPart() + " oder den Ziellinkidentifer " + transitionDTO.getLinkIdentifierTargetWorkflowPart() + " gefunden werden. Bitte die Importdefinitionen überprüfen.");
+                    return new WorkflowImportResult(false, Collections.singletonList("Es konnte kein erzeugtes Start oder Ziel Workflowpart Objekt für den Startlinkidentifier " + transitionDTO.getLinkIdentifierSourceWorkflowPart() + " oder den Ziellinkidentifer " + transitionDTO.getLinkIdentifierTargetWorkflowPart() + " gefunden werden. Bitte die Importdefinitionen überprüfen."));
                 }
                 final WorkflowTransition transition = new WorkflowTransition(transitionDTO.getName(), transitionDTO.getDescription(), linkIdentifierToWorkflowpartMap.get(transitionDTO.getLinkIdentifierSourceWorkflowPart()), linkIdentifierToWorkflowpartMap.get(transitionDTO.getLinkIdentifierTargetWorkflowPart()));
                 workflowTransitionRepository.save(transition);
             }
-            return true;
+            return new WorkflowImportResult(true);
         }
         catch (IOException e) {
-            //ignore inspection that value is always != null because something could go wrong while parsing the importfile
-            if (workflow != null) {
+            errorMessages.add("es ist ein unerwarteter Fehler beim Import aufgetreten! Meldung: " + e.getMessage());
+            if (workflow != null) { //workflow could be null when converting file json to object fails
                 workflowRepository.delete(workflow);
             }
-            LOGGER.error("Import game of file " + file.getName() + " failed!", e);
         }
-        return false;
+        return new WorkflowImportResult(false, errorMessages);
     }
 }

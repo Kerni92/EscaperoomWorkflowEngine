@@ -30,12 +30,16 @@ public class Game extends BasicEntity {
     @Column(name = "totaltime")
     private Long totalTime;
 
-    @Column(name = "username")
+    @Column(name = "usernames")
     private String usernames;
 
     @ManyToOne(targetEntity = Workflow.class, fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "fk_workflow", nullable = false)
     private Workflow workflow;
+
+    @OneToMany
+    @JoinColumn(name = "fk_game")
+    private List<ExecutedWorkflowPart> executedWorkflowParts;
 
     public Game() {
         super();
