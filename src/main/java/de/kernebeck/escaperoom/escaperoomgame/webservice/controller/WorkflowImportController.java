@@ -6,14 +6,17 @@ import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.dto.imports.Workflo
 import de.kernebeck.escaperoom.escaperoomgame.core.service.definition.imports.EscaperoomGameImportService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.Reader;
 import java.util.Collections;
 
-@RestController("/api/import/")
+@RestController
+@RequestMapping(path = "/api/import")
 public class WorkflowImportController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WorkflowImportController.class);
@@ -22,6 +25,7 @@ public class WorkflowImportController {
 
     private final EscaperoomGameImportService escaperoomGameImportService;
 
+    @Autowired
     public WorkflowImportController(EscaperoomGameImportService escaperoomGameImportService) {
         this.escaperoomGameImportService = escaperoomGameImportService;
     }

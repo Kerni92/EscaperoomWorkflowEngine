@@ -15,11 +15,11 @@ public class WorkflowTransition extends BasicEntity {
     private String description;
 
     @ManyToOne(targetEntity = WorkflowPart.class, fetch = FetchType.EAGER, optional = false)
-    @JoinColumn(name = "fk_sourcePart")
+    @JoinColumn(name = "fk_sourcepart")
     private WorkflowPart sourcePart;
 
     @ManyToOne(targetEntity = WorkflowPart.class, fetch = FetchType.EAGER, optional = false)
-    @JoinColumn(name = "fk_targetPart")
+    @JoinColumn(name = "fk_destinationpart")
     private WorkflowPart destinationPart;
 
     public WorkflowTransition() {

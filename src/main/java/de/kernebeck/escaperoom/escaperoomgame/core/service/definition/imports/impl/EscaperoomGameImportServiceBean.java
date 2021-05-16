@@ -63,6 +63,7 @@ public class EscaperoomGameImportServiceBean implements EscaperoomGameImportServ
         try {
             final WorkflowDTO importGame = OBJECT_MAPPER.readValue(reader, WorkflowDTO.class);
 
+            //TODO add more validation
             //first create workflowobject
             workflow = new Workflow();
             workflow.setName(importGame.getName());
@@ -71,10 +72,16 @@ public class EscaperoomGameImportServiceBean implements EscaperoomGameImportServ
             final Map<String, WorkflowPart> linkIdentifierToWorkflowpartMap = new LinkedHashMap<>();
             //second create workflowparts
             for (final WorkflowPartDTO workflowPartDTO : importGame.getWorkflowParts()) {
+                //TODO add more validation
                 WorkflowPart wp = new WorkflowPart(workflowPartDTO.getName(), workflowPartDTO.getDescription(), WorkflowPartType.fromEnumerationValue(workflowPartDTO.getType()),
                         workflow, Collections.emptyList(), Collections.emptySet(), Collections.emptySet());
                 wp = workflowPartRepository.save(wp);
                 linkIdentifierToWorkflowpartMap.put(workflowPartDTO.getLinkIdentifier(), wp);
+
+                if (importGame.getStartPartLinkId().equalsIgnoreCase(workflowPartDTO.getLinkIdentifier())) {
+                    workflow.setWorkflowStart(wp);
+                    workflowRepository.save(workflow);
+                }
 
                 //create riddles and riddle hints
                 if (workflowPartDTO.getRiddles() != null && !workflowPartDTO.getRiddles().isEmpty()) {
@@ -112,6 +119,13 @@ public class EscaperoomGameImportServiceBean implements EscaperoomGameImportServ
                 final WorkflowTransition transition = new WorkflowTransition(transitionDTO.getName(), transitionDTO.getDescription(), linkIdentifierToWorkflowpartMap.get(transitionDTO.getLinkIdentifierSourceWorkflowPart()), linkIdentifierToWorkflowpartMap.get(transitionDTO.getLinkIdentifierTargetWorkflowPart()));
                 workflowTransitionRepository.save(transition);
             }
+
+            //set startpart for workflow
+            if (workflow.getWorkflowStart() == null) {
+                workflowRepository.delete(workflow);
+                return new WorkflowImportResult(false, Collections.singletonList("Es wurde kein Startelement für den Workflow gesetzt oder es ist keins angegeben."));
+            }
+
             return new WorkflowImportResult(true);
         }
         catch (IOException e) {

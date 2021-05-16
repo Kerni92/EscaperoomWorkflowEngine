@@ -1,10 +1,9 @@
 package de.kernebeck.escaperoom.escaperoomgame;
 
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 
 @Configuration
-@EnableWebSecurity
+//@EnableWebSecurity
 public class EscaperoomGameWebserviceConfiguration {
 
 

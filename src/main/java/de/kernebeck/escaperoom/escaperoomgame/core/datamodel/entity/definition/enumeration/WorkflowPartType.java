@@ -2,6 +2,7 @@ package de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.definition.
 
 public enum WorkflowPartType {
     PART("part"),
+    DECISION("decision"),
     ENDPART("endpart");
 
 

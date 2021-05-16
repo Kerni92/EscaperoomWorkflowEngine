@@ -40,11 +40,11 @@ create table if not exists workflowtransition
     dbupdatedate       timestamp    not null default current_timestamp on update current_timestamp,
     name               varchar(512) not null,
     description        text         not null,
-    fk_sourcePart      bigint(20)   not null,
-    fk_destinationPart bigint(20)   not null,
+    fk_sourcepart      bigint(20)   not null,
+    fk_destinationpart bigint(20)   not null,
     PRIMARY KEY (id),
-    CONSTRAINT workflowtransition_sourcewp FOREIGN KEY (fk_sourcePart) REFERENCES workflowpart (id) ON DELETE CASCADE,
-    CONSTRAINT workflowtransition_destwp FOREIGN KEY (fk_destinationPart) REFERENCES workflowpart (id) ON DELETE CASCADE
+    CONSTRAINT workflowtransition_sourcewp FOREIGN KEY (fk_sourcepart) REFERENCES workflowpart (id) ON DELETE CASCADE,
+    CONSTRAINT workflowtransition_destwp FOREIGN KEY (fk_destinationpart) REFERENCES workflowpart (id) ON DELETE CASCADE
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_bin;
