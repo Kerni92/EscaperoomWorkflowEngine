@@ -11,7 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 @EnableWebSecurity
-public class EscaperoomGameWebserviceConfiguration extends WebSecurityConfigurerAdapter {
+public class EscaperoomGameWebsecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -20,7 +20,7 @@ public class EscaperoomGameWebserviceConfiguration extends WebSecurityConfigurer
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable().antMatcher("/**").authorizeRequests().antMatchers("/", "/resources/*").permitAll().
+        http.csrf().disable().antMatcher("/api/**").authorizeRequests().
                 anyRequest().authenticated().and().httpBasic();
     }
 
