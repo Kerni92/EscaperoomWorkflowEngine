@@ -20,8 +20,9 @@ public class EscaperoomGameWebsecurityConfiguration extends WebSecurityConfigure
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable().antMatcher("/api/**").authorizeRequests().
-                anyRequest().authenticated().and().httpBasic();
+        http.csrf().disable().authorizeRequests()
+                .antMatchers("/api/import/**").authenticated().
+                anyRequest().permitAll().and().httpBasic();
     }
 
     @Bean
