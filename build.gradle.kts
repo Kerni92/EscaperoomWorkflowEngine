@@ -52,6 +52,8 @@ java {
 frontend {
     nodeVersion.set("14.16.1")
     assembleScript.set("run build")
+//    cleanScript.set("run clean");
+//    checkScript.set("run check");
 }
 
 

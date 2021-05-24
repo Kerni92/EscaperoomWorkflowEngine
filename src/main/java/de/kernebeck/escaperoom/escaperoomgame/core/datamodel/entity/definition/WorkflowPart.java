@@ -23,7 +23,7 @@ public class WorkflowPart extends BasicEntity {
     @Enumerated(value = EnumType.STRING)
     private WorkflowPartType partType;
 
-    @ManyToOne(targetEntity = Workflow.class, fetch = FetchType.EAGER, optional = false)
+    @ManyToOne(targetEntity = Workflow.class, fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "fk_workflow", nullable = false)
     private Workflow workflow;
 
@@ -32,11 +32,11 @@ public class WorkflowPart extends BasicEntity {
     private List<Solution> solutions = new ArrayList<>();
 
     @OneToMany(targetEntity = WorkflowTransition.class, fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
-    @JoinColumn(name = "fk_target")
+    @JoinColumn(name = "fk_destinationpart")
     private Set<WorkflowTransition> ingoingTransitions = new LinkedHashSet<>();
 
     @OneToMany(targetEntity = WorkflowTransition.class, fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
-    @JoinColumn(name = "fk_source")
+    @JoinColumn(name = "fk_sourcepart")
     private Set<WorkflowTransition> outgoingTransitions = new LinkedHashSet<>();
 
     public WorkflowPart() {
