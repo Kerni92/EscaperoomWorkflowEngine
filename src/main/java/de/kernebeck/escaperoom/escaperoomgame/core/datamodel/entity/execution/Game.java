@@ -21,11 +21,11 @@ public class Game extends BasicEntity {
     @Column(name = "gameid")
     private String gameId;
 
-    @Column(name = "laststarttime")
-    private Timestamp lastStartTime;
+    @Column(name = "starttime")
+    private Timestamp starttime;
 
-    @Column(name = "lastendtime")
-    private Timestamp lastEndTime;
+    @Column(name = "endtime")
+    private Timestamp endTime;
 
     @Column(name = "totaltime")
     private Long totalTime;
@@ -46,10 +46,10 @@ public class Game extends BasicEntity {
         //empty constructor required for hibernate
     }
 
-    public Game(String gameId, Timestamp lastStartTime, Timestamp lastEndTime, Long totalTime, Workflow workflow) {
+    public Game(String gameId, Timestamp starttime, Timestamp lastEndTime, Long totalTime, Workflow workflow) {
         this.gameId = gameId;
-        this.lastStartTime = lastStartTime;
-        this.lastEndTime = lastEndTime;
+        this.starttime = starttime;
+        this.endTime = lastEndTime;
         this.totalTime = totalTime;
         this.workflow = workflow;
     }
@@ -58,12 +58,12 @@ public class Game extends BasicEntity {
         return gameId;
     }
 
-    public Timestamp getLastStartTime() {
-        return lastStartTime;
+    public Timestamp getStarttime() {
+        return starttime;
     }
 
-    public Timestamp getLastEndTime() {
-        return lastEndTime;
+    public Timestamp getEndTime() {
+        return endTime;
     }
 
     public Long getTotalTime() {
@@ -91,12 +91,12 @@ public class Game extends BasicEntity {
         this.gameId = gameId;
     }
 
-    public void setLastStartTime(Timestamp lastStartTime) {
-        this.lastStartTime = lastStartTime;
+    public void setStarttime(Timestamp lastStartTime) {
+        this.starttime = lastStartTime;
     }
 
-    public void setLastEndTime(Timestamp lastEndTime) {
-        this.lastEndTime = lastEndTime;
+    public void setEndTime(Timestamp lastEndTime) {
+        this.endTime = lastEndTime;
     }
 
     public void setTotalTime(Long totalTime) {

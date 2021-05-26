@@ -26,6 +26,7 @@ create table if not exists executedworkflowpart
     endtime         timestamp,
     totaltime       bigint(20)          default 0,
     fk_workflowpart bigint(20) not null,
+    fk_game         bigint(20) not null,
     PRIMARY KEY (id),
     CONSTRAINT executedworkflowpart_workflowpart FOREIGN KEY (fk_workflowpart) REFERENCES workflowpart (id) ON DELETE CASCADE
 ) ENGINE = InnoDB
