@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.BasicEntity;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.definition.Workflow;
+import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.definition.WorkflowPart;
 
 import javax.persistence.*;
 import java.io.IOException;
@@ -40,6 +41,10 @@ public class Game extends BasicEntity {
     @OneToMany
     @JoinColumn(name = "fk_game")
     private List<ExecutedWorkflowPart> executedWorkflowParts;
+
+    @ManyToOne(targetEntity = Workflow.class, fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "fk_currentworkflowpart")
+    private WorkflowPart currentWorkflowpart;
 
     public Game() {
         super();
@@ -87,6 +92,14 @@ public class Game extends BasicEntity {
         return workflow;
     }
 
+    public List<ExecutedWorkflowPart> getExecutedWorkflowParts() {
+        return executedWorkflowParts;
+    }
+
+    public WorkflowPart getCurrentWorkflowpart() {
+        return currentWorkflowpart;
+    }
+
     public void setGameId(String gameId) {
         this.gameId = gameId;
     }
@@ -115,6 +128,14 @@ public class Game extends BasicEntity {
         else {
             this.usernames = null;
         }
+    }
+
+    public void setCurrentWorkflowpart(WorkflowPart currentWorkflowpart) {
+        this.currentWorkflowpart = currentWorkflowpart;
+    }
+
+    public void setExecutedWorkflowParts(List<ExecutedWorkflowPart> executedWorkflowParts) {
+        this.executedWorkflowParts = executedWorkflowParts;
     }
 
     public void setWorkflow(Workflow workflow) {

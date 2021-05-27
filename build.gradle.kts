@@ -23,6 +23,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.mariadb.jdbc:mariadb-java-client")
     implementation("org.flywaydb:flyway-core")
+    implementation("commons-io:commons-io:2.9.0")
 
 
 

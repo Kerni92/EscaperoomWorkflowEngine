@@ -1,10 +1,14 @@
 const React = require('react');
-import {makeStyles} from '@material-ui/core/styles';
+const regeneratorRuntime = require("regenerator-runtime");
+
+import {createMuiTheme, withStyles} from '@material-ui/core/styles';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 
-const useStyles = makeStyles((theme) => ({
+const theme = createMuiTheme();
+
+const useStyles = {
     formControl: {
         margin: theme.spacing(1),
         minWidth: 240,
@@ -12,7 +16,7 @@ const useStyles = makeStyles((theme) => ({
     selectEmpty: {
         marginTop: theme.spacing(2),
     },
-}));
+};
 
 
 export class GameChooser extends React.Component {
@@ -43,10 +47,11 @@ export class GameChooser extends React.Component {
     render() {
         const {games} = this.state;
         const {selectedGame} = this.state;
-
+        const {classes} = this.props;
         return (
-            <FormControl className="useStyles.formControl">
-                <Select id="gameselect" onChange={this.handleChange} value={selectedGame} name="Escaperoom">
+            <FormControl className={classes.formControl}>
+                <Select id="gameselect" onChange={this.handleChange} value={selectedGame} name="Escaperoom"
+                        className={classes.selectEmpty}>
                     {games.map(game =>
                         <MenuItem key={game.id} value={game.id}>{game.name}</MenuItem>
                     )}
@@ -54,5 +59,6 @@ export class GameChooser extends React.Component {
             </FormControl>
         );
     }
-
 }
+
+export default withStyles(useStyles)(GameChooser);

@@ -5,7 +5,7 @@ const client = require('./client');
 
 import {BrowserRouter as Router, Route, Switch} from "react-router-dom";
 
-import {Administration} from "./components/pages/administration"
+import Administration from "./components/pages/administration"
 import {Game} from "./components/pages/game"
 import {Home} from "./components/pages/home"
 

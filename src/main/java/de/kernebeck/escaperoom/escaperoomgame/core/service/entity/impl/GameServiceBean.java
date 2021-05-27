@@ -8,11 +8,13 @@ import de.kernebeck.escaperoom.escaperoomgame.core.service.entity.WorkflowServic
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 @Component
+@Transactional
 public class GameServiceBean implements GameService {
 
     @Autowired
@@ -26,6 +28,7 @@ public class GameServiceBean implements GameService {
         final Optional<Workflow> wf = workflowService.findById(workflowId);
         if (wf.isPresent()) {
             Game game = new Game(UUID.randomUUID().toString(), null, null, null, wf.get());
+            game.setCurrentWorkflowpart(wf.get().getWorkflowStart());
             game.setUsernames(usernames);
             return gameRepository.save(game);
         }
