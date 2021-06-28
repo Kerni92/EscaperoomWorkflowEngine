@@ -8,4 +8,6 @@ public interface GameService {
 
     Game createGame(Long workflowId, List<String> usernames);
 
+    Game findNotFinishedByGameId(String gameId);
+
 }

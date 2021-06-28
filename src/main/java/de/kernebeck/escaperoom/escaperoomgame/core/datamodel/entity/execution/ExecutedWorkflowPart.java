@@ -12,7 +12,7 @@ public class ExecutedWorkflowPart extends BasicEntity {
 
     @ManyToOne
     @JoinColumn(name = "fk_workflowpart")
-    private WorkflowPart finishedPart;
+    private WorkflowPart workflowPart;
 
     @Column(name = "endtime")
     private Timestamp endTime;
@@ -32,16 +32,16 @@ public class ExecutedWorkflowPart extends BasicEntity {
         //empty constructor required for hibernate
     }
 
-    public ExecutedWorkflowPart(WorkflowPart finishedPart, Timestamp endTime, Timestamp startTime, Long totalTime, List<SolvedRiddle> solvedRiddleList) {
-        this.finishedPart = finishedPart;
+    public ExecutedWorkflowPart(WorkflowPart workflowPart, Timestamp endTime, Timestamp startTime, Long totalTime, List<SolvedRiddle> solvedRiddleList) {
+        this.workflowPart = workflowPart;
         this.endTime = endTime;
         this.startTime = startTime;
         this.totalTime = totalTime;
         this.solvedRiddleList = solvedRiddleList;
     }
 
-    public WorkflowPart getFinishedPart() {
-        return finishedPart;
+    public WorkflowPart getWorkflowPart() {
+        return workflowPart;
     }
 
     public Timestamp getEndTime() {
@@ -60,8 +60,8 @@ public class ExecutedWorkflowPart extends BasicEntity {
         return solvedRiddleList;
     }
 
-    public void setFinishedPart(WorkflowPart finishedPart) {
-        this.finishedPart = finishedPart;
+    public void setWorkflowPart(WorkflowPart workflowPart) {
+        this.workflowPart = workflowPart;
     }
 
     public void setEndTime(Timestamp endTime) {

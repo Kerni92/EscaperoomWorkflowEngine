@@ -29,7 +29,7 @@ public class WorkflowPart extends BasicEntity {
 
     @OneToMany(targetEntity = Solution.class, fetch = FetchType.EAGER)
     @JoinColumn(name = "fk_workflowpart")
-    private List<Solution> solutions = new ArrayList<>();
+    private List<Riddle> riddles = new ArrayList<>();
 
     @OneToMany(targetEntity = WorkflowTransition.class, fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     @JoinColumn(name = "fk_destinationpart")
@@ -44,12 +44,12 @@ public class WorkflowPart extends BasicEntity {
         //empty constructor for hibernate
     }
 
-    public WorkflowPart(String name, String description, WorkflowPartType partType, Workflow workflow, List<Solution> solutions, Set<WorkflowTransition> ingoingTransitions, Set<WorkflowTransition> outgoingTransitions) {
+    public WorkflowPart(String name, String description, WorkflowPartType partType, Workflow workflow, List<Riddle> riddles, Set<WorkflowTransition> ingoingTransitions, Set<WorkflowTransition> outgoingTransitions) {
         this.name = name;
         this.description = description;
         this.partType = partType;
         this.workflow = workflow;
-        this.solutions = solutions;
+        this.riddles = riddles;
         this.ingoingTransitions = ingoingTransitions;
         this.outgoingTransitions = outgoingTransitions;
     }
@@ -70,8 +70,8 @@ public class WorkflowPart extends BasicEntity {
         return workflow;
     }
 
-    public List<Solution> getSolutions() {
-        return solutions;
+    public List<Riddle> getRiddles() {
+        return riddles;
     }
 
     public Set<WorkflowTransition> getIngoingTransitions() {
@@ -106,7 +106,7 @@ public class WorkflowPart extends BasicEntity {
         this.outgoingTransitions = outgoingTransitions;
     }
 
-    public void setSolutions(List<Solution> solutions) {
-        this.solutions = solutions;
+    public void setRiddles(List<Riddle> riddles) {
+        this.riddles = riddles;
     }
 }

@@ -34,6 +34,10 @@ public class Solution extends BasicEntity {
     private String solutionOptions;
 
     @ManyToOne
+    @JoinColumn(name = "fk_riddle")
+    private Riddle riddle;
+
+    @ManyToOne
     @JoinColumn(name = "fk_workflowpart")
     private WorkflowPart workflowPart;
 
@@ -79,6 +83,10 @@ public class Solution extends BasicEntity {
         return Collections.emptyList();
     }
 
+    public Riddle getRiddle() {
+        return riddle;
+    }
+
     public WorkflowPart getWorkflowPart() {
         return workflowPart;
     }
@@ -106,6 +114,10 @@ public class Solution extends BasicEntity {
         catch (IOException e) {
             //ignore -> should not happen
         }
+    }
+
+    public void setRiddle(Riddle riddle) {
+        this.riddle = riddle;
     }
 
     public void setWorkflowPart(WorkflowPart workflowPart) {

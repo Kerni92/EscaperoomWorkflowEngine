@@ -18,6 +18,9 @@ public class Riddle extends BasicEntity {
     @Column(name = "content")
     private String content;
 
+    @OneToMany(targetEntity = Solution.class)
+    private List<Solution> solutions;
+
     @ManyToOne
     @JoinColumn(name = "fk_workflowpart")
     private WorkflowPart workflowPart;
@@ -57,6 +60,10 @@ public class Riddle extends BasicEntity {
         return workflowPart;
     }
 
+    public List<Solution> getSolutions() {
+        return solutions;
+    }
+
     public void setName(String riddleName) {
         this.name = riddleName;
     }
@@ -75,5 +82,9 @@ public class Riddle extends BasicEntity {
 
     public void setWorkflowPart(WorkflowPart workflowPart) {
         this.workflowPart = workflowPart;
+    }
+
+    public void setSolutions(List<Solution> solutions) {
+        this.solutions = solutions;
     }
 }
