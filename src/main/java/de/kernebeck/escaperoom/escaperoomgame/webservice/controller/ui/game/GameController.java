@@ -1,8 +1,11 @@
 package de.kernebeck.escaperoom.escaperoomgame.webservice.controller.ui.game;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.definition.Riddle;
+import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.definition.RiddleHint;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.definition.Solution;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.definition.Workflow;
+import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.execution.ExecutedWorkflowPart;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.execution.Game;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.execution.SolvedRiddle;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.repository.execution.SolvedRiddleRepository;
@@ -25,10 +28,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.io.IOException;
 import java.io.Reader;
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "/api/ui/game")
@@ -109,14 +110,14 @@ public class GameController {
             final List<String> errors = new ArrayList<>();
             final Game game = gameService.findNotFinishedByGameId(resource.getGameId());
             if (game == null) {
-                errors.add("Es wurde aktives Spiel für die ID " + resource.getGameId() + " gefunden.");
+                errors.add("Es wurde kein aktives Spiel für die ID " + resource.getGameId() + " gefunden.");
             }
 
             //check if current workflowpart of game has riddle which should be checked
             if (game.getCurrentWorkflowpart().getWorkflowPart().getRiddles().stream().noneMatch(r -> r.getId().equals(resource.getRiddleId()))) {
                 errors.add("Das Rätsel steht im aktuellen Spielstatus nicht zur Verfügung.");
             }
-            else if (game.getCurrentWorkflowpart().getSolvedRiddleList() != null && game.getCurrentWorkflowpart().getSolvedRiddleList().stream().anyMatch(r -> r.getRiddle().getId().equals(resource.getRiddleId()) && r.getResolved())) {
+            else if (game.getCurrentWorkflowpart().getSolvedRiddleList() != null && game.getCurrentWorkflowpart().getSolvedRiddleList().stream().anyMatch(r -> r.getRiddle().getId().equals(resource.getRiddleId()) && r.isResolved())) {
                 errors.add("Das Rätsel wurde bereits gelöst!");
             }
 
@@ -125,16 +126,14 @@ public class GameController {
 
                 //check if one valid solution exsits
                 final Optional<Solution> solution = solutions.stream().filter(s -> s.getSolution().equals(resource.getSolution())).findFirst();
-
-                final Optional<SolvedRiddle> solvedRiddleOptional = game.getCurrentWorkflowpart().getSolvedRiddleList().stream().filter(r -> r.getRiddle().getId().equals(resource.getRiddleId())).findFirst();
-                final SolvedRiddle solvedRiddle = solvedRiddleOptional.orElse(new SolvedRiddle(riddleService.findById(resource.getRiddleId()), Collections.emptyList(), game.getCurrentWorkflowpart(), 0, false));
+                final SolvedRiddle solvedRiddle = getOrSolvedRiddleByRiddleIdAndWorkflowpart(resource.getRiddleId(), game.getCurrentWorkflowpart());
                 solvedRiddle.setAttempts(solvedRiddle.getAttempts() + 1);
                 if (solution.isPresent()) {
                     solvedRiddle.setResolved(Boolean.TRUE);
                 }
                 solvedRiddleRepository.save(solvedRiddle);
 
-                return ResponseEntity.ok(new CheckRiddleResult(solvedRiddle.getResolved()));
+                return ResponseEntity.ok(new CheckRiddleResult(solvedRiddle.isResolved()));
             }
 
             return ResponseEntity.badRequest().body(errors);
@@ -153,22 +152,73 @@ public class GameController {
 
             final Game game = gameService.findNotFinishedByGameId(resource.getGameId());
             if (game == null) {
-                errors.add("Es wurde aktives Spiel für die ID " + resource.getGameId() + " gefunden.");
+                errors.add("Es wurde kein aktives Spiel für die ID " + resource.getGameId() + " gefunden.");
             }
 
-            if (game.getCurrentWorkflowpart().getWorkflowPart().getRiddles().stream().noneMatch(r -> r.getId().equals(resource.getRiddleId()))) {
+            if (errors.isEmpty() && game.getCurrentWorkflowpart().getWorkflowPart().getRiddles().stream().noneMatch(r -> r.getId().equals(resource.getRiddleId()))) {
                 errors.add("Das Rätsel zum angeforderten Hinweis steht im aktuellen Spielstatus nicht zur Verfügung.");
             }
 
-            if (errors.isEmpty()) {
 
+            if (errors.isEmpty()) {
+                final SolvedRiddle solvedRiddle = getOrSolvedRiddleByRiddleIdAndWorkflowpart(resource.getRiddleId(), game.getCurrentWorkflowpart());
+                if (solvedRiddle == null) {
+                    return ResponseEntity.badRequest().body("Die Hinweise zum Rätsel stehen aktuell nicht zur Verfügung");
+                }
+                if (solvedRiddle.isResolved()) {
+                    return ResponseEntity.badRequest().body("Das Rätsel ist bereits gelöst.");
+                }
+
+                if (solvedRiddle.getUsedHints().size() == solvedRiddle.getRiddle().getHints().size()) {
+                    return ResponseEntity.badRequest().body("Es wurden bereits alle Hinweise für das Rätsel abgerufen");
+                }
+
+                final Optional<RiddleHint> highestSortIndexRiddleHint = solvedRiddle.getUsedHints().stream().max(Comparator.comparingInt((t) -> t.getSortIndex() == null ? 0 : t.getSortIndex()));
+                final RiddleHint hint2Use;
+                if (highestSortIndexRiddleHint.isEmpty()) {
+                    Optional<RiddleHint> hint = solvedRiddle.getRiddle().getHints().stream().sorted(Comparator.comparingInt((t) -> t.getSortIndex() == null ? 0 : t.getSortIndex())).findFirst();
+                    if (hint.isPresent()) {
+                        hint2Use = hint.get();
+                        solvedRiddle.addUsedHint(hint.get());
+                    }
+                    else {
+                        return ResponseEntity.badRequest().body("Das Rätsel besitzt keine Hinweise.!");
+                    }
+                }
+                else {
+                    final Set<Long> usedHints = solvedRiddle.getUsedHints().stream().map(RiddleHint::getId).collect(Collectors.toSet());
+
+                    Optional<RiddleHint> hint = solvedRiddle.getRiddle().getHints().stream().filter(sh -> !usedHints.contains(sh.getId())).sorted(Comparator.comparingInt((t) -> t.getSortIndex() == null ? 0 : t.getSortIndex())).findFirst();
+                    hint2Use = hint.get();
+                    solvedRiddle.addUsedHint(hint.get());
+                }
+                solvedRiddleRepository.save(solvedRiddle);
+
+                return ResponseEntity.ok(new RiddleHintResource(hint2Use));
             }
 
+            return ResponseEntity.badRequest().body(errors);
         }
         catch (IOException e) {
             LOGGER.error("Invalid json format! " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unexpected error occured! " + e.getMessage());
         }
+    }
+
+    private SolvedRiddle getOrSolvedRiddleByRiddleIdAndWorkflowpart(Long riddleId, ExecutedWorkflowPart part) {
+        final Optional<SolvedRiddle> solvedRiddleOptional = part.getSolvedRiddleList().stream().filter(r -> r.getRiddle().getId().equals(riddleId)).findFirst();
+        SolvedRiddle solvedRiddle = null;
+        if (solvedRiddleOptional.isEmpty()) {
+            final Optional<Riddle> riddle = part.getWorkflowPart().getRiddles().stream().filter(r -> r.getId().equals(riddleId)).findFirst();
+            if (riddle.isPresent()) {
+                solvedRiddle = solvedRiddleRepository.save(new SolvedRiddle(riddle.get(), Collections.emptyList(), part, 0, Boolean.FALSE));
+            }
+        }
+        else {
+            solvedRiddle = solvedRiddleOptional.get();
+        }
+
+        return solvedRiddle;
     }
 
 }

@@ -5,6 +5,7 @@ import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.definition.R
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.definition.RiddleHint;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -61,7 +62,7 @@ public class SolvedRiddle extends BasicEntity {
         return attempts;
     }
 
-    public Boolean getResolved() {
+    public Boolean isResolved() {
         return resolved;
     }
 
@@ -71,6 +72,14 @@ public class SolvedRiddle extends BasicEntity {
 
     public void setUsedHints(List<RiddleHint> usedHints) {
         this.usedHints = usedHints;
+    }
+
+    public void addUsedHint(RiddleHint hint) {
+        if (this.usedHints == null) {
+            this.usedHints = new ArrayList<>();
+        }
+        this.usedHints.add(hint);
+
     }
 
     public void setExecutedWorkflowPart(ExecutedWorkflowPart executedWorkflowPart) {

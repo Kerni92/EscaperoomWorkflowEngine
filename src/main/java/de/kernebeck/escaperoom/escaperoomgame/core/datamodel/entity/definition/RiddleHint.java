@@ -14,7 +14,10 @@ public class RiddleHint extends BasicEntity {
     @Column(name = "content")
     private String content;
 
-    @ManyToOne
+    @Column(name = "sortindex")
+    private Integer sortIndex;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fk_riddle")
     private Riddle riddle;
 
@@ -38,6 +41,10 @@ public class RiddleHint extends BasicEntity {
         return content;
     }
 
+    public Integer getSortIndex() {
+        return sortIndex;
+    }
+
     public Riddle getRiddle() {
         return riddle;
     }
@@ -48,6 +55,10 @@ public class RiddleHint extends BasicEntity {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public void setSortIndex(Integer sortIndex) {
+        this.sortIndex = sortIndex;
     }
 
     public void setRiddle(Riddle riddle) {
