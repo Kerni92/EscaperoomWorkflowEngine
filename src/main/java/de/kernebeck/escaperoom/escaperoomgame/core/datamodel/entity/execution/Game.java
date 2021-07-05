@@ -42,11 +42,11 @@ public class Game extends BasicEntity {
 
     @OneToMany
     @JoinColumn(name = "fk_game")
-    private List<ExecutedWorkflowPart> executedWorkflowParts;
+    private List<WorkflowPartInstance> workflowPartInstances;
 
-    @OneToOne(targetEntity = ExecutedWorkflowPart.class, fetch = FetchType.EAGER, optional = false)
+    @OneToOne(targetEntity = WorkflowPartInstance.class, fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "fk_currentworkflowpart")
-    private ExecutedWorkflowPart currentWorkflowpart;
+    private WorkflowPartInstance currentWorkflowpart;
 
     public Game() {
         super();
@@ -94,11 +94,11 @@ public class Game extends BasicEntity {
         return workflow;
     }
 
-    public List<ExecutedWorkflowPart> getExecutedWorkflowParts() {
-        return executedWorkflowParts;
+    public List<WorkflowPartInstance> getExecutedWorkflowParts() {
+        return workflowPartInstances;
     }
 
-    public ExecutedWorkflowPart getCurrentWorkflowpart() {
+    public WorkflowPartInstance getActiveWorkflowPartInstance() {
         return currentWorkflowpart;
     }
 
@@ -132,12 +132,12 @@ public class Game extends BasicEntity {
         }
     }
 
-    public void setCurrentWorkflowpart(ExecutedWorkflowPart currentWorkflowpart) {
+    public void setCurrentWorkflowpart(WorkflowPartInstance currentWorkflowpart) {
         this.currentWorkflowpart = currentWorkflowpart;
     }
 
-    public void setExecutedWorkflowParts(List<ExecutedWorkflowPart> executedWorkflowParts) {
-        this.executedWorkflowParts = executedWorkflowParts;
+    public void setExecutedWorkflowParts(List<WorkflowPartInstance> workflowPartInstances) {
+        this.workflowPartInstances = workflowPartInstances;
     }
 
     public void setWorkflow(Workflow workflow) {

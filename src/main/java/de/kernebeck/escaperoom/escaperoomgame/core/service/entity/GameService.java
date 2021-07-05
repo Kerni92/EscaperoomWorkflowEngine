@@ -10,4 +10,5 @@ public interface GameService {
 
     Game findNotFinishedByGameId(String gameId);
 
+    Game save(Game game);
 }

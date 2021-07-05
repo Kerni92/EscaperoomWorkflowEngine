@@ -9,7 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-public class SolvedRiddle extends BasicEntity {
+@Table(name = "riddleinstance")
+public class RiddleInstance extends BasicEntity {
 
     @Column(name = "attempts")
     private Integer attempts;
@@ -22,26 +23,26 @@ public class SolvedRiddle extends BasicEntity {
     private Riddle riddle;
 
     @ManyToMany
-    @JoinTable(name = "solvedriddle_riddlehint",
+    @JoinTable(name = "riddleinstance_riddlehint",
             joinColumns = @JoinColumn(name = "fk_riddlehint", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "fk_solvedriddle", referencedColumnName = "id")
+            inverseJoinColumns = @JoinColumn(name = "fk_riddleinstance", referencedColumnName = "id")
     )
     private List<RiddleHint> usedHints;
 
-    @ManyToOne(targetEntity = ExecutedWorkflowPart.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "fk_executedworkflowpart")
-    private ExecutedWorkflowPart executedWorkflowPart;
+    @ManyToOne(targetEntity = WorkflowPartInstance.class, fetch = FetchType.LAZY)
+    @JoinColumn(name = "fk_workflowpartinstance")
+    private WorkflowPartInstance workflowPartInstance;
 
-    public SolvedRiddle() {
+    public RiddleInstance() {
         //default constructor required for hibernate
         this.attempts = 0;
         this.resolved = Boolean.FALSE;
     }
 
-    public SolvedRiddle(Riddle riddle, List<RiddleHint> usedHints, ExecutedWorkflowPart executedWorkflowPart, Integer attempts, Boolean resolved) {
+    public RiddleInstance(Riddle riddle, List<RiddleHint> usedHints, WorkflowPartInstance workflowPartInstance, Integer attempts, Boolean resolved) {
         this.riddle = riddle;
         this.usedHints = usedHints;
-        this.executedWorkflowPart = executedWorkflowPart;
+        this.workflowPartInstance = workflowPartInstance;
         this.attempts = attempts != null ? attempts : 0;
         this.resolved = resolved != null ? resolved : false;
     }
@@ -54,8 +55,8 @@ public class SolvedRiddle extends BasicEntity {
         return usedHints;
     }
 
-    public ExecutedWorkflowPart getExecutedWorkflowPart() {
-        return executedWorkflowPart;
+    public WorkflowPartInstance getWorkflowPartInstance() {
+        return workflowPartInstance;
     }
 
     public Integer getAttempts() {
@@ -82,8 +83,8 @@ public class SolvedRiddle extends BasicEntity {
 
     }
 
-    public void setExecutedWorkflowPart(ExecutedWorkflowPart executedWorkflowPart) {
-        this.executedWorkflowPart = executedWorkflowPart;
+    public void setWorkflowPartInstance(WorkflowPartInstance workflowPartInstance) {
+        this.workflowPartInstance = workflowPartInstance;
     }
 
     public void setAttempts(Integer attempts) {

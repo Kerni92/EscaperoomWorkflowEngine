@@ -5,10 +5,12 @@ import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.definition.W
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-public class ExecutedWorkflowPart extends BasicEntity {
+@Table(name = "workflowpartinstance")
+public class WorkflowPartInstance extends BasicEntity {
 
     @ManyToOne
     @JoinColumn(name = "fk_workflowpart")
@@ -20,28 +22,41 @@ public class ExecutedWorkflowPart extends BasicEntity {
     @Column(name = "starttime")
     private Timestamp startTime;
 
+    @Column(name = "laststarttime")
+    private Timestamp lastStartTime;
+
     @Column(name = "totaltime")
     private Long totalTime;
 
     @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "fk_executedworkflowpart")
-    private List<SolvedRiddle> solvedRiddleList;
+    @JoinColumn(name = "fk_workflowpartinstance")
+    private List<RiddleInstance> riddleInstanceList;
+
+    @ManyToOne
+    private Game game;
 
 
-    public ExecutedWorkflowPart() {
-        //empty constructor required for hibernate
+    public WorkflowPartInstance() {
+        //default constructor required for hibernate
+        this.riddleInstanceList = new ArrayList<>();
     }
 
-    public ExecutedWorkflowPart(WorkflowPart workflowPart, Timestamp endTime, Timestamp startTime, Long totalTime, List<SolvedRiddle> solvedRiddleList) {
+    public WorkflowPartInstance(WorkflowPart workflowPart, Timestamp endTime, Timestamp startTime, Timestamp lastStartTime, Long totalTime, Game game) {
         this.workflowPart = workflowPart;
         this.endTime = endTime;
         this.startTime = startTime;
         this.totalTime = totalTime;
-        this.solvedRiddleList = solvedRiddleList;
+        this.riddleInstanceList = new ArrayList<>();
+        this.game = game;
+        this.lastStartTime = lastStartTime;
     }
 
     public WorkflowPart getWorkflowPart() {
         return workflowPart;
+    }
+
+    public Timestamp getLastStartTime() {
+        return lastStartTime;
     }
 
     public Timestamp getEndTime() {
@@ -56,8 +71,12 @@ public class ExecutedWorkflowPart extends BasicEntity {
         return totalTime;
     }
 
-    public List<SolvedRiddle> getSolvedRiddleList() {
-        return solvedRiddleList;
+    public List<RiddleInstance> getRiddleInstanceList() {
+        return riddleInstanceList;
+    }
+
+    public Game getGame() {
+        return game;
     }
 
     public void setWorkflowPart(WorkflowPart workflowPart) {
@@ -72,12 +91,20 @@ public class ExecutedWorkflowPart extends BasicEntity {
         this.startTime = startTime;
     }
 
+    public void setLastStartTime(Timestamp lastStartTime) {
+        this.lastStartTime = lastStartTime;
+    }
+
     public void setTotalTime(Long totalTime) {
         this.totalTime = totalTime;
     }
 
-    public void setSolvedRiddleList(List<SolvedRiddle> solvedRiddleList) {
-        this.solvedRiddleList = solvedRiddleList;
+    public void setRiddleInstanceList(List<RiddleInstance> riddleInstanceList) {
+        this.riddleInstanceList = riddleInstanceList;
+    }
+
+    public void setGame(Game game) {
+        this.game = game;
     }
 }
 
