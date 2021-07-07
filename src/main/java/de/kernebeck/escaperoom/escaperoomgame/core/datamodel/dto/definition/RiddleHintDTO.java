@@ -9,13 +9,16 @@ public class RiddleHintDTO {
 
     private String content;
 
+    private Integer sortIndex;
+
     public RiddleHintDTO() {
         //empty constructor for jackson
     }
 
-    public RiddleHintDTO(String name, String content) {
+    public RiddleHintDTO(String name, String content, Integer sortIndex) {
         this.name = name;
         this.content = content;
+        this.sortIndex = sortIndex;
     }
 
     public String getName() {
@@ -26,11 +29,19 @@ public class RiddleHintDTO {
         return content;
     }
 
+    public Integer getSortIndex() {
+        return sortIndex;
+    }
+
     public void setName(String name) {
         this.name = name;
     }
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public void setSortIndex(Integer sortIndex) {
+        this.sortIndex = sortIndex;
     }
 }

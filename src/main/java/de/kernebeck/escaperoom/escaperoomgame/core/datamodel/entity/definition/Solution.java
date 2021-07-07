@@ -37,21 +37,18 @@ public class Solution extends BasicEntity {
     @JoinColumn(name = "fk_riddle")
     private Riddle riddle;
 
-    @ManyToOne
-    @JoinColumn(name = "fk_workflowpart")
-    private WorkflowPart workflowPart;
 
     public Solution() {
         super();
         //empty constructor for hibernate
     }
 
-    public Solution(String name, String description, SolutionType type, String solution, WorkflowPart workflowPart) {
+    public Solution(String name, String description, SolutionType type, String solution, Riddle riddle) {
         this.name = name;
         this.description = description;
         this.type = type;
         this.solution = solution;
-        this.workflowPart = workflowPart;
+        this.riddle = riddle;
     }
 
     public String getName() {
@@ -87,10 +84,6 @@ public class Solution extends BasicEntity {
         return riddle;
     }
 
-    public WorkflowPart getWorkflowPart() {
-        return workflowPart;
-    }
-
     public void setName(String name) {
         this.name = name;
     }
@@ -120,7 +113,4 @@ public class Solution extends BasicEntity {
         this.riddle = riddle;
     }
 
-    public void setWorkflowPart(WorkflowPart workflowPart) {
-        this.workflowPart = workflowPart;
-    }
 }

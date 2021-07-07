@@ -27,7 +27,7 @@ public class WorkflowPart extends BasicEntity {
     @JoinColumn(name = "fk_workflow", nullable = false)
     private Workflow workflow;
 
-    @OneToMany(targetEntity = Solution.class, fetch = FetchType.EAGER)
+    @OneToMany(targetEntity = Riddle.class, fetch = FetchType.EAGER)
     @JoinColumn(name = "fk_workflowpart")
     private List<Riddle> riddles = new ArrayList<>();
 

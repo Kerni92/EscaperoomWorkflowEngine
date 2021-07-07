@@ -44,8 +44,8 @@ public class Game extends BasicEntity {
     @JoinColumn(name = "fk_game")
     private List<WorkflowPartInstance> workflowPartInstances;
 
-    @OneToOne(targetEntity = WorkflowPartInstance.class, fetch = FetchType.EAGER, optional = false)
-    @JoinColumn(name = "fk_currentworkflowpart")
+    @OneToOne(targetEntity = WorkflowPartInstance.class, fetch = FetchType.EAGER)
+    @JoinColumn(name = "fk_workflowpartinstance")
     private WorkflowPartInstance currentWorkflowpart;
 
     public Game() {
@@ -53,12 +53,14 @@ public class Game extends BasicEntity {
         //empty constructor required for hibernate
     }
 
-    public Game(String gameId, Timestamp starttime, Timestamp lastEndTime, Long totalTime, Workflow workflow) {
+    public Game(String gameId, Timestamp starttime, Timestamp lastEndTime, Boolean finished, Long totalTime, Workflow workflow) {
+        super();
         this.gameId = gameId;
         this.starttime = starttime;
         this.endTime = lastEndTime;
         this.totalTime = totalTime;
         this.workflow = workflow;
+        this.finished = finished;
     }
 
     public String getGameId() {
@@ -75,6 +77,10 @@ public class Game extends BasicEntity {
 
     public Long getTotalTime() {
         return totalTime;
+    }
+
+    public Boolean isFinished() {
+        return finished;
     }
 
     public List<String> getUsernames() {
@@ -130,6 +136,10 @@ public class Game extends BasicEntity {
         else {
             this.usernames = null;
         }
+    }
+
+    public void setFinished(Boolean finished) {
+        this.finished = finished;
     }
 
     public void setCurrentWorkflowpart(WorkflowPartInstance currentWorkflowpart) {

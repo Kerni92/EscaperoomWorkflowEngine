@@ -50,13 +50,13 @@ public class WorkflowExecutionServiceBean implements WorkflowExecutionService {
             final long startTime = activeWorkflowPart.getLastStartTime().getTime();
 
             activeWorkflowPart.setEndTime(new Timestamp(currentTime));
-            activeWorkflowPart.setTotalTime(activeWorkflowPart.getTotalTime() + (startTime - currentTime));
+            activeWorkflowPart.setTotalTime((activeWorkflowPart.getTotalTime() != null ? activeWorkflowPart.getTotalTime() : 0) + (startTime - currentTime));
 
             workflowPartInstanceRepository.save(activeWorkflowPart);
 
             //second create new one for next workflowpart
             final Timestamp starttime = new Timestamp(System.currentTimeMillis());
-            final WorkflowPartInstance nextActive = new WorkflowPartInstance(workflowTransition.getDestination(), null, starttime, starttime, null, game);
+            final WorkflowPartInstance nextActive = new WorkflowPartInstance(workflowTransition.getDestinationPart(), null, starttime, starttime, null, game);
             workflowPartInstanceRepository.save(nextActive);
 
             //create riddle instance

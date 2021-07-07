@@ -14,6 +14,9 @@ public class WorkflowTransition extends BasicEntity {
     @Column(name = "description")
     private String description;
 
+    @Column(name = "sortindex")
+    private Integer sortIndex;
+
     @ManyToOne(targetEntity = WorkflowPart.class, fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "fk_sourcepart")
     private WorkflowPart sourcePart;
@@ -27,11 +30,12 @@ public class WorkflowTransition extends BasicEntity {
         //empty Constructor for Hibernate object initialization
     }
 
-    public WorkflowTransition(String name, String description, WorkflowPart source, WorkflowPart destination) {
+    public WorkflowTransition(String name, String description, Integer sortIndex, WorkflowPart source, WorkflowPart destination) {
         this.name = name;
         this.description = description;
         this.sourcePart = source;
         this.destinationPart = destination;
+        this.sortIndex = sortIndex;
     }
 
     public String getName() {
@@ -42,12 +46,16 @@ public class WorkflowTransition extends BasicEntity {
         return description;
     }
 
-    public WorkflowPart getSource() {
+    public WorkflowPart getSourcePart() {
         return sourcePart;
     }
 
-    public WorkflowPart getDestination() {
+    public WorkflowPart getDestinationPart() {
         return destinationPart;
+    }
+
+    public Integer getSortIndex() {
+        return sortIndex;
     }
 
     public void setName(String name) {
@@ -58,11 +66,15 @@ public class WorkflowTransition extends BasicEntity {
         this.description = description;
     }
 
-    public void setSource(WorkflowPart source) {
+    public void setSourcePart(WorkflowPart source) {
         this.sourcePart = source;
     }
 
-    public void setDestination(WorkflowPart destination) {
+    public void setDestinationPart(WorkflowPart destination) {
         this.destinationPart = destination;
+    }
+
+    public void setSortIndex(Integer sortIndex) {
+        this.sortIndex = sortIndex;
     }
 }

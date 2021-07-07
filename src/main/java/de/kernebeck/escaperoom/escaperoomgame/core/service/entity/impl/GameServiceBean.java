@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
+import java.sql.Timestamp;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -33,14 +34,13 @@ public class GameServiceBean implements GameService {
     public Game createGame(Long workflowId, List<String> usernames) {
         final Optional<Workflow> wf = workflowService.findById(workflowId);
         if (wf.isPresent()) {
-            Game game = new Game(UUID.randomUUID().toString(), null, null, null, wf.get());
+            Game game = new Game(UUID.randomUUID().toString(), null, null, Boolean.FALSE, null, wf.get());
             game.setUsernames(usernames);
             game.setExecutedWorkflowParts(Collections.emptyList());
 
             game = gameRepository.save(game);
 
             WorkflowPartInstance workflowPartInstance = workflowPartInstanceRepository.save(new WorkflowPartInstance(wf.get().getWorkflowStart(), null, null, null, null, game));
-            workflowPartInstance = workflowPartInstanceRepository.save(workflowPartInstance);
             game.setCurrentWorkflowpart(workflowPartInstance);
 
             return gameRepository.save(game);
@@ -48,6 +48,16 @@ public class GameServiceBean implements GameService {
 
         return null;
     }
+
+    @Override
+    public void startGame(Game game) {
+        final Timestamp time = new Timestamp(System.currentTimeMillis());
+        game.setStarttime(time);
+        game.getActiveWorkflowPartInstance().setStartTime(time);
+        game.getActiveWorkflowPartInstance().setLastStartTime(time);
+        gameRepository.save(game);
+    }
+
 
     @Override
     public Game findNotFinishedByGameId(String gameId) {

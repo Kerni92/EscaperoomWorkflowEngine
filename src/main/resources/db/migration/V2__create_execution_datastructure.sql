@@ -9,8 +9,9 @@ create table if not exists game
     endtime                 timestamp,
     totaltime               bigint(20)            default 0,
     usernames               text         not null,
+    finished                tinyint(1)   not null default 0,
     fk_workflow             bigint(20)   not null,
-    fk_workflowpartinstance bigint(20)   not null,
+    fk_workflowpartinstance bigint(20),
     PRIMARY KEY (id),
     CONSTRAINT game_workflow FOREIGN KEY (fk_workflow) REFERENCES workflow (id) ON DELETE CASCADE
 ) ENGINE = InnoDB
@@ -29,7 +30,8 @@ create table if not exists workflowpartinstance
     fk_workflowpart bigint(20) not null,
     fk_game         bigint(20) not null,
     PRIMARY KEY (id),
-    CONSTRAINT workflowpartinstance_workflowpart FOREIGN KEY (fk_workflowpart) REFERENCES workflowpart (id) ON DELETE CASCADE
+    CONSTRAINT workflowpartinstance_workflowpart FOREIGN KEY (fk_workflowpart) REFERENCES workflowpart (id) ON DELETE CASCADE,
+    CONSTRAINT workflowpartinstance_game FOREIGN KEY (fk_game) REFERENCES game (id) ON DELETE CASCADE
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_bin;
@@ -50,7 +52,7 @@ create table if not exists riddleinstance
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_bin;
 
-create table if not exists solvedriddle_riddlehint
+create table if not exists riddleinstance_riddlehint
 (
     fk_riddleinstance bigint(20) not null,
     fk_riddlehint     bigint(20) not null,

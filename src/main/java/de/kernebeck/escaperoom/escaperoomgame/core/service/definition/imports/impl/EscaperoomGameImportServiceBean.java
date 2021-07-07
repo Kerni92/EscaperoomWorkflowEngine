@@ -92,18 +92,18 @@ public class EscaperoomGameImportServiceBean implements EscaperoomGameImportServ
 
                         //create riddle hints if existing
                         if (riddleDTO.getHints() != null && !riddleDTO.getHints().isEmpty()) {
-                            final RiddleHint riddleHint = new RiddleHint(riddleDTO.getName(), riddleDTO.getContent(), riddle);
+                            final RiddleHint riddleHint = new RiddleHint(riddleDTO.getName(), riddleDTO.getContent(), riddleDTO.getSortIndex(), riddle);
                             riddleHintRepository.save(riddleHint);
                         }
-                    }
-                }
 
-                //create solutions
-                if (workflowPartDTO.getSolutions() != null && !workflowPartDTO.getSolutions().isEmpty()) {
-                    for (final SolutionDTO solutionDTO : workflowPartDTO.getSolutions()) {
-                        final Solution solution = new Solution(solutionDTO.getName(), solutionDTO.getDescription(), SolutionType.fromEnumerationValue(solutionDTO.getType()), solutionDTO.getSolution(), wp);
-                        solution.setSolutionOptions(solutionDTO.getSolutionOptions());
-                        solutionRepository.save(solution);
+                        //create solutions
+                        if (riddleDTO.getSolutions() != null && !riddleDTO.getSolutions().isEmpty()) {
+                            for (final SolutionDTO solutionDTO : riddleDTO.getSolutions()) {
+                                final Solution solution = new Solution(solutionDTO.getName(), solutionDTO.getDescription(), SolutionType.fromEnumerationValue(solutionDTO.getType()), solutionDTO.getSolution(), riddle);
+                                solution.setSolutionOptions(solutionDTO.getSolutionOptions());
+                                solutionRepository.save(solution);
+                            }
+                        }
                     }
                 }
             }
@@ -116,7 +116,7 @@ public class EscaperoomGameImportServiceBean implements EscaperoomGameImportServ
                     workflowRepository.delete(workflow);
                     return new WorkflowImportResult(false, Collections.singletonList("Es konnte kein erzeugtes Start oder Ziel Workflowpart Objekt für den Startlinkidentifier " + transitionDTO.getLinkIdentifierSourceWorkflowPart() + " oder den Ziellinkidentifer " + transitionDTO.getLinkIdentifierTargetWorkflowPart() + " gefunden werden. Bitte die Importdefinitionen überprüfen."));
                 }
-                final WorkflowTransition transition = new WorkflowTransition(transitionDTO.getName(), transitionDTO.getDescription(), linkIdentifierToWorkflowpartMap.get(transitionDTO.getLinkIdentifierSourceWorkflowPart()), linkIdentifierToWorkflowpartMap.get(transitionDTO.getLinkIdentifierTargetWorkflowPart()));
+                final WorkflowTransition transition = new WorkflowTransition(transitionDTO.getName(), transitionDTO.getDescription(), transitionDTO.getSortIndex(), linkIdentifierToWorkflowpartMap.get(transitionDTO.getLinkIdentifierSourceWorkflowPart()), linkIdentifierToWorkflowpartMap.get(transitionDTO.getLinkIdentifierTargetWorkflowPart()));
                 workflowTransitionRepository.save(transition);
             }
 

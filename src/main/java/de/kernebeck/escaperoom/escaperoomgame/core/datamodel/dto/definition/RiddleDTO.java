@@ -13,17 +13,20 @@ public class RiddleDTO {
 
     private String content;
 
+    private List<SolutionDTO> solutions;
+
     private List<RiddleHintDTO> hints;
 
     public RiddleDTO() {
         //empty constructor for jackson
     }
 
-    public RiddleDTO(String name, Integer sortIndex, String content, List<RiddleHintDTO> hints) {
+    public RiddleDTO(String name, Integer sortIndex, String content, List<RiddleHintDTO> hints, List<SolutionDTO> solutions) {
         this.name = name;
         this.sortIndex = sortIndex;
         this.content = content;
         this.hints = hints;
+        this.solutions = solutions;
     }
 
     public String getName() {
@@ -42,6 +45,10 @@ public class RiddleDTO {
         return hints;
     }
 
+    public List<SolutionDTO> getSolutions() {
+        return solutions;
+    }
+
     public void setName(String name) {
         this.name = name;
     }
@@ -56,5 +63,9 @@ public class RiddleDTO {
 
     public void setHints(List<RiddleHintDTO> hints) {
         this.hints = hints;
+    }
+
+    public void setSolutions(List<SolutionDTO> solutions) {
+        this.solutions = solutions;
     }
 }

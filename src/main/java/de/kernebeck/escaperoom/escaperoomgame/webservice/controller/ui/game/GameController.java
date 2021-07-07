@@ -1,10 +1,7 @@
 package de.kernebeck.escaperoom.escaperoomgame.webservice.controller.ui.game;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.definition.Riddle;
-import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.definition.RiddleHint;
-import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.definition.Solution;
-import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.definition.Workflow;
+import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.definition.*;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.execution.Game;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.execution.RiddleInstance;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.execution.WorkflowPartInstance;
@@ -13,7 +10,9 @@ import de.kernebeck.escaperoom.escaperoomgame.core.service.entity.GameService;
 import de.kernebeck.escaperoom.escaperoomgame.core.service.entity.SolutionService;
 import de.kernebeck.escaperoom.escaperoomgame.core.service.entity.WorkflowService;
 import de.kernebeck.escaperoom.escaperoomgame.core.service.execution.WorkflowExecutionService;
+import de.kernebeck.escaperoom.escaperoomgame.webservice.resourceassembler.WorkflowPartResourceAssembler;
 import de.kernebeck.escaperoom.escaperoomgame.webservice.resourceassembler.WorkflowResourceAssembler;
+import de.kernebeck.escaperoom.escaperoomgame.webservice.resourceassembler.WorkflowTransitionResourceAssembler;
 import de.kernebeck.escaperoom.escaperoomgame.webservice.resources.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +21,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.transaction.Transactional;
 import java.io.IOException;
 import java.io.Reader;
 import java.security.Principal;
@@ -29,6 +29,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
+@Transactional
 @RequestMapping(value = "/api/ui/game")
 public class GameController {
 
@@ -52,6 +53,12 @@ public class GameController {
 
     @Autowired
     private SolutionService solutionService;
+
+    @Autowired
+    private WorkflowTransitionResourceAssembler workflowTransitionResourceAssembler;
+
+    @Autowired
+    private WorkflowPartResourceAssembler workflowPartResourceAssembler;
 
     @GetMapping(path = "/getAvailableWorkflows", produces = "application/json")
     public ResponseEntity<List<WorkflowResource>> getAvailableWorkflows(Principal principal) {
@@ -100,40 +107,48 @@ public class GameController {
         }
     }
 
-    @PostMapping(value = "/{gameId]/checkRiddleSolution/{riddleId}", consumes = "application/json", produces = "application/json")
+    @PostMapping(value = "/{gameId}/start", produces = "application/json")
+    public ResponseEntity startGame(Principal principal, @PathVariable String gameId) {
+        final Game game = gameService.findNotFinishedByGameId(gameId);
+        if (game == null) {
+            ResponseEntity.badRequest().body("Es wurde kein aktives Spiel für die ID " + gameId + " gefunden.");
+        }
+
+        gameService.startGame(game);
+
+        return ResponseEntity.ok("");
+    }
+
+    @PostMapping(value = "/{gameId}/checkRiddleSolution/{riddleId}", consumes = "application/json", produces = "application/json")
     public ResponseEntity checkRiddleSolution(Principal principal, @PathVariable String gameId, @PathVariable Long riddleId, Reader reader) {
         try {
             final CheckRiddleSolutionResource resource = OBJECT_MAPPER.readValue(reader, CheckRiddleSolutionResource.class);
-            final List<String> errors = new ArrayList<>();
             final Game game = gameService.findNotFinishedByGameId(gameId);
             if (game == null) {
-                errors.add("Es wurde kein aktives Spiel für die ID " + gameId + " gefunden.");
+                return ResponseEntity.badRequest().body("Es wurde kein aktives Spiel für die ID " + gameId + " gefunden.");
             }
 
             //check if current workflowpart of game has riddle which should be checked
             if (game.getActiveWorkflowPartInstance().getWorkflowPart().getRiddles().stream().noneMatch(r -> r.getId().equals(riddleId))) {
-                errors.add("Das Rätsel steht im aktuellen Spielstatus nicht zur Verfügung.");
+                return ResponseEntity.badRequest().body("Das Rätsel steht im aktuellen Spielstatus nicht zur Verfügung.");
             }
             else if (game.getActiveWorkflowPartInstance().getRiddleInstanceList() != null && game.getActiveWorkflowPartInstance().getRiddleInstanceList().stream().anyMatch(r -> r.getRiddle().getId().equals(riddleId) && r.isResolved())) {
-                errors.add("Das Rätsel wurde bereits gelöst!");
+                return ResponseEntity.badRequest().body("Das Rätsel wurde bereits gelöst!");
             }
 
-            if (errors.isEmpty()) {
-                final List<Solution> solutions = solutionService.findByRiddleId(riddleId);
+            final List<Solution> solutions = solutionService.findByRiddleId(riddleId);
 
-                //check if one valid solution exsits
-                final Optional<Solution> solution = solutions.stream().filter(s -> s.getSolution().equals(resource.getSolution())).findFirst();
-                final RiddleInstance riddleInstance = getOrSolvedRiddleByRiddleIdAndWorkflowpart(riddleId, game.getActiveWorkflowPartInstance());
-                riddleInstance.setAttempts(riddleInstance.getAttempts() + 1);
-                if (solution.isPresent()) {
-                    riddleInstance.setResolved(Boolean.TRUE);
-                }
-                riddleInstanceRepository.save(riddleInstance);
-
-                return ResponseEntity.ok(new CheckRiddleResult(riddleInstance.isResolved()));
+            //check if one valid solution exsits
+            final Optional<Solution> solution = solutions.stream().filter(s -> s.getSolution().equals(resource.getSolution())).findFirst();
+            final RiddleInstance riddleInstance = getOrSolvedRiddleByRiddleIdAndWorkflowpart(riddleId, game.getActiveWorkflowPartInstance());
+            riddleInstance.setAttempts(riddleInstance.getAttempts() + 1);
+            if (solution.isPresent()) {
+                riddleInstance.setResolved(Boolean.TRUE);
             }
+            riddleInstanceRepository.save(riddleInstance);
 
-            return ResponseEntity.badRequest().body(errors);
+            return ResponseEntity.ok(new CheckRiddleResult(riddleInstance.isResolved()));
+
         }
         catch (IOException e) {
             LOGGER.error("Invalid json format! " + e.getMessage());
@@ -201,21 +216,44 @@ public class GameController {
         }
     }
 
-    @PostMapping
-    public ResponseEntity finishWorkflowPartAndContinueGame(Principal principal, Reader reader) {
-        try {
-
+    @PostMapping(value = "{gameId}/getNextPossibleWorkflowTransitions", produces = "application/json")
+    public ResponseEntity getNextPossibleWorkflowTransitions(Principal principal, @PathVariable String gameId) {
+        final Game game = gameService.findNotFinishedByGameId(gameId);
+        if (game == null) {
+            return ResponseEntity.badRequest().body("Es wurde kein aktives Spiel für die ID " + gameId + " gefunden.");
         }
-        catch (Exception e) {
 
+        //first check if all riddles are resolved
+        if (game.getActiveWorkflowPartInstance().getRiddleInstanceList().stream().anyMatch(r -> !r.isResolved())) {
+            return ResponseEntity.badRequest().body("Es sind nicht alle Rätsel gelöst.");
         }
-        return ResponseEntity.ok("");
+
+        //second check if any riddle is not resolved
+        final Set<WorkflowTransition> transitions = game.getActiveWorkflowPartInstance().getWorkflowPart().getOutgoingTransitions();
+        if (transitions == null || transitions.isEmpty()) {
+            return ResponseEntity.badRequest().body("Es konnten keine folgenden Workflowtransitionen gefunden werden.");
+        }
+        final List<WorkflowTransition> transitionsSorted = new ArrayList<>(game.getActiveWorkflowPartInstance().getWorkflowPart().getOutgoingTransitions());
+
+        return ResponseEntity.ok(transitionsSorted.stream().map(workflowTransitionResourceAssembler::convertEntityToResource).sorted(Comparator.comparingInt(WorkflowTransitionResource::getSortIndex)).collect(Collectors.toList()));
     }
 
-    @PostMapping(value = "/executeChoosenWorkflowTransition")
-    public ResponseEntity executeChoosenWorkflowTransition(Principal principal, Reader reader) {
+    @PostMapping(value = "{gameId}/executeChoosenWorkflowTransition/{workflowTransitionId}", produces = "application/json")
+    public ResponseEntity executeChoosenWorkflowTransition(Principal principal, @PathVariable String gameId, @PathVariable Long workflowTransitionId) {
+        final Game game = gameService.findNotFinishedByGameId(gameId);
+        if (game == null) {
+            return ResponseEntity.badRequest().body("Es wurde kein aktives Spiel für die ID " + gameId + " gefunden.");
+        }
 
-        return ResponseEntity.ok("");
+        final Optional<WorkflowTransition> transition = game.getActiveWorkflowPartInstance().getWorkflowPart().getOutgoingTransitions().stream().filter(t -> t.getId().equals(workflowTransitionId)).findFirst();
+
+        if (transition.isEmpty()) {
+            return ResponseEntity.badRequest().body("Die angegebene Workflowtransition ist für den aktuellen Spielstatus nicht gültig!");
+        }
+
+        final WorkflowPartInstance nextWorkflowPart = workflowExecutionService.executeWorkflowTransition(game, transition.get());
+
+        return ResponseEntity.ok(workflowPartResourceAssembler.convertEntityToResource(nextWorkflowPart));
     }
 
     private RiddleInstance getOrSolvedRiddleByRiddleIdAndWorkflowpart(Long riddleId, WorkflowPartInstance part) {

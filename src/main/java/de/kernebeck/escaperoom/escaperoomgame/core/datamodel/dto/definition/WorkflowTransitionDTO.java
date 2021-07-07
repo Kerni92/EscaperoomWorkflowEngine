@@ -9,6 +9,8 @@ public class WorkflowTransitionDTO {
 
     private String description;
 
+    private Integer sortIndex = 0;
+
     private String linkIdentifier;
 
     private String linkIdentifierSourceWorkflowPart;
@@ -19,10 +21,11 @@ public class WorkflowTransitionDTO {
         //empty constructor for hibernate
     }
 
-    public WorkflowTransitionDTO(String name, String description, String linkIdentifier, String linkIdentifierSourceWorkflowPart, String linkIdentifierTargetWorkflowPart) {
+    public WorkflowTransitionDTO(String name, String description, String linkIdentifier, Integer sortIndex, String linkIdentifierSourceWorkflowPart, String linkIdentifierTargetWorkflowPart) {
         this.name = name;
         this.description = description;
         this.linkIdentifier = linkIdentifier;
+        this.sortIndex = sortIndex;
         this.linkIdentifierSourceWorkflowPart = linkIdentifierSourceWorkflowPart;
         this.linkIdentifierTargetWorkflowPart = linkIdentifierTargetWorkflowPart;
     }
@@ -47,6 +50,10 @@ public class WorkflowTransitionDTO {
         return linkIdentifierTargetWorkflowPart;
     }
 
+    public Integer getSortIndex() {
+        return sortIndex;
+    }
+
     public void setName(String name) {
         this.name = name;
     }
@@ -65,5 +72,9 @@ public class WorkflowTransitionDTO {
 
     public void setLinkIdentifierTargetWorkflowPart(String linkIdentifierTargetWorkflowPart) {
         this.linkIdentifierTargetWorkflowPart = linkIdentifierTargetWorkflowPart;
+    }
+
+    public void setSortIndex(Integer sortIndex) {
+        this.sortIndex = sortIndex;
     }
 }

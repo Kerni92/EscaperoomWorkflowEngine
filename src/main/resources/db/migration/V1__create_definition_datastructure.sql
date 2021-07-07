@@ -40,29 +40,12 @@ create table if not exists workflowtransition
     dbupdatedate       timestamp    not null default current_timestamp on update current_timestamp,
     name               varchar(512) not null,
     description        text         not null,
+    sortindex          int          not null default 0,
     fk_sourcepart      bigint(20)   not null,
     fk_destinationpart bigint(20)   not null,
     PRIMARY KEY (id),
     CONSTRAINT workflowtransition_sourcewp FOREIGN KEY (fk_sourcepart) REFERENCES workflowpart (id) ON DELETE CASCADE,
     CONSTRAINT workflowtransition_destwp FOREIGN KEY (fk_destinationpart) REFERENCES workflowpart (id) ON DELETE CASCADE
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8mb4
-  COLLATE = utf8mb4_bin;
-
--- create entity solution
-create table if not exists solution
-(
-    id              bigint(20)   not null auto_increment,
-    dbcreationdate  timestamp    not null default current_timestamp,
-    dbupdatedate    timestamp    not null default current_timestamp on update current_timestamp,
-    name            varchar(512) not null,
-    description     text,
-    type            varchar(255) not null,
-    solution        text         not null,
-    solutionoptions text,
-    fk_workflowpart bigint(20)   not null,
-    PRIMARY KEY (id),
-    CONSTRAINT solution_sourcewp FOREIGN KEY (fk_workflowpart) REFERENCES workflowpart (id) ON DELETE CASCADE
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_bin;
@@ -91,10 +74,29 @@ create table if not exists riddlehint
     dbupdatedate   timestamp    not null default current_timestamp on update current_timestamp,
     name           varchar(512) not null,
     content        text         not null,
+    sortindex      int          not null default 0,
     fk_riddle      bigint(20)   not null,
     PRIMARY KEY (id),
     CONSTRAINT riddlehint_riddle FOREIGN KEY (fk_riddle) REFERENCES riddle (id) ON DELETE CASCADE
 
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_bin;
+
+-- create entity solution
+create table if not exists solution
+(
+    id              bigint(20)   not null auto_increment,
+    dbcreationdate  timestamp    not null default current_timestamp,
+    dbupdatedate    timestamp    not null default current_timestamp on update current_timestamp,
+    name            varchar(512) not null,
+    description     text,
+    type            varchar(255) not null,
+    solution        text         not null,
+    solutionoptions text,
+    fk_riddle       bigint(20)   not null,
+    PRIMARY KEY (id),
+    CONSTRAINT solution_riddle FOREIGN KEY (fk_riddle) REFERENCES riddle (id) ON DELETE CASCADE
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_bin;

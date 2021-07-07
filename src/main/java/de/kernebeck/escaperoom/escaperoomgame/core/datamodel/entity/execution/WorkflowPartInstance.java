@@ -33,6 +33,7 @@ public class WorkflowPartInstance extends BasicEntity {
     private List<RiddleInstance> riddleInstanceList;
 
     @ManyToOne
+    @JoinColumn(name = "fk_game")
     private Game game;
 
 

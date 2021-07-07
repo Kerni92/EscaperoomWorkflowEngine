@@ -26,11 +26,12 @@ public class RiddleHint extends BasicEntity {
         //default construtor for hibnerate
     }
 
-    public RiddleHint(String name, String content, Riddle riddle) {
+    public RiddleHint(String name, String content, Integer sortIndex, Riddle riddle) {
         super();
         this.name = name;
         this.content = content;
         this.riddle = riddle;
+        this.sortIndex = sortIndex;
     }
 
     public String getName() {
