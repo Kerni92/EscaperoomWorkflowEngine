@@ -96,10 +96,10 @@ public class GameController {
                     result.setGameId(game.getGameId());
                     return ResponseEntity.status(HttpStatus.CREATED).body(result);
                 }
-                return ResponseEntity.badRequest().body("Es ist ein unerwarteter Fehler bei der Anlage des Spiels aufgetreten. Bitte probieren Sie es erneut oder kontaktieren Sie den Support.");
+                return ResponseEntity.badRequest().body(new ErrorResource("Es ist ein unerwarteter Fehler bei der Anlage des Spiels aufgetreten. Bitte probieren Sie es erneut oder kontaktieren Sie den Support."));
             }
 
-            return ResponseEntity.badRequest().body(errors);
+            return ResponseEntity.badRequest().body(new ErrorResource(errors));
         }
         catch (IOException e) {
             LOGGER.error("Unexpected parsing error! ", e);
@@ -111,7 +111,7 @@ public class GameController {
     public ResponseEntity startGame(Principal principal, @PathVariable String gameId) {
         final Game game = gameService.findNotFinishedByGameId(gameId);
         if (game == null) {
-            ResponseEntity.badRequest().body("Es wurde kein aktives Spiel für die ID " + gameId + " gefunden.");
+            ResponseEntity.badRequest().body(new ErrorResource("Es wurde kein aktives Spiel für die ID " + gameId + " gefunden."));
         }
 
         gameService.startGame(game);
@@ -125,15 +125,15 @@ public class GameController {
             final CheckRiddleSolutionResource resource = OBJECT_MAPPER.readValue(reader, CheckRiddleSolutionResource.class);
             final Game game = gameService.findNotFinishedByGameId(gameId);
             if (game == null) {
-                return ResponseEntity.badRequest().body("Es wurde kein aktives Spiel für die ID " + gameId + " gefunden.");
+                return ResponseEntity.badRequest().body(new ErrorResource("Es wurde kein aktives Spiel für die ID " + gameId + " gefunden."));
             }
 
             //check if current workflowpart of game has riddle which should be checked
             if (game.getActiveWorkflowPartInstance().getWorkflowPart().getRiddles().stream().noneMatch(r -> r.getId().equals(riddleId))) {
-                return ResponseEntity.badRequest().body("Das Rätsel steht im aktuellen Spielstatus nicht zur Verfügung.");
+                return ResponseEntity.badRequest().body(new ErrorResource("Das Rätsel steht im aktuellen Spielstatus nicht zur Verfügung."));
             }
             else if (game.getActiveWorkflowPartInstance().getRiddleInstanceList() != null && game.getActiveWorkflowPartInstance().getRiddleInstanceList().stream().anyMatch(r -> r.getRiddle().getId().equals(riddleId) && r.isResolved())) {
-                return ResponseEntity.badRequest().body("Das Rätsel wurde bereits gelöst!");
+                return ResponseEntity.badRequest().body(new ErrorResource("Das Rätsel wurde bereits gelöst!"));
             }
 
             final List<Solution> solutions = solutionService.findByRiddleId(riddleId);
@@ -159,60 +159,53 @@ public class GameController {
     @PostMapping(value = "/{gameId}/getNextRiddleHint/{riddleId}", consumes = "application/json", produces = "application/json")
     public ResponseEntity getNextRiddleHint(Principal principal, @PathVariable String gameId, @PathVariable Long riddleId) {
         try {
-            final List<String> errors = new ArrayList<>();
-
             final Game game = gameService.findNotFinishedByGameId(gameId);
             if (game == null) {
-                errors.add("Es wurde kein aktives Spiel für die ID " + gameId + " gefunden.");
+                return ResponseEntity.badRequest().body(new ErrorResource("Es wurde kein aktives Spiel für die ID " + gameId + " gefunden."));
             }
 
-            if (errors.isEmpty() && game.getActiveWorkflowPartInstance().getWorkflowPart().getRiddles().stream().noneMatch(r -> r.getId().equals(riddleId))) {
-                errors.add("Das Rätsel zum angeforderten Hinweis steht im aktuellen Spielstatus nicht zur Verfügung.");
+            if (game.getActiveWorkflowPartInstance().getWorkflowPart().getRiddles().stream().noneMatch(r -> r.getId().equals(riddleId))) {
+                return ResponseEntity.badRequest().body(new ErrorResource("Das Rätsel zum angeforderten Hinweis steht im aktuellen Spielstatus nicht zur Verfügung."));
             }
 
+            final RiddleInstance riddleInstance = getOrSolvedRiddleByRiddleIdAndWorkflowpart(riddleId, game.getActiveWorkflowPartInstance());
+            if (riddleInstance == null) {
+                return ResponseEntity.badRequest().body(new ErrorResource("Die Hinweise zum Rätsel stehen aktuell nicht zur Verfügung"));
+            }
+            if (riddleInstance.isResolved()) {
+                return ResponseEntity.badRequest().body(new ErrorResource("Das Rätsel ist bereits gelöst."));
+            }
 
-            if (errors.isEmpty()) {
-                final RiddleInstance riddleInstance = getOrSolvedRiddleByRiddleIdAndWorkflowpart(riddleId, game.getActiveWorkflowPartInstance());
-                if (riddleInstance == null) {
-                    return ResponseEntity.badRequest().body("Die Hinweise zum Rätsel stehen aktuell nicht zur Verfügung");
-                }
-                if (riddleInstance.isResolved()) {
-                    return ResponseEntity.badRequest().body("Das Rätsel ist bereits gelöst.");
-                }
+            if (riddleInstance.getUsedHints().size() == riddleInstance.getRiddle().getHints().size()) {
+                return ResponseEntity.badRequest().body(new ErrorResource("Es wurden bereits alle Hinweise für das Rätsel abgerufen"));
+            }
 
-                if (riddleInstance.getUsedHints().size() == riddleInstance.getRiddle().getHints().size()) {
-                    return ResponseEntity.badRequest().body("Es wurden bereits alle Hinweise für das Rätsel abgerufen");
-                }
-
-                final Optional<RiddleHint> highestSortIndexRiddleHint = riddleInstance.getUsedHints().stream().max(Comparator.comparingInt((t) -> t.getSortIndex() == null ? 0 : t.getSortIndex()));
-                final RiddleHint hint2Use;
-                if (highestSortIndexRiddleHint.isEmpty()) {
-                    Optional<RiddleHint> hint = riddleInstance.getRiddle().getHints().stream().sorted(Comparator.comparingInt((t) -> t.getSortIndex() == null ? 0 : t.getSortIndex())).findFirst();
-                    if (hint.isPresent()) {
-                        hint2Use = hint.get();
-                        riddleInstance.addUsedHint(hint.get());
-                    }
-                    else {
-                        return ResponseEntity.badRequest().body("Das Rätsel besitzt keine Hinweise.!");
-                    }
-                }
-                else {
-                    final Set<Long> usedHints = riddleInstance.getUsedHints().stream().map(RiddleHint::getId).collect(Collectors.toSet());
-
-                    Optional<RiddleHint> hint = riddleInstance.getRiddle().getHints().stream().filter(sh -> !usedHints.contains(sh.getId())).sorted(Comparator.comparingInt((t) -> t.getSortIndex() == null ? 0 : t.getSortIndex())).findFirst();
+            final Optional<RiddleHint> highestSortIndexRiddleHint = riddleInstance.getUsedHints().stream().max(Comparator.comparingInt((t) -> t.getSortIndex() == null ? 0 : t.getSortIndex()));
+            final RiddleHint hint2Use;
+            if (highestSortIndexRiddleHint.isEmpty()) {
+                Optional<RiddleHint> hint = riddleInstance.getRiddle().getHints().stream().sorted(Comparator.comparingInt((t) -> t.getSortIndex() == null ? 0 : t.getSortIndex())).findFirst();
+                if (hint.isPresent()) {
                     hint2Use = hint.get();
                     riddleInstance.addUsedHint(hint.get());
                 }
-                riddleInstanceRepository.save(riddleInstance);
-
-                return ResponseEntity.ok(new RiddleHintResource(hint2Use));
+                else {
+                    return ResponseEntity.badRequest().body(new ErrorResource("Das Rätsel besitzt keine Hinweise.!"));
+                }
             }
+            else {
+                final Set<Long> usedHints = riddleInstance.getUsedHints().stream().map(RiddleHint::getId).collect(Collectors.toSet());
 
-            return ResponseEntity.badRequest().body(errors);
+                Optional<RiddleHint> hint = riddleInstance.getRiddle().getHints().stream().filter(sh -> !usedHints.contains(sh.getId())).sorted(Comparator.comparingInt((t) -> t.getSortIndex() == null ? 0 : t.getSortIndex())).findFirst();
+                hint2Use = hint.get();
+                riddleInstance.addUsedHint(hint.get());
+            }
+            riddleInstanceRepository.save(riddleInstance);
+
+            return ResponseEntity.ok(new RiddleHintResource(hint2Use));
         }
         catch (Exception e) {
             LOGGER.error("Invalid json format! " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unexpected error occured! " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResource("Unexpected error occured! " + e.getMessage()));
         }
     }
 
@@ -220,18 +213,18 @@ public class GameController {
     public ResponseEntity getNextPossibleWorkflowTransitions(Principal principal, @PathVariable String gameId) {
         final Game game = gameService.findNotFinishedByGameId(gameId);
         if (game == null) {
-            return ResponseEntity.badRequest().body("Es wurde kein aktives Spiel für die ID " + gameId + " gefunden.");
+            return ResponseEntity.badRequest().body(new ErrorResource("Es wurde kein aktives Spiel für die ID " + gameId + " gefunden."));
         }
 
         //first check if all riddles are resolved
         if (game.getActiveWorkflowPartInstance().getRiddleInstanceList().stream().anyMatch(r -> !r.isResolved())) {
-            return ResponseEntity.badRequest().body("Es sind nicht alle Rätsel gelöst.");
+            return ResponseEntity.badRequest().body(new ErrorResource("Es sind nicht alle Rätsel gelöst."));
         }
 
         //second check if any riddle is not resolved
         final Set<WorkflowTransition> transitions = game.getActiveWorkflowPartInstance().getWorkflowPart().getOutgoingTransitions();
         if (transitions == null || transitions.isEmpty()) {
-            return ResponseEntity.badRequest().body("Es konnten keine folgenden Workflowtransitionen gefunden werden.");
+            return ResponseEntity.badRequest().body(new ErrorResource("Es konnten keine folgenden Workflowtransitionen gefunden werden."));
         }
         final List<WorkflowTransition> transitionsSorted = new ArrayList<>(game.getActiveWorkflowPartInstance().getWorkflowPart().getOutgoingTransitions());
 
@@ -242,13 +235,19 @@ public class GameController {
     public ResponseEntity executeChoosenWorkflowTransition(Principal principal, @PathVariable String gameId, @PathVariable Long workflowTransitionId) {
         final Game game = gameService.findNotFinishedByGameId(gameId);
         if (game == null) {
-            return ResponseEntity.badRequest().body("Es wurde kein aktives Spiel für die ID " + gameId + " gefunden.");
+            return ResponseEntity.badRequest().body(new ErrorResource("Es wurde kein aktives Spiel für die ID " + gameId + " gefunden."));
+        }
+
+        //first check if all riddles are resolved
+        //first check if all riddles are resolved
+        if (game.getActiveWorkflowPartInstance().getRiddleInstanceList().stream().anyMatch(r -> !r.isResolved())) {
+            return ResponseEntity.badRequest().body(new ErrorResource("Es sind nicht alle Rätsel gelöst."));
         }
 
         final Optional<WorkflowTransition> transition = game.getActiveWorkflowPartInstance().getWorkflowPart().getOutgoingTransitions().stream().filter(t -> t.getId().equals(workflowTransitionId)).findFirst();
 
         if (transition.isEmpty()) {
-            return ResponseEntity.badRequest().body("Die angegebene Workflowtransition ist für den aktuellen Spielstatus nicht gültig!");
+            return ResponseEntity.badRequest().body(new ErrorResource("Die angegebene Workflowtransition ist für den aktuellen Spielstatus nicht gültig!"));
         }
 
         final WorkflowPartInstance nextWorkflowPart = workflowExecutionService.executeWorkflowTransition(game, transition.get());

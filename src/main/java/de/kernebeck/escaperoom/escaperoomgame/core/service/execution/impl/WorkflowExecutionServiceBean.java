@@ -68,7 +68,7 @@ public class WorkflowExecutionServiceBean implements WorkflowExecutionService {
             game.setCurrentWorkflowpart(nextActive);
             gameService.save(game);
 
-            return workflowPartInstanceRepository.findById(activeWorkflowPart.getId()).get(); //should never be null
+            return workflowPartInstanceRepository.findById(nextActive.getId()).get(); //should never be null
         }
 
         return null;
