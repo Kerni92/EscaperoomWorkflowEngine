@@ -58,6 +58,16 @@ public class GameServiceBean implements GameService {
         gameRepository.save(game);
     }
 
+    @Override
+    public void pauseGame(Game game) {
+        final Timestamp time = new Timestamp(System.currentTimeMillis());
+
+    }
+
+    @Override
+    public void continueGame(Game game) {
+
+    }
 
     @Override
     public Game findNotFinishedByGameId(String gameId) {

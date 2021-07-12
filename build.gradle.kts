@@ -5,15 +5,12 @@ repositories {
 plugins {
     id("org.springframework.boot") version "2.4.4"
     id("io.spring.dependency-management") version "1.0.11.RELEASE"
-    id("org.siouan.frontend-jdk11") version "5.1.0"
     id("java-library")
     id("war")
 }
 
 group = "de.kernebeck.escaperoom"
 version = "0.0.1-SNAPSHOT"
-
-apply(plugin = "org.siouan.frontend-jdk11")
 
 
 dependencies {
@@ -25,8 +22,13 @@ dependencies {
     implementation("org.flywaydb:flyway-core")
     implementation("commons-io:commons-io:2.9.0")
 
+    implementation("org.apache.wicket:wicket-core:9.4.0")
+    implementation("org.apache.wicket:wicket-spring:9.4.0")
+    implementation("org.apache.wicket:wicket-native-websocket-javax:9.4.0")
+    implementation("org.apache.wicket:wicket-bean-validation:9.4.0")
+    implementation("org.apache.wicket:wicket-extensions:9.4.0")
 
-
+    developmentOnly("org.apache.wicket:wicket-devutils:9.4.0")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
 
 
@@ -39,6 +41,7 @@ dependencies {
 sourceSets {
     main {
         java.srcDir("src/main/java")
+        resources.srcDir("src/main/java")
     }
     test {
         java.srcDir("src/test/java")
@@ -48,13 +51,6 @@ sourceSets {
 java {
     sourceCompatibility = JavaVersion.VERSION_11
     targetCompatibility = JavaVersion.VERSION_11
-}
-
-frontend {
-    nodeVersion.set("14.16.1")
-    assembleScript.set("run build")
-//    cleanScript.set("run clean");
-//    checkScript.set("run check");
 }
 
 

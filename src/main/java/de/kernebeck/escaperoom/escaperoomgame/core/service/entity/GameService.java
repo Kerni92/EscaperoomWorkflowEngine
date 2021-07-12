@@ -10,6 +10,10 @@ public interface GameService {
 
     void startGame(Game game);
 
+    void pauseGame(Game game);
+
+    void continueGame(Game game);
+
     Game findNotFinishedByGameId(String gameId);
 
     Game save(Game game);

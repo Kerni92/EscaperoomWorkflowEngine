@@ -119,6 +119,30 @@ public class GameController {
         return ResponseEntity.ok("");
     }
 
+    @PostMapping(value = "/{gameId}/pause", produces = "application/json")
+    public ResponseEntity pauseGame(Principal principal, @PathVariable String gameId) {
+        final Game game = gameService.findNotFinishedByGameId(gameId);
+        if (game == null) {
+            ResponseEntity.badRequest().body(new ErrorResource("Es wurde kein aktives Spiel für die ID " + gameId + " gefunden."));
+        }
+
+        gameService.startGame(game);
+
+        return ResponseEntity.ok("");
+    }
+
+    @PostMapping(value = "/{gameId}/continue", produces = "application/json")
+    public ResponseEntity continueGame(Principal principal, @PathVariable String gameId) {
+        final Game game = gameService.findNotFinishedByGameId(gameId);
+        if (game == null) {
+            ResponseEntity.badRequest().body(new ErrorResource("Es wurde kein aktives Spiel für die ID " + gameId + " gefunden."));
+        }
+
+        gameService.startGame(game);
+
+        return ResponseEntity.ok("");
+    }
+
     @PostMapping(value = "/{gameId}/checkRiddleSolution/{riddleId}", consumes = "application/json", produces = "application/json")
     public ResponseEntity checkRiddleSolution(Principal principal, @PathVariable String gameId, @PathVariable Long riddleId, Reader reader) {
         try {
