@@ -4,6 +4,7 @@ import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.BasicEntity;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.definition.enumeration.WorkflowPartType;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -11,7 +12,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "workflowpart")
-public class WorkflowPart extends BasicEntity {
+public class WorkflowPart extends BasicEntity implements Serializable {
 
     @Column(name = "name")
     private String name;

@@ -50,6 +50,17 @@ public class GameServiceBean implements GameService {
     }
 
     @Override
+    public Game findByGameId(String gameId) {
+        if (gameId != null) {
+            final Optional<Game> result = gameRepository.findByGameId(gameId);
+            if (result.isPresent()) {
+                return result.get();
+            }
+        }
+        return null;
+    }
+
+    @Override
     public void startGame(Game game) {
         final Timestamp time = new Timestamp(System.currentTimeMillis());
         game.setStarttime(time);

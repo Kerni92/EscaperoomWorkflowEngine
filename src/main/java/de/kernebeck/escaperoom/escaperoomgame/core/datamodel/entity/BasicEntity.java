@@ -1,10 +1,11 @@
 package de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.sql.Timestamp;
 
 @MappedSuperclass
-public class BasicEntity {
+public class BasicEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

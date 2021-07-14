@@ -7,6 +7,8 @@ import java.util.Optional;
 
 public interface GameRepository extends BasicEntityRepository<Game> {
 
+    Optional<Game> findByGameId(String gameid);
+
     Optional<Game> findByGameIdAndFinishedFalse(String gameid);
 
 }

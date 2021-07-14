@@ -3,10 +3,11 @@ package de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.definition;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.BasicEntity;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity
 @Table(name = "workflow")
-public class Workflow extends BasicEntity {
+public class Workflow extends BasicEntity implements Serializable {
 
     @Column(name = "name", nullable = false)
     private String name;

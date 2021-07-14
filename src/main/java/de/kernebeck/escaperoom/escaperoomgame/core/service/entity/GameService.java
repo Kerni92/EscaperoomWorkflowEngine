@@ -8,6 +8,8 @@ public interface GameService {
 
     Game createGame(Long workflowId, List<String> usernames);
 
+    Game findByGameId(String gameId);
+
     void startGame(Game game);
 
     void pauseGame(Game game);
