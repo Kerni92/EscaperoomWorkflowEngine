@@ -18,7 +18,7 @@ public class RiddleInstance extends BasicEntity {
     @Column(name = "resolved")
     private Boolean resolved;
 
-    @ManyToOne(targetEntity = Riddle.class, fetch = FetchType.LAZY)
+    @ManyToOne(targetEntity = Riddle.class, fetch = FetchType.EAGER)
     @JoinColumn(name = "fk_riddle")
     private Riddle riddle;
 

@@ -61,7 +61,7 @@ public class CreateGameDialog<T extends Serializable> extends AbstractFormDialog
         form.add(new Label("description", new ResourceModel("dialog.creategame.description", "dialog.creategame.description")));
         // Slider //
         form.add(new Label("lblGameSelection", new ResourceModel("dialog.creategame.selectGame", "dialog.creategame.selectGame")));
-        form.add(new DropDownChoice<Workflow>("gameSelection", new PropertyModel<>(this, "selectedGame"), new WorkflowListModel(workflowService), new IChoiceRenderer<>() {
+        form.add(new DropDownChoice<Workflow>("gameSelection", new PropertyModel<>(this, "selectedGame"), new WorkflowListModel(), new IChoiceRenderer<>() {
             @Override
             public Object getDisplayValue(Workflow object) {
                 return object.getName();

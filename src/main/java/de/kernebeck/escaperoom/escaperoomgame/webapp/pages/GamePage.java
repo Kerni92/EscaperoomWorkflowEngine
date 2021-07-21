@@ -2,7 +2,9 @@ package de.kernebeck.escaperoom.escaperoomgame.webapp.pages;
 
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.execution.Game;
 import de.kernebeck.escaperoom.escaperoomgame.core.service.entity.GameService;
+import de.kernebeck.escaperoom.escaperoomgame.webapp.component.WorkflowPartComponent;
 import de.kernebeck.escaperoom.escaperoomgame.webapp.model.GameModel;
+import de.kernebeck.escaperoom.escaperoomgame.webapp.model.WorkflowPartInstanceModel;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
@@ -28,7 +30,8 @@ public class GamePage extends WebPage {
             game = new GameModel(gameId);
         }
 
-        add(new Label("test", "Folgendes Spiel wird geladen: " + (game != null && game.getObject() != null ? game.getObject().getGameId() : " Es wurde keins Übergeben")));
+
+        add(new WorkflowPartComponent("test", new WorkflowPartInstanceModel(game.getObject().getActiveWorkflowPartInstance().getId())));
     }
 
 

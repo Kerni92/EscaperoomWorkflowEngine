@@ -2,10 +2,12 @@ package de.kernebeck.escaperoom.escaperoomgame.core.service.entity.impl;
 
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.definition.Workflow;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.execution.Game;
+import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.execution.RiddleInstance;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.execution.WorkflowPartInstance;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.repository.execution.GameRepository;
-import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.repository.execution.WorkflowPartInstanceRepository;
 import de.kernebeck.escaperoom.escaperoomgame.core.service.entity.GameService;
+import de.kernebeck.escaperoom.escaperoomgame.core.service.entity.RiddleInstanceService;
+import de.kernebeck.escaperoom.escaperoomgame.core.service.entity.WorkflowPartInstanceService;
 import de.kernebeck.escaperoom.escaperoomgame.core.service.entity.WorkflowService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -28,7 +30,10 @@ public class GameServiceBean implements GameService {
     private WorkflowService workflowService;
 
     @Autowired
-    private WorkflowPartInstanceRepository workflowPartInstanceRepository;
+    private WorkflowPartInstanceService workflowPartInstanceService;
+
+    @Autowired
+    private RiddleInstanceService riddleInstanceService;
 
     @Override
     public Game createGame(Long workflowId, List<String> usernames) {
@@ -40,7 +45,7 @@ public class GameServiceBean implements GameService {
 
             game = gameRepository.save(game);
 
-            WorkflowPartInstance workflowPartInstance = workflowPartInstanceRepository.save(new WorkflowPartInstance(wf.get().getWorkflowStart(), null, null, null, null, game));
+            final WorkflowPartInstance workflowPartInstance = workflowPartInstanceService.createWorkflowPartInstanceFromWorkflowPart(game, wf.get().getWorkflowStart());
             game.setCurrentWorkflowpart(workflowPartInstance);
 
             return gameRepository.save(game);
@@ -53,6 +58,17 @@ public class GameServiceBean implements GameService {
     public Game findByGameId(String gameId) {
         if (gameId != null) {
             final Optional<Game> result = gameRepository.findByGameId(gameId);
+            if (result.isPresent()) {
+                return result.get();
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public Game findGameByRiddleInstance(RiddleInstance riddleInstance) {
+        if (riddleInstance != null) {
+            final Optional<Game> result = gameRepository.findGameByRiddleInstance(riddleInstance.getId());
             if (result.isPresent()) {
                 return result.get();
             }
@@ -93,4 +109,5 @@ public class GameServiceBean implements GameService {
         }
         return null;
     }
+
 }

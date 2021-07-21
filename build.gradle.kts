@@ -21,6 +21,7 @@ dependencies {
     implementation("org.mariadb.jdbc:mariadb-java-client")
     implementation("org.flywaydb:flyway-core")
     implementation("commons-io:commons-io:2.9.0")
+    implementation("com.google.guava:guava:30.1.1-jre")
 
     implementation("org.apache.wicket:wicket-core:9.4.0")
     implementation("org.apache.wicket:wicket-spring:9.4.0")

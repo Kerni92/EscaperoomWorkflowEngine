@@ -11,7 +11,12 @@ public class GameModel extends LoadableDetachableModel<Game> {
     @SpringBean
     private GameService gameService;
 
-    private final String gameId;
+    private String gameId;
+
+    public GameModel() {
+        //required for serialization and deserialization
+        Injector.get().inject(this);
+    }
 
     public GameModel(String gameId) {
         super();

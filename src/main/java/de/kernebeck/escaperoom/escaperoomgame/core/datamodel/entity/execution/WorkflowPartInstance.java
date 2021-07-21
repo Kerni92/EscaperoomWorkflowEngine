@@ -12,7 +12,7 @@ import java.util.List;
 @Table(name = "workflowpartinstance")
 public class WorkflowPartInstance extends BasicEntity {
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fk_workflowpart")
     private WorkflowPart workflowPart;
 
@@ -28,7 +28,7 @@ public class WorkflowPartInstance extends BasicEntity {
     @Column(name = "totaltime")
     private Long totalTime;
 
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.EAGER)
     @JoinColumn(name = "fk_workflowpartinstance")
     private List<RiddleInstance> riddleInstanceList;
 

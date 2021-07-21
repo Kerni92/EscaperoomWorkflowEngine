@@ -4,4 +4,6 @@ import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.execution.Wo
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.repository.BasicEntityRepository;
 
 public interface WorkflowPartInstanceRepository extends BasicEntityRepository<WorkflowPartInstance> {
+
+
 }
