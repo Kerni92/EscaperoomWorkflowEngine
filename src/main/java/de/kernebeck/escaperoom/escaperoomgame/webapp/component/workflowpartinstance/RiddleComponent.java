@@ -1,4 +1,4 @@
-package de.kernebeck.escaperoom.escaperoomgame.webapp.component;
+package de.kernebeck.escaperoom.escaperoomgame.webapp.component.workflowpartinstance;
 
 import com.googlecode.wicket.jquery.ui.JQueryIcon;
 import com.googlecode.wicket.jquery.ui.markup.html.link.AjaxSubmitLink;
@@ -61,8 +61,6 @@ public class RiddleComponent extends GenericPanel<RiddleInstance> {
                 target.add(riddleForm);
                 target.add(messageLabel);
             }
-
-
         };
         submitLink.setEnabled(!isResolved);
         submitLink.setOutputMarkupId(true);

@@ -1,19 +1,19 @@
-package de.kernebeck.escaperoom.escaperoomgame.webapp.component;
+package de.kernebeck.escaperoom.escaperoomgame.webapp.component.workflowpartinstance;
 
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.execution.RiddleInstance;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.execution.WorkflowPartInstance;
 import de.kernebeck.escaperoom.escaperoomgame.webapp.model.RiddleInstanceModel;
-import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.panel.GenericPanel;
 import org.apache.wicket.markup.repeater.RepeatingView;
 import org.apache.wicket.model.IModel;
 
-public class WorkflowPartComponent extends GenericPanel<WorkflowPartInstance> {
+public class WorkflowPartInstanceComponent extends GenericPanel<WorkflowPartInstance> {
 
-    public WorkflowPartComponent(String id, IModel<WorkflowPartInstance> model) {
+    private IModel<Boolean> workflowPartFinishedModel;
+
+    public WorkflowPartInstanceComponent(String id, IModel<WorkflowPartInstance> model, IModel<Boolean> workflowPartFinishedModel) {
         super(id, model);
-
-        final WebMarkupContainer content = new WebMarkupContainer("content");
+        this.workflowPartFinishedModel = workflowPartFinishedModel;
         final WorkflowPartInstance workflowPartInstance = getModelObject();
         final RepeatingView riddles = new RepeatingView("riddles");
         if (workflowPartInstance.getRiddleInstanceList() != null && !workflowPartInstance.getRiddleInstanceList().isEmpty()) {
@@ -23,6 +23,6 @@ public class WorkflowPartComponent extends GenericPanel<WorkflowPartInstance> {
         }
         add(riddles);
     }
-    
+
 
 }
