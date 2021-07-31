@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class WorkflowTransitionServiceBean implements WorkflowTransitionService {
@@ -20,6 +21,15 @@ public class WorkflowTransitionServiceBean implements WorkflowTransitionService 
 
     @Autowired
     private WorkflowPartInstanceService workflowPartInstanceService;
+
+    @Override
+    public WorkflowTransition findById(Long id) {
+        final Optional<WorkflowTransition> transition = workflowTransitionRepository.findById(id);
+        if (transition.isPresent()) {
+            return transition.get();
+        }
+        return null;
+    }
 
     @Override
     public List<WorkflowTransition> findWorkflowTransitionsByWorkflowPartInstance(WorkflowPartInstance workflowPartInstance) {

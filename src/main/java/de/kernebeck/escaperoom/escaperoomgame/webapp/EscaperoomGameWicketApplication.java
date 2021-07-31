@@ -1,7 +1,9 @@
 package de.kernebeck.escaperoom.escaperoomgame.webapp;
 
+import com.google.common.eventbus.EventBus;
 import de.kernebeck.escaperoom.escaperoomgame.webapp.pages.GamePage;
 import de.kernebeck.escaperoom.escaperoomgame.webapp.pages.HomePage;
+import de.kernebeck.escaperoom.escaperoomgame.webapp.service.WebSocketEventService;
 import org.apache.wicket.Page;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.spring.injection.annot.SpringComponentInjector;
@@ -13,6 +15,9 @@ public class EscaperoomGameWicketApplication extends WebApplication {
     @Autowired
     private ApplicationContext applicationContext;
 
+    @Autowired
+    private EventBus eventBus;
+
     @Override
     protected void init() {
         super.init();
@@ -23,6 +28,7 @@ public class EscaperoomGameWicketApplication extends WebApplication {
 
         this.mountPage("/game", GamePage.class);
 
+        eventBus.register(WebSocketEventService.getInstance());
     }
 
     @Override

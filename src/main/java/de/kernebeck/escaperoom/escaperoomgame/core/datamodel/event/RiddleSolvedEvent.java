@@ -1,9 +1,11 @@
-package de.kernebeck.escaperoom.escaperoomgame.core.service.event;
+package de.kernebeck.escaperoom.escaperoomgame.core.datamodel.event;
+
+import org.apache.wicket.protocol.ws.api.message.IWebSocketPushMessage;
 
 import java.io.Serializable;
 import java.util.Objects;
 
-public class RiddleSolvedEvent implements Serializable {
+public class RiddleSolvedEvent implements Serializable, IWebSocketPushMessage {
 
     private static final long serialVersionUID = 673667055344485724L;
 

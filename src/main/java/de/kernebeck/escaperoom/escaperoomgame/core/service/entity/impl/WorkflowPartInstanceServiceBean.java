@@ -10,6 +10,7 @@ import de.kernebeck.escaperoom.escaperoomgame.core.service.entity.WorkflowPartIn
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.util.Optional;
 
 @Service
@@ -33,9 +34,9 @@ public class WorkflowPartInstanceServiceBean implements WorkflowPartInstanceServ
     }
 
     @Override
-    public WorkflowPartInstance createWorkflowPartInstanceFromWorkflowPart(Game game, WorkflowPart workflowPart) {
+    public WorkflowPartInstance createWorkflowPartInstanceFromWorkflowPart(Game game, WorkflowPart workflowPart, Timestamp start) {
         if (workflowPart != null) {
-            final WorkflowPartInstance instance = workflowPartInstanceRepository.save(new WorkflowPartInstance(workflowPart, null, null, null, null, game));
+            final WorkflowPartInstance instance = workflowPartInstanceRepository.save(new WorkflowPartInstance(workflowPart, null, start, null, null, game));
             //create riddle instances
             for (final Riddle r : workflowPart.getRiddles()) {
                 riddleInstanceService.createRiddleInstanceByRiddle(r, instance);
@@ -48,8 +49,15 @@ public class WorkflowPartInstanceServiceBean implements WorkflowPartInstanceServ
     }
 
     @Override
-    public String getGameIdFromWorkflowPartInstance(WorkflowPartInstance workflowPartInstance) {
+    public WorkflowPartInstance createWorkflowPartInstanceFromWorkflowPart(Game game, WorkflowPart workflowPart) {
+        return this.createWorkflowPartInstanceFromWorkflowPart(game, workflowPart, null);
+    }
 
+    @Override
+    public WorkflowPartInstance save(WorkflowPartInstance workflowPartInstance) {
+        if (workflowPartInstance != null) {
+            return workflowPartInstanceRepository.save(workflowPartInstance);
+        }
         return null;
     }
 }

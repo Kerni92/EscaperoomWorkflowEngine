@@ -1,6 +1,7 @@
 package de.kernebeck.escaperoom.escaperoomgame.core.service.entity.impl;
 
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.definition.Workflow;
+import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.definition.WorkflowTransition;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.execution.Game;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.execution.RiddleInstance;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.execution.WorkflowPartInstance;
@@ -9,6 +10,7 @@ import de.kernebeck.escaperoom.escaperoomgame.core.service.entity.GameService;
 import de.kernebeck.escaperoom.escaperoomgame.core.service.entity.RiddleInstanceService;
 import de.kernebeck.escaperoom.escaperoomgame.core.service.entity.WorkflowPartInstanceService;
 import de.kernebeck.escaperoom.escaperoomgame.core.service.entity.WorkflowService;
+import de.kernebeck.escaperoom.escaperoomgame.core.service.execution.WorkflowExecutionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -31,6 +33,9 @@ public class GameServiceBean implements GameService {
 
     @Autowired
     private WorkflowPartInstanceService workflowPartInstanceService;
+
+    @Autowired
+    private WorkflowExecutionService workflowExecutionService;
 
     @Autowired
     private RiddleInstanceService riddleInstanceService;
@@ -75,6 +80,17 @@ public class GameServiceBean implements GameService {
         }
         return null;
     }
+
+    @Override
+    public boolean executeWorkflowTransition(Game game, WorkflowTransition workflowTransition) {
+        final WorkflowPartInstance workflowPartInstance = workflowExecutionService.executeWorkflowTransition(game, workflowTransition);
+        if (workflowPartInstance != null) {
+            return true;
+        }
+
+        return false;
+    }
+
 
     @Override
     public void startGame(Game game) {

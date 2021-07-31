@@ -1,6 +1,7 @@
 package de.kernebeck.escaperoom.escaperoomgame.webapp.model;
 
-import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.execution.WorkflowPartInstance;
+import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.execution.Game;
+import de.kernebeck.escaperoom.escaperoomgame.core.service.entity.GameService;
 import de.kernebeck.escaperoom.escaperoomgame.core.service.entity.WorkflowPartInstanceService;
 import org.apache.wicket.injection.Injector;
 import org.apache.wicket.model.LoadableDetachableModel;
@@ -11,25 +12,28 @@ public class WorkflowPartFinishedModel extends LoadableDetachableModel<Boolean> 
     @SpringBean
     private WorkflowPartInstanceService workflowPartInstanceService;
 
-    private Long workflowPartInstanceId = null;
+    @SpringBean
+    private GameService gameService;
+
+    private String gameId = null;
 
     public WorkflowPartFinishedModel() {
         super();
         Injector.get().inject(this);
     }
 
-    public WorkflowPartFinishedModel(Long workflowPartInstanceId) {
+    public WorkflowPartFinishedModel(String gameId) {
         super();
         Injector.get().inject(this);
-        this.workflowPartInstanceId = workflowPartInstanceId;
+        this.gameId = gameId;
     }
 
     @Override
     protected Boolean load() {
-        if (workflowPartInstanceId != null) {
-            final WorkflowPartInstance instance = workflowPartInstanceService.findWorkflowPartInstanceById(workflowPartInstanceId);
-            if (instance != null) {
-                return instance.getRiddleInstanceList().isEmpty() || instance.getRiddleInstanceList().stream().noneMatch(r -> r == null || !r.isResolved());
+        if (gameId != null) {
+            final Game game = gameService.findByGameId(gameId);
+            if (game.getActiveWorkflowPartInstance() != null) {
+                return game.getActiveWorkflowPartInstance().getRiddleInstanceList().isEmpty() || game.getActiveWorkflowPartInstance().getRiddleInstanceList().stream().noneMatch(r -> r == null || !r.isResolved());
             }
         }
         return Boolean.FALSE;

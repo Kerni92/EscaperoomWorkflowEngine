@@ -7,6 +7,8 @@ import java.util.List;
 
 public interface WorkflowTransitionService {
 
+    WorkflowTransition findById(Long id);
+
     List<WorkflowTransition> findWorkflowTransitionsByWorkflowPartInstance(WorkflowPartInstance workflowPartInstance);
 
     List<WorkflowTransition> findWorkflowTransitionsByWorkflowPartInstanceId(Long workflowPartInstanceId);

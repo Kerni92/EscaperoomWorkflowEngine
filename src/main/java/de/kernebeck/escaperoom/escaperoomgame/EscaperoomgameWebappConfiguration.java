@@ -3,12 +3,14 @@ package de.kernebeck.escaperoom.escaperoomgame;
 import de.kernebeck.escaperoom.escaperoomgame.webapp.EscaperoomGameWicketApplication;
 import org.apache.wicket.protocol.http.WicketFilter;
 import org.apache.wicket.protocol.ws.javax.JavaxWebSocketFilter;
+import org.apache.wicket.protocol.ws.javax.WicketServerEndpointConfig;
 import org.apache.wicket.spring.SpringWebApplicationFactory;
 import org.springframework.boot.web.servlet.ServletContextInitializer;
 import org.springframework.boot.web.servlet.ServletListenerRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
+import org.springframework.web.socket.server.standard.ServerEndpointExporter;
 
 import javax.servlet.DispatcherType;
 import javax.servlet.FilterRegistration;
@@ -42,4 +44,13 @@ public class EscaperoomgameWebappConfiguration {
         };
     }
 
+    @Bean
+    public ServerEndpointExporter serverEndpointExporter() {
+        return new ServerEndpointExporter();
+    }
+
+    @Bean
+    public WicketServerEndpointConfig wicketServerEndpointConfig() {
+        return new WicketServerEndpointConfig();
+    }
 }

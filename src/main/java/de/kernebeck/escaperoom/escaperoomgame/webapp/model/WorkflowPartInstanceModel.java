@@ -1,7 +1,8 @@
 package de.kernebeck.escaperoom.escaperoomgame.webapp.model;
 
+import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.execution.Game;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.execution.WorkflowPartInstance;
-import de.kernebeck.escaperoom.escaperoomgame.core.service.entity.WorkflowPartInstanceService;
+import de.kernebeck.escaperoom.escaperoomgame.core.service.entity.GameService;
 import org.apache.wicket.injection.Injector;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
@@ -9,27 +10,29 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
 public class WorkflowPartInstanceModel extends LoadableDetachableModel<WorkflowPartInstance> {
 
     @SpringBean
-    private WorkflowPartInstanceService workflowPartInstanceService;
+    private GameService gameService;
 
-    private Long workflowPartId;
+    private String gameId;
 
     public WorkflowPartInstanceModel() {
         //required for serialization and deserialization
         super();
         Injector.get().inject(this);
-
     }
 
-    public WorkflowPartInstanceModel(Long workflowPartId) {
+    public WorkflowPartInstanceModel(String gameId) {
         super();
         Injector.get().inject(this);
-        this.workflowPartId = workflowPartId;
+        this.gameId = gameId;
     }
 
     @Override
     protected WorkflowPartInstance load() {
-        if (workflowPartId != null) {
-            return workflowPartInstanceService.findWorkflowPartInstanceById(workflowPartId);
+        if (gameId != null) {
+            final Game game = gameService.findByGameId(gameId);
+            if (game != null) {
+                return game.getActiveWorkflowPartInstance();
+            }
         }
         return null;
     }

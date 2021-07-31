@@ -6,11 +6,11 @@ import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.definition.S
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.execution.Game;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.execution.RiddleInstance;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.execution.WorkflowPartInstance;
+import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.event.RiddleSolvedEvent;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.repository.execution.RiddleInstanceRepository;
 import de.kernebeck.escaperoom.escaperoomgame.core.service.entity.GameService;
 import de.kernebeck.escaperoom.escaperoomgame.core.service.entity.RiddleInstanceService;
 import de.kernebeck.escaperoom.escaperoomgame.core.service.entity.SolutionService;
-import de.kernebeck.escaperoom.escaperoomgame.core.service.event.RiddleSolvedEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
