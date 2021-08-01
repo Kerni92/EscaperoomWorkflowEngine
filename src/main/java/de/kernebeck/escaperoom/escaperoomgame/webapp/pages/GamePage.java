@@ -13,10 +13,12 @@ import de.kernebeck.escaperoom.escaperoomgame.webapp.model.ValidWorkflowTransiti
 import de.kernebeck.escaperoom.escaperoomgame.webapp.model.WorkflowPartFinishedModel;
 import de.kernebeck.escaperoom.escaperoomgame.webapp.model.WorkflowPartInstanceModel;
 import de.kernebeck.escaperoom.escaperoomgame.webapp.service.WebSocketEventService;
+import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.protocol.ws.api.WebSocketBehavior;
@@ -42,9 +44,10 @@ public class GamePage extends WebPage {
 
     private Label messageLabel;
 
+    private WebMarkupContainer content;
+
     public GamePage() {
         super();
-        add(new Label("test", "Es wurde kein Spiel übergeben"));
     }
 
     public GamePage(PageParameters pageParameters) {
@@ -61,7 +64,10 @@ public class GamePage extends WebPage {
             @Override
             protected void onPush(WebSocketRequestHandler handler, IWebSocketPushMessage message) {
                 if (message instanceof RiddleSolvedEvent) {
-                    handler.add(buildContentContainer());
+                    workflowPartFinishedModel.detach();
+                    workflowPartInstanceModel.detach();
+                    buildContent(true);
+                    handler.add(content);
                 }
             }
 
@@ -84,34 +90,49 @@ public class GamePage extends WebPage {
         this.messageLabel.setOutputMarkupId(true);
         this.messageLabel.setVisible(false);
         add(this.messageLabel);
-        add(buildContentContainer());
+        this.content = new WebMarkupContainer("content");
+        content.setOutputMarkupId(true);
+        buildContent(false);
+        add(content);
     }
 
 
-    private WebMarkupContainer buildContentContainer() {
-        final WebMarkupContainer content = new WebMarkupContainer("content");
-        final Game game = gameModel.getObject();
-        this.messageLabel.setVisible(false);
-        if (game.isFinished()) {
-            content.add(new GameResultComponent(CONTENTCOMPONENT_ID, gameModel));
-        }
-        else {
-            if (workflowPartFinishedModel.getObject()) {
-                content.add(new SelectWorkflowTransitionComponent(CONTENTCOMPONENT_ID, new ValidWorkflowTransitionListModel(workflowPartInstanceModel.getObject().getId())) {
-
-                    @Override
-                    public void onSubmit(AjaxRequestTarget target, WorkflowTransition transition) {
-                        GamePage.this.submitWorkflowTransitionSelection(target, transition);
-                    }
-
-                });
+    private void buildContent(boolean isUpdate) {
+        if (gameModel != null) {
+            final Game game = gameModel.getObject();
+            this.messageLabel.setVisible(false);
+            Component contentComponent;
+            if (game.isFinished()) {
+                contentComponent = new GameResultComponent(CONTENTCOMPONENT_ID, gameModel);
             }
             else {
-                content.add(new WorkflowPartInstanceComponent(CONTENTCOMPONENT_ID, workflowPartInstanceModel, workflowPartFinishedModel));
+                if (workflowPartFinishedModel.getObject()) {
+                    contentComponent = new SelectWorkflowTransitionComponent(CONTENTCOMPONENT_ID, new ValidWorkflowTransitionListModel(workflowPartInstanceModel.getObject().getId())) {
+
+                        @Override
+                        public void onSubmit(AjaxRequestTarget target, WorkflowTransition transition) {
+                            GamePage.this.submitWorkflowTransitionSelection(target, transition);
+                        }
+
+                    };
+                }
+                else {
+                    contentComponent = new WorkflowPartInstanceComponent(CONTENTCOMPONENT_ID, workflowPartInstanceModel, workflowPartFinishedModel);
+                }
+            }
+            contentComponent.setOutputMarkupId(true);
+            if (isUpdate) {
+                content.replace(contentComponent);
+            }
+            else {
+                content.add(contentComponent);
             }
         }
-
-        return content;
+        else {
+            this.messageLabel.setDefaultModelObject("Es wurde keine gültige Spielid übergeben.");
+            this.messageLabel.setVisible(true);
+            content.add(new EmptyPanel(CONTENTCOMPONENT_ID));
+        }
     }
 
     private void submitWorkflowTransitionSelection(AjaxRequestTarget target, WorkflowTransition transition) {
@@ -120,8 +141,8 @@ public class GamePage extends WebPage {
             gameModel.detach();
             workflowPartFinishedModel.detach();
             workflowPartInstanceModel.detach();
-            final WebMarkupContainer content = buildContentContainer();
-            this.replace(content);
+            buildContent(true);
+            this.add(content);
             target.add(this);
         }
         else {

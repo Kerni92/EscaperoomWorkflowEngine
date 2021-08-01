@@ -10,9 +10,7 @@ import org.apache.wicket.protocol.ws.api.message.IWebSocketPushMessage;
 import org.apache.wicket.protocol.ws.api.registry.IWebSocketConnectionRegistry;
 import org.apache.wicket.protocol.ws.api.registry.SimpleWebSocketConnectionRegistry;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class WebSocketEventService {
@@ -51,9 +49,21 @@ public class WebSocketEventService {
     private void sendEvent(String gameId, IWebSocketPushMessage message) {
         if (connections.containsKey(gameId)) {
             Application a = Application.get();
-            for (final ConnectedMessage m : connections.get(gameId)) {
+            final Set<ConnectedMessage> connectionsToRemove = new HashSet<>();
+            for (int i = 0; i < connections.get(gameId).size(); i++) {
+                final ConnectedMessage m = connections.get(gameId).get(i);
                 IWebSocketConnection connection = connectionRegistry.getConnection(a, m.getSessionId(), m.getKey());
-                connection.sendMessage(message);
+                if (connection != null) {
+                    connection.sendMessage(message);
+                }
+                else {
+                    connectionsToRemove.add(m);
+                }
+            }
+
+            //remove connection because it seems to be closed
+            for (ConnectedMessage con : connectionsToRemove) {
+                connections.get(gameId).remove(con);
             }
         }
     }
