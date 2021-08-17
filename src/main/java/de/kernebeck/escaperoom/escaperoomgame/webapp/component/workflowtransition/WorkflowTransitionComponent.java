@@ -1,11 +1,12 @@
 package de.kernebeck.escaperoom.escaperoomgame.webapp.component.workflowtransition;
 
-import com.googlecode.wicket.jquery.ui.markup.html.link.AjaxSubmitLink;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.definition.WorkflowTransition;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.GenericPanel;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 
 public abstract class WorkflowTransitionComponent extends GenericPanel<WorkflowTransition> {
 
@@ -19,6 +20,7 @@ public abstract class WorkflowTransitionComponent extends GenericPanel<WorkflowT
                 WorkflowTransitionComponent.this.onSubmit(target, getModelObject());
             }
         };
+        submitLink.setBody(Model.of(model.getObject().getName()));
 
         add(description);
         add(submitLink);

@@ -6,6 +6,7 @@ import de.kernebeck.escaperoom.escaperoomgame.webapp.model.RiddleInstanceModel;
 import org.apache.wicket.markup.html.panel.GenericPanel;
 import org.apache.wicket.markup.repeater.RepeatingView;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 
 public class WorkflowPartInstanceComponent extends GenericPanel<WorkflowPartInstance> {
 
@@ -18,7 +19,7 @@ public class WorkflowPartInstanceComponent extends GenericPanel<WorkflowPartInst
         final RepeatingView riddles = new RepeatingView("riddles");
         if (workflowPartInstance.getRiddleInstanceList() != null && !workflowPartInstance.getRiddleInstanceList().isEmpty()) {
             for (RiddleInstance ri : workflowPartInstance.getRiddleInstanceList()) {
-                riddles.add(new RiddleComponent(riddles.newChildId(), new RiddleInstanceModel(ri.getId())));
+                riddles.add(new RiddleComponent(riddles.newChildId(), Model.of(workflowPartInstance.getGame().getId()), new RiddleInstanceModel(ri.getId())));
             }
         }
         add(riddles);

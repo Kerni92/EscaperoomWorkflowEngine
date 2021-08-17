@@ -6,6 +6,7 @@ create table if not exists game
     dbupdatedate            timestamp    not null default current_timestamp on update current_timestamp,
     gameid                  varchar(512) not null,
     starttime               timestamp,
+    laststarttime           timestamp,
     endtime                 timestamp,
     totaltime               bigint(20)            default 0,
     usernames               text         not null,

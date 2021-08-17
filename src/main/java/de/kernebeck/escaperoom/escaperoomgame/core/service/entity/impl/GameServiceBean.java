@@ -1,7 +1,6 @@
 package de.kernebeck.escaperoom.escaperoomgame.core.service.entity.impl;
 
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.definition.Workflow;
-import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.definition.WorkflowTransition;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.execution.Game;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.execution.RiddleInstance;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.execution.WorkflowPartInstance;
@@ -15,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
-import java.sql.Timestamp;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -81,36 +79,6 @@ public class GameServiceBean implements GameService {
         return null;
     }
 
-    @Override
-    public boolean executeWorkflowTransition(Game game, WorkflowTransition workflowTransition) {
-        final WorkflowPartInstance workflowPartInstance = workflowExecutionService.executeWorkflowTransition(game, workflowTransition);
-        if (workflowPartInstance != null) {
-            return true;
-        }
-
-        return false;
-    }
-
-
-    @Override
-    public void startGame(Game game) {
-        final Timestamp time = new Timestamp(System.currentTimeMillis());
-        game.setStarttime(time);
-        game.getActiveWorkflowPartInstance().setStartTime(time);
-        game.getActiveWorkflowPartInstance().setLastStartTime(time);
-        gameRepository.save(game);
-    }
-
-    @Override
-    public void pauseGame(Game game) {
-        final Timestamp time = new Timestamp(System.currentTimeMillis());
-
-    }
-
-    @Override
-    public void continueGame(Game game) {
-
-    }
 
     @Override
     public Game findNotFinishedByGameId(String gameId) {

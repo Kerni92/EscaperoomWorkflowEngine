@@ -35,7 +35,7 @@ public class WorkflowExecutionServiceBean implements WorkflowExecutionService {
 
     @Override
     public WorkflowPartInstance executeWorkflowTransition(Game game, WorkflowTransition workflowTransition) {
-        //TODO implement locking
+
         if (isTransitionExecutionPossible(game, workflowTransition)) {
             //first finish current workflowinstance
             final WorkflowPartInstance activeWorkflowPart = game.getActiveWorkflowPartInstance();
@@ -43,7 +43,7 @@ public class WorkflowExecutionServiceBean implements WorkflowExecutionService {
             final long startTime = activeWorkflowPart.getLastStartTime().getTime();
 
             activeWorkflowPart.setEndTime(new Timestamp(currentTime));
-            activeWorkflowPart.setTotalTime((activeWorkflowPart.getTotalTime() != null ? activeWorkflowPart.getTotalTime() : 0) + (startTime - currentTime));
+            activeWorkflowPart.setTotalTime((activeWorkflowPart.getTotalTime() != null ? activeWorkflowPart.getTotalTime() : 0) + (currentTime - startTime));
 
             workflowPartInstanceService.save(activeWorkflowPart);
 

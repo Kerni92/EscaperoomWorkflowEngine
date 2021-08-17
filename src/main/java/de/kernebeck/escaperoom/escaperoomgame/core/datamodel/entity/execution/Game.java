@@ -27,6 +27,9 @@ public class Game extends BasicEntity {
     @Column(name = "endtime")
     private Timestamp endTime;
 
+    @Column(name = "laststarttime")
+    private Timestamp lastStartTime;
+
     @Column(name = "totaltime")
     private Long totalTime;
 
@@ -53,11 +56,12 @@ public class Game extends BasicEntity {
         //empty constructor required for hibernate
     }
 
-    public Game(String gameId, Timestamp starttime, Timestamp lastEndTime, Boolean finished, Long totalTime, Workflow workflow) {
+    public Game(String gameId, Timestamp starttime, Timestamp endTime, Timestamp lastStartTime, Boolean finished, Long totalTime, Workflow workflow) {
         super();
         this.gameId = gameId;
         this.starttime = starttime;
-        this.endTime = lastEndTime;
+        this.endTime = endTime;
+        this.lastStartTime = lastStartTime;
         this.totalTime = totalTime;
         this.workflow = workflow;
         this.finished = finished;
@@ -69,6 +73,10 @@ public class Game extends BasicEntity {
 
     public Timestamp getStarttime() {
         return starttime;
+    }
+
+    public Timestamp getLastStartTime() {
+        return lastStartTime;
     }
 
     public Timestamp getEndTime() {
@@ -136,6 +144,10 @@ public class Game extends BasicEntity {
         else {
             this.usernames = null;
         }
+    }
+
+    public void setLastStartTime(Timestamp lastStartTime) {
+        this.lastStartTime = lastStartTime;
     }
 
     public void setFinished(Boolean finished) {

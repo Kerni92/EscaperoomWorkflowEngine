@@ -1,31 +1,34 @@
 package de.kernebeck.escaperoom.escaperoomgame.webapp.component.workflowpartinstance;
 
-import com.googlecode.wicket.jquery.ui.JQueryIcon;
-import com.googlecode.wicket.jquery.ui.markup.html.link.AjaxSubmitLink;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.definition.Riddle;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.execution.RiddleInstance;
-import de.kernebeck.escaperoom.escaperoomgame.core.service.entity.RiddleInstanceService;
+import de.kernebeck.escaperoom.escaperoomgame.core.service.execution.GameExecutionService;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.GenericPanel;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
 public class RiddleComponent extends GenericPanel<RiddleInstance> {
 
     @SpringBean
-    private RiddleInstanceService riddleInstanceService;
+    private GameExecutionService gameExecutionService;
 
     private String solution = "";
     private Boolean isResolved;
     private String labelMessage = "";
 
-    public RiddleComponent(String id, IModel<RiddleInstance> model) {
+    private IModel<Long> gameIdModel;
+
+    public RiddleComponent(String id, IModel<Long> gameIdModel, IModel<RiddleInstance> model) {
         super(id, model);
 
+        this.gameIdModel = gameIdModel;
         this.isResolved = getModelObject().isResolved();
         final Riddle riddle = getModelObject().getRiddle();
         final Label riddleDescription = new Label("riddleDescription", riddle.getContent());
@@ -45,11 +48,11 @@ public class RiddleComponent extends GenericPanel<RiddleInstance> {
         solutionInput.setEnabled(!isResolved);
         solutionInput.setOutputMarkupId(true);
         riddleForm.add(solutionInput);
-        final AjaxSubmitLink submitLink = new AjaxSubmitLink("checkRiddleButton", JQueryIcon.CIRCLE_CHECK) {
+        final AjaxSubmitLink submitLink = new AjaxSubmitLink("checkRiddleButton") {
             @Override
             protected void onSubmit(AjaxRequestTarget target) {
                 super.onSubmit(target);
-                boolean result = riddleInstanceService.checkSolution(getModelObject(), solution);
+                boolean result = gameExecutionService.checkRiddleSolution(RiddleComponent.this.gameIdModel.getObject(), getModelObject(), solution);
                 if (result) {
                     solutionInput.setEnabled(false);
                     setEnabled(false);
@@ -64,6 +67,7 @@ public class RiddleComponent extends GenericPanel<RiddleInstance> {
         };
         submitLink.setEnabled(!isResolved);
         submitLink.setOutputMarkupId(true);
+        submitLink.setBody(Model.of("Rätsel lösen"));
         riddleForm.add(submitLink);
 
         add(riddleForm);

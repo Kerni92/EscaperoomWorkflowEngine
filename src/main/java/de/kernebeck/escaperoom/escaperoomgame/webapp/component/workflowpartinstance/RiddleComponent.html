@@ -6,12 +6,12 @@
 </head>
 <body>
 <wicket:panel>
-    <div class="riddleContent">
-        <span wicket:id="messageLabel"></span>
-        <span wicket:id="riddleDescription"></span>
+    <div class="riddleContent" style="float: left; border-bottom: black 1px solid; width: 400px">
+        <span wicket:id="messageLabel"></span><br/>
+        <span wicket:id="riddleDescription"></span><br/>
         <form wicket:id="riddleForm">
-            <input type="text" wicket:id="solutionInput"/>
-            <input type="button" wicket:id="checkRiddleButton">
+            <input type="text" wicket:id="solutionInput"/><br/>
+            <input type="button" wicket:id="checkRiddleButton"/>
         </form>
     </div>
 </wicket:panel>

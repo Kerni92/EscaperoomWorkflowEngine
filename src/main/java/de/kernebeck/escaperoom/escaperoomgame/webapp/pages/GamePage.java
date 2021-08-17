@@ -4,7 +4,7 @@ import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.definition.W
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.execution.Game;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.execution.WorkflowPartInstance;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.event.RiddleSolvedEvent;
-import de.kernebeck.escaperoom.escaperoomgame.core.service.entity.GameService;
+import de.kernebeck.escaperoom.escaperoomgame.core.service.execution.GameExecutionService;
 import de.kernebeck.escaperoom.escaperoomgame.webapp.component.gameresult.GameResultComponent;
 import de.kernebeck.escaperoom.escaperoomgame.webapp.component.workflowpartinstance.WorkflowPartInstanceComponent;
 import de.kernebeck.escaperoom.escaperoomgame.webapp.component.workflowtransition.SelectWorkflowTransitionComponent;
@@ -34,7 +34,7 @@ public class GamePage extends WebPage {
     private static final String CONTENTCOMPONENT_ID = "contentComponent";
 
     @SpringBean
-    private GameService gameService;
+    private GameExecutionService gameExecutionService;
 
     private IModel<Game> gameModel = null;
 
@@ -136,7 +136,7 @@ public class GamePage extends WebPage {
     }
 
     private void submitWorkflowTransitionSelection(AjaxRequestTarget target, WorkflowTransition transition) {
-        final boolean success = gameService.executeWorkflowTransition(gameModel.getObject(), transition);
+        final boolean success = gameExecutionService.executeWorkflowTransition(gameModel.getObject(), transition);
         if (success) {
             gameModel.detach();
             workflowPartFinishedModel.detach();

@@ -9,7 +9,7 @@ import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.repository.executio
 import de.kernebeck.escaperoom.escaperoomgame.core.service.entity.GameService;
 import de.kernebeck.escaperoom.escaperoomgame.core.service.entity.SolutionService;
 import de.kernebeck.escaperoom.escaperoomgame.core.service.entity.WorkflowService;
-import de.kernebeck.escaperoom.escaperoomgame.core.service.execution.WorkflowExecutionService;
+import de.kernebeck.escaperoom.escaperoomgame.core.service.execution.GameExecutionService;
 import de.kernebeck.escaperoom.escaperoomgame.webservice.resourceassembler.WorkflowPartResourceAssembler;
 import de.kernebeck.escaperoom.escaperoomgame.webservice.resourceassembler.WorkflowResourceAssembler;
 import de.kernebeck.escaperoom.escaperoomgame.webservice.resourceassembler.WorkflowTransitionResourceAssembler;
@@ -46,7 +46,7 @@ public class GameController {
     private GameService gameService;
 
     @Autowired
-    private WorkflowExecutionService workflowExecutionService;
+    private GameExecutionService gameExecutionService;
 
     @Autowired
     private RiddleInstanceRepository riddleInstanceRepository;
@@ -114,7 +114,7 @@ public class GameController {
             ResponseEntity.badRequest().body(new ErrorResource("Es wurde kein aktives Spiel für die ID " + gameId + " gefunden."));
         }
 
-        gameService.startGame(game);
+        gameExecutionService.startGame(game);
 
         return ResponseEntity.ok("");
     }
@@ -126,7 +126,7 @@ public class GameController {
             ResponseEntity.badRequest().body(new ErrorResource("Es wurde kein aktives Spiel für die ID " + gameId + " gefunden."));
         }
 
-        gameService.startGame(game);
+        gameExecutionService.startGame(game);
 
         return ResponseEntity.ok("");
     }
@@ -138,7 +138,7 @@ public class GameController {
             ResponseEntity.badRequest().body(new ErrorResource("Es wurde kein aktives Spiel für die ID " + gameId + " gefunden."));
         }
 
-        gameService.startGame(game);
+        gameExecutionService.startGame(game);
 
         return ResponseEntity.ok("");
     }
@@ -274,9 +274,12 @@ public class GameController {
             return ResponseEntity.badRequest().body(new ErrorResource("Die angegebene Workflowtransition ist für den aktuellen Spielstatus nicht gültig!"));
         }
 
-        final WorkflowPartInstance nextWorkflowPart = workflowExecutionService.executeWorkflowTransition(game, transition.get());
+        final boolean success = gameExecutionService.executeWorkflowTransition(game, transition.get());
 
-        return ResponseEntity.ok(workflowPartResourceAssembler.convertEntityToResource(nextWorkflowPart));
+        if (success) {
+            return ResponseEntity.ok(workflowPartResourceAssembler.convertEntityToResource(gameService.findByGameId(game.getGameId()).getActiveWorkflowPartInstance()));
+        }
+        return ResponseEntity.badRequest().body("Die angegebene Workflowtransition konnte nicht ausgeführt werden.");
     }
 
     private RiddleInstance getOrSolvedRiddleByRiddleIdAndWorkflowpart(Long riddleId, WorkflowPartInstance part) {

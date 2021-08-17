@@ -8,8 +8,8 @@ public interface RiddleInstanceService {
 
     RiddleInstance findById(Long id);
 
-    RiddleInstance createRiddleInstanceByRiddle(Riddle riddle, WorkflowPartInstance workflowPartInstance);
+    RiddleInstance save(RiddleInstance instance);
 
-    boolean checkSolution(RiddleInstance riddleInstance, String solution);
+    RiddleInstance createRiddleInstanceByRiddle(Riddle riddle, WorkflowPartInstance workflowPartInstance);
 
 }
