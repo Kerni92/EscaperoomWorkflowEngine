@@ -4,6 +4,7 @@ import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.definition.R
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.execution.RiddleInstance;
 import de.kernebeck.escaperoom.escaperoomgame.core.service.execution.GameExecutionService;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
@@ -67,6 +68,14 @@ public class RiddleComponent extends GenericPanel<RiddleInstance> {
         submitLink.setEnabled(!isResolved);
         submitLink.setOutputMarkupId(true);
         riddleForm.add(submitLink);
+
+        final AjaxButton showHintDialogButton = new AjaxButton("showHintDialog") {
+            @Override
+            protected void onSubmit(AjaxRequestTarget target) {
+                super.onSubmit(target);
+            }
+        };
+        riddleForm.add(showHintDialogButton);
 
         add(riddleForm);
     }

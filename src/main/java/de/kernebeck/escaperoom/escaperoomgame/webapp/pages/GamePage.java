@@ -107,14 +107,21 @@ public class GamePage extends WebPage {
             }
             else {
                 if (workflowPartFinishedModel.getObject()) {
-                    contentComponent = new SelectWorkflowTransitionComponent(CONTENTCOMPONENT_ID, new ValidWorkflowTransitionListModel(workflowPartInstanceModel.getObject().getId())) {
+                    final ValidWorkflowTransitionListModel model = new ValidWorkflowTransitionListModel(workflowPartInstanceModel.getObject().getId());
+                    if (model.getObject().size() > 1) {
+                        contentComponent = new SelectWorkflowTransitionComponent(CONTENTCOMPONENT_ID, model) {
 
-                        @Override
-                        public void onSubmit(AjaxRequestTarget target, WorkflowTransition transition) {
-                            GamePage.this.submitWorkflowTransitionSelection(target, transition);
-                        }
+                            @Override
+                            public void onSubmit(AjaxRequestTarget target, WorkflowTransition transition) {
+                                GamePage.this.submitWorkflowTransitionSelection(target, transition);
+                            }
 
-                    };
+                        };
+                    }
+                    else {
+                        GamePage.this.submitWorkflowTransitionSelection(null, model.getObject().get(0));
+                        contentComponent = new WorkflowPartInstanceComponent(CONTENTCOMPONENT_ID, workflowPartInstanceModel, workflowPartFinishedModel);
+                    }
                 }
                 else {
                     contentComponent = new WorkflowPartInstanceComponent(CONTENTCOMPONENT_ID, workflowPartInstanceModel, workflowPartFinishedModel);
@@ -143,12 +150,16 @@ public class GamePage extends WebPage {
             workflowPartInstanceModel.detach();
             buildContent(true);
             this.add(content);
-            target.add(this);
+            if (target != null) {
+                target.add(this);
+            }
         }
         else {
             this.messageLabel.setDefaultModelObject("Der nächste Spielausschnitt konnte nicht gestartet werden. Entweder hat ein Mitspieler bereits ein Element ausgewählt oder es ist ein Fehler aufgetreten. Bitte probieren Sie es erneut oder aktualisieren Sie die Seite.");
             this.messageLabel.setVisible(true);
-            target.add(this.messageLabel);
+            if (target != null) {
+                target.add(this.messageLabel);
+            }
         }
     }
 }
