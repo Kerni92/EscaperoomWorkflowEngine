@@ -1,10 +1,10 @@
 package de.kernebeck.escaperoom.escaperoomgame.webapp.pages;
 
-import com.googlecode.wicket.jquery.core.resource.StyleSheetPackageHeaderItem;
 import de.kernebeck.escaperoom.escaperoomgame.webapp.dialog.CreateGameDialog;
+import de.kernebeck.escaperoom.escaperoomgame.webapp.dialog.JoinOrContinueGameDialog;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
-import org.apache.wicket.markup.head.IHeaderResponse;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.ResourceModel;
@@ -15,7 +15,7 @@ public class HomePage extends WebPage {
         super();
     }
 
-    private CreateGameDialog dialog;
+    private WebMarkupContainer dialog;
 
     @Override
     protected void onInitialize() {
@@ -24,23 +24,53 @@ public class HomePage extends WebPage {
         final Form<Void> form = new Form<>("form");
         add(form);
 
-        dialog = new CreateGameDialog("dialog", new ResourceModel("homepage.dialog.title", "homepage.dialog.title"));
+        dialog = new WebMarkupContainer("dialog");
+        dialog.setVisible(false);
+        dialog.setOutputMarkupId(true);
+        dialog.setOutputMarkupPlaceholderTag(true);
+        final WebMarkupContainer dialogContent = new WebMarkupContainer("dialogContent");
+        dialogContent.setOutputMarkupId(true);
+        dialog.add(dialogContent);
+        add(dialog);
+
+
         form.add(new AjaxButton("newGameButton", new ResourceModel("homepage.button.createnewgame", "homepage.button.createnewgame")) {
             @Override
             protected void onSubmit(AjaxRequestTarget target) {
-                super.onSubmit(target);
-                HomePage.this.dialog.open(target);
+                final CreateGameDialog createGameDialog = new CreateGameDialog("dialogContent", new ResourceModel("homepage.button.createnewgame", "homepage.button.createnewgame")) {
+                    @Override
+                    public void closeDialog(AjaxRequestTarget target) {
+                        HomePage.this.hideDialog(target);
+                    }
+                };
+                createGameDialog.setOutputMarkupId(true);
+                dialog.replace(createGameDialog);
+                dialog.setVisible(true);
+                target.add(dialog);
             }
         });
-        dialog.setOutputMarkupId(true);
-        add(dialog);
+
+        form.add(new AjaxButton("joinOrContinueGame", new ResourceModel("homepage.button.joinorcontinuegame", "homepage.button.joinorcontinuegame")) {
+            @Override
+            protected void onSubmit(AjaxRequestTarget target) {
+                final JoinOrContinueGameDialog joinOrContinueGameDialog = new JoinOrContinueGameDialog("dialogContent", new ResourceModel("homepage.button.continueorjoingame", "homepage.button.continueorjoingame")) {
+                    @Override
+                    public void closeDialog(AjaxRequestTarget target) {
+                        HomePage.this.hideDialog(target);
+                    }
+                };
+                joinOrContinueGameDialog.setOutputMarkupId(true);
+                dialog.replace(joinOrContinueGameDialog);
+                dialog.setVisible(true);
+                target.add(dialog);
+            }
+        });
     }
 
-    @Override
-    public void renderHead(IHeaderResponse response) {
-        super.renderHead(response);
-
-        response.render(new StyleSheetPackageHeaderItem(HomePage.class));
+    private void hideDialog(AjaxRequestTarget target) {
+        dialog.replace(new WebMarkupContainer("dialogContent"));
+        dialog.setVisible(false);
+        target.add(dialog);
     }
 
 

@@ -29,8 +29,6 @@ dependencies {
     implementation("org.apache.wicket:wicket-native-websocket-javax:9.4.0")
     implementation("org.apache.wicket:wicket-bean-validation:9.4.0")
     implementation("org.apache.wicket:wicket-extensions:9.4.0")
-    implementation("com.googlecode.wicket-jquery-ui:wicket-jquery-ui:9.3.2")
-    implementation("com.googlecode.wicket-jquery-ui:wicket-jquery-ui-theme-uilightness:9.3.2")
 
 
     developmentOnly("org.apache.wicket:wicket-devutils:9.4.0")

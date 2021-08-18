@@ -56,7 +56,7 @@ public class EscaperoomGameWicketApplication extends WebApplication {
             }
         });
 
-        this.getComponentInstantiationListeners().add(new SpringComponentInjector(this, applicationContext));
+        this.getComponentInstantiationListeners().add(new SpringComponentInjector(this, applicationContext, true));
 
         this.mountPage("/game", GamePage.class);
 

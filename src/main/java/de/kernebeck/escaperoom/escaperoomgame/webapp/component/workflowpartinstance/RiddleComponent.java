@@ -10,7 +10,6 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.GenericPanel;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
@@ -21,7 +20,7 @@ public class RiddleComponent extends GenericPanel<RiddleInstance> {
 
     private String solution = "";
     private Boolean isResolved;
-    private String labelMessage = "";
+    private String labelMessage = "Noch kein Lösungsversuch gestartet";
 
     private IModel<Long> gameIdModel;
 
@@ -56,10 +55,10 @@ public class RiddleComponent extends GenericPanel<RiddleInstance> {
                 if (result) {
                     solutionInput.setEnabled(false);
                     setEnabled(false);
-                    labelMessage = "resolved";
+                    labelMessage = "Die eingegebene Lösung ist richtig.";
                 }
                 else {
-                    labelMessage = "not resolved";
+                    labelMessage = "Die eingegebene Lösung ist leider falsch.";
                 }
                 target.add(riddleForm);
                 target.add(messageLabel);
@@ -67,7 +66,6 @@ public class RiddleComponent extends GenericPanel<RiddleInstance> {
         };
         submitLink.setEnabled(!isResolved);
         submitLink.setOutputMarkupId(true);
-        submitLink.setBody(Model.of("Rätsel lösen"));
         riddleForm.add(submitLink);
 
         add(riddleForm);

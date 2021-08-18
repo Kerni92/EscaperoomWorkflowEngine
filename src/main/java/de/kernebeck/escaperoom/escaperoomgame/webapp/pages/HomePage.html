@@ -2,17 +2,39 @@
 <html lang="en" xmlns:wicket="http://wicket.apache.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
     <title>Title</title>
 </head>
 <body>
 <div class="content">
-    <div wicket:id="dialog"></div>
+    <div wicket:id="dialog" class="w3-modal" style="display: block">
+        <div wicket:id="dialogContent"></div>
+    </div>
+    <header class="w3-container w3-teal">
+        <h2>Escaperoomsgame Online spielen</h2>
+    </header>
     <form wicket:id="form">
-        <div class="header">
-            <!-- add menu-->
+        <div class="w3-container">
+            <div class="w3-panel">
+                <p class="w3-align-left">
+                    Willkommen beim Onlineescaperoom.
+                </p>
+                <p class="w3-align-left">
+                    Auf dieser Seite können Sie Onlineescaperooms zusammen mit Ihren Freunden lösen und gemeinsam aus
+                    verschiedenen Szenarien entkommen.
+                </p>
+                <p> Wir wünschen Ihnen viel Spass.</p>
+            </div>
+            <div class="w3-panel">
+                <button wicket:id="newGameButton" class="w3-left w3-button w3-teal w3-margin">Neues Spiel starten
+                </button>
+                <button wicket:id="joinOrContinueGame" class="w3-left w3-button w3-teal w3-margin">Spiel beitreten oder
+                    Fortsetzen
+                </button>
+            </div>
         </div>
         <div class="body">
-            <button wicket:id="newGameButton"></button>
         </div>
     </form>
 </div>

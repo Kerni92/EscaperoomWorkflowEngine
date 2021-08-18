@@ -6,15 +6,37 @@
 </head>
 <body>
 <wicket:panel>
-    <div class="ui-dialog-content">
-        <div wicket:id="feedbackPanel"></div>
+    <div class="w3-modal-content">
         <form wicket:id="dialogForm">
-            <p><span wicket:id="description"></span></p>
-            <label wicket:id="lblGameSelection"></label><select wicket:id="gameSelection"></select>
-            <label wicket:id="lblPlayer1"></label><input wicket:id="player1" type="text"/>
-            <label wicket:id="lblPlayer2"></label><input wicket:id="player2" type="text"/>
-            <label wicket:id="lblPlayer3"></label><input wicket:id="player3" type="text"/>
-            <label wicket:id="lblPlayer4"></label><input wicket:id="player4" type="text"/>
+
+            <header class="w3-container w3-teal">
+                <input type="button" wicket:id="closeDialogX" class="w3-button w3-display-topright" value="&times;"/>
+                <h2>Neues Spiel starten</h2>
+            </header>
+
+            <div class="w3-panel w3-red w3-border w3-round w3-center w3-rightbar w3-leftbar" wicket:id="feedbackPanel">
+                <span wicket:id="messageLabel" style="text-align: left;"></span>
+            </div>
+
+            <div class="w3-panel w3-light-grey w3-border w3-round w3-center w3-margin">
+                <span wicket:id="description"></span>
+            </div>
+
+            <label class="w3-text-grey w3-margin">Escaperoom auswählen:</label>
+            <select wicket:id="gameSelection" class="w3-select w3-border w3-margin" style="width: 96%;"></select>
+            <label class="w3-text-grey w3-margin">Spieler 1:</label>
+            <input type="text" wicket:id="player1" class="w3-input w3-border w3-margin" style="width: 96%;"/>
+            <label class="w3-text-grey w3-margin">Spieler 2:</label>
+            <input type="text" wicket:id="player2" class="w3-input w3-border w3-margin" style="width: 96%;"/>
+            <label class="w3-text-grey w3-margin">Spieler 3:</label>
+            <input type="text" wicket:id="player3" class="w3-input w3-border w3-margin" style="width: 96%;"/>
+            <label class="w3-text-grey w3-margin">Spieler 4:</label>
+            <input type="text" wicket:id="player4" class="w3-input w3-border w3-margin" style="width: 96%;"/>
+
+            <input type="button" wicket:id="closeDialog" class="w3-button w3-light-grey left w3-margin"
+                   value="Abbrechen"/>
+            <input type="submit" wicket:id="startGame" class="w3-button w3-teal w3-right w3-margin"
+                   value="Spiel starten"/>
         </form>
     </div>
 </wicket:panel>

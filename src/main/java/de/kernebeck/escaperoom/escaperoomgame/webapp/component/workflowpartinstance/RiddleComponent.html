@@ -6,12 +6,22 @@
 </head>
 <body>
 <wicket:panel>
-    <div class="riddleContent" style="float: left; border-bottom: black 1px solid; width: 400px">
-        <span wicket:id="messageLabel"></span><br/>
-        <span wicket:id="riddleDescription"></span><br/>
+    <div class="w3-card-2 w3-left" style="padding: 5px; margin: 10px; width: 600px">
+        <div class="w3-panel w3-light-grey w3-border w3-round w3-center w3-rightbar w3-leftbar">
+            <span wicket:id="messageLabel" class="w3-left-align"></span>
+        </div>
+
+        <div class="w3-panel w3-light-grey w3-border w3-round w3-center">
+            <span wicket:id="riddleDescription" class="w3-left-align"></span>
+        </div>
+
         <form wicket:id="riddleForm">
-            <input type="text" wicket:id="solutionInput"/><br/>
-            <input type="button" wicket:id="checkRiddleButton"/>
+            <div class="w3-container">
+                <label class="w3-text-grey">Lösung</label>
+                <input type="text" wicket:id="solutionInput" class="w3-input w3-border"/>
+                <input type="button" wicket:id="checkRiddleButton" class="w3-button w3-green w3-right"
+                       style="margin: 10px 0 5px 0;" value="Lösung überprüfen"/>
+            </div>
         </form>
     </div>
 </wicket:panel>

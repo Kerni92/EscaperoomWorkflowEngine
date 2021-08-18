@@ -96,6 +96,7 @@ public class GameExecutionServiceBean implements GameExecutionService {
         //save game values
         final long elapsedGameTime = time.getTime() - game.getLastStartTime().getTime();
         game.setTotalTime(game.getTotalTime() == null ? elapsedGameTime : game.getTotalTime() + elapsedGameTime);
+        game.setLastStartTime(null);
         game.setFinished(finished);
         gameService.save(game);
 
@@ -103,6 +104,7 @@ public class GameExecutionServiceBean implements GameExecutionService {
         final long elapsedWorkflowPartTime = time.getTime() - activeWorkflowPartInstance.getLastStartTime().getTime();
         activeWorkflowPartInstance.setTotalTime(activeWorkflowPartInstance.getTotalTime() == null ? elapsedGameTime : activeWorkflowPartInstance.getTotalTime() + elapsedWorkflowPartTime);
         activeWorkflowPartInstance.setEndTime(time);
+        activeWorkflowPartInstance.setLastStartTime(null);
         workflowPartInstanceService.save(activeWorkflowPartInstance);
     }
 

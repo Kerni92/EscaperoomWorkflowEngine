@@ -42,7 +42,7 @@ public class GameServiceBean implements GameService {
     public Game createGame(Long workflowId, List<String> usernames) {
         final Optional<Workflow> wf = workflowService.findById(workflowId);
         if (wf.isPresent()) {
-            Game game = new Game(UUID.randomUUID().toString(), null, null, Boolean.FALSE, null, wf.get());
+            Game game = new Game(UUID.randomUUID().toString(), null, null, null, Boolean.FALSE, null, wf.get());
             game.setUsernames(usernames);
             game.setExecutedWorkflowParts(Collections.emptyList());
 
