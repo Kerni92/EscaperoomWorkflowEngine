@@ -137,7 +137,7 @@ public class GamePage extends WebPage {
                 if (workflowPartFinishedModel.getObject()) {
                     final ValidWorkflowTransitionListModel model = new ValidWorkflowTransitionListModel(workflowPartInstanceModel.getObject().getId());
                     if (model.getObject().size() > 1) {
-                        contentComponent = new SelectWorkflowTransitionComponent(CONTENTCOMPONENT_ID, model) {
+                        contentComponent = new SelectWorkflowTransitionComponent(CONTENTCOMPONENT_ID, Model.of("Placeholder"), model) {
 
                             @Override
                             public void onSubmit(AjaxRequestTarget target, WorkflowTransition transition) {
