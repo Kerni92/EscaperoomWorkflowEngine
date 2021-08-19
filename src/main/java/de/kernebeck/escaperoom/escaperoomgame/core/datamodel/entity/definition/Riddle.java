@@ -4,6 +4,7 @@ import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.BasicEntity;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "riddle")
@@ -86,5 +87,18 @@ public class Riddle extends BasicEntity {
 
     public void setSolutions(List<Solution> solutions) {
         this.solutions = solutions;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Riddle riddle = (Riddle) o;
+        return sortIndex == riddle.sortIndex && Objects.equals(name, riddle.name) && Objects.equals(content, riddle.content) && Objects.equals(solutions, riddle.solutions) && Objects.equals(workflowPart, riddle.workflowPart) && Objects.equals(hints, riddle.hints);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, sortIndex, content, solutions, workflowPart, hints);
     }
 }

@@ -24,14 +24,7 @@ public class HomePage extends WebPage {
         final Form<Void> form = new Form<>("form");
         add(form);
 
-        dialog = new WebMarkupContainer("dialog");
-        dialog.setVisible(false);
-        dialog.setOutputMarkupId(true);
-        dialog.setOutputMarkupPlaceholderTag(true);
-        final WebMarkupContainer dialogContent = new WebMarkupContainer("dialogContent");
-        dialogContent.setOutputMarkupId(true);
-        dialog.add(dialogContent);
-        add(dialog);
+        initDialog();
 
 
         form.add(new AjaxButton("newGameButton", new ResourceModel("homepage.button.createnewgame", "homepage.button.createnewgame")) {
@@ -65,6 +58,17 @@ public class HomePage extends WebPage {
                 target.add(dialog);
             }
         });
+    }
+
+    private void initDialog() {
+        dialog = new WebMarkupContainer("dialog");
+        dialog.setVisible(false);
+        dialog.setOutputMarkupId(true);
+        dialog.setOutputMarkupPlaceholderTag(true);
+        final WebMarkupContainer dialogContent = new WebMarkupContainer("dialogContent");
+        dialogContent.setOutputMarkupId(true);
+        dialog.add(dialogContent);
+        add(dialog);
     }
 
     private void hideDialog(AjaxRequestTarget target) {

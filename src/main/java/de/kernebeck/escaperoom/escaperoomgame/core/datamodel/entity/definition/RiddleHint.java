@@ -3,6 +3,7 @@ package de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.definition;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.BasicEntity;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 @Table(name = "riddlehint")
@@ -64,5 +65,18 @@ public class RiddleHint extends BasicEntity {
 
     public void setRiddle(Riddle riddle) {
         this.riddle = riddle;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        RiddleHint that = (RiddleHint) o;
+        return Objects.equals(name, that.name) && Objects.equals(content, that.content) && Objects.equals(sortIndex, that.sortIndex) && Objects.equals(riddle, that.riddle);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, content, sortIndex, riddle);
     }
 }

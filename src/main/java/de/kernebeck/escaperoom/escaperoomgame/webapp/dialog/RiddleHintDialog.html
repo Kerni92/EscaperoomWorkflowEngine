@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:wicket="http://wicket.apache.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<wicket:panel>
+    <div class="w3-modal-content">
+        <form wicket:id="dialogForm">
+
+            <header class="w3-container w3-teal">
+                <input type="button" wicket:id="closeDialogX" class="w3-button w3-display-topright" value="&times;"/>
+                <h2>Rätselhinweise</h2>
+            </header>
+
+            <div class="w3-container">
+                <div class="w3-panel w3-red w3-border w3-round w3-center w3-rightbar w3-leftbar"
+                     wicket:id="feedbackPanel">
+                    <span wicket:id="messageLabel" style="text-align: left;"></span>
+                </div>
+
+                <div wicket:id="riddleHints"></div>
+
+                <div class="w3-container">
+                    <input type="button" wicket:id="closeDialog" class="w3-button w3-light-grey left w3-margin"
+                           value="Schließen"/>
+                    <input type="submit" wicket:id="showNextHint" class="w3-button w3-teal w3-right w3-margin"
+                           value="Nächsten Hinweis anzeigen"/>
+                </div>
+            </div>
+        </form>
+    </div>
+</wicket:panel>
+</body>
+</html>

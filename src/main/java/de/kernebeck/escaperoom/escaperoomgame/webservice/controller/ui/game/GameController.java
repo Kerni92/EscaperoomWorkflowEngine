@@ -138,7 +138,7 @@ public class GameController {
             ResponseEntity.badRequest().body(new ErrorResource("Es wurde kein aktives Spiel für die ID " + gameId + " gefunden."));
         }
 
-        gameExecutionService.startGame(game);
+        gameExecutionService.continueGame(game);
 
         return ResponseEntity.ok("");
     }

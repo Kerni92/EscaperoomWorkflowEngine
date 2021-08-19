@@ -92,8 +92,10 @@ public class EscaperoomGameImportServiceBean implements EscaperoomGameImportServ
 
                         //create riddle hints if existing
                         if (riddleDTO.getHints() != null && !riddleDTO.getHints().isEmpty()) {
-                            final RiddleHint riddleHint = new RiddleHint(riddleDTO.getName(), riddleDTO.getContent(), riddleDTO.getSortIndex(), riddle);
-                            riddleHintRepository.save(riddleHint);
+                            for (final RiddleHintDTO riddleHintDTO : riddleDTO.getHints()) {
+                                final RiddleHint riddleHint = new RiddleHint(riddleHintDTO.getName(), riddleHintDTO.getContent(), riddleHintDTO.getSortIndex(), riddle);
+                                riddleHintRepository.save(riddleHint);
+                            }
                         }
 
                         //create solutions

@@ -10,8 +10,21 @@
 <div class="message">
     <span wicket:id="message"></span>
 </div>
-<div wicket:id="content" class="content">
-    <div wicket:id="contentComponent">
+<div wicket:id="dialog" class="w3-modal" style="display: block">
+    <div wicket:id="dialogContent"></div>
+</div>
+<div wicket:id="content">
+    <header class="w3-container w3-teal">
+        <h2 class="w3-left w3-margin-right"><span wicket:id="workflowName"></span></h2>
+        <div class="w3-panel w3-right">
+            <h4 class="w3-left">Spieler:</h4>
+            <ul class="w3-left w3-ul w3-padding">
+                <li wicket:id="playerNames" class="w3-left w3-margin-right"></li>
+            </ul>
+        </div>
+    </header>
+
+    <div wicket:id="contentComponent" class="w3-container">
 
     </div>
 </div>

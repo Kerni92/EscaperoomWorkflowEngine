@@ -112,5 +112,4 @@ public class Solution extends BasicEntity {
     public void setRiddle(Riddle riddle) {
         this.riddle = riddle;
     }
-
 }

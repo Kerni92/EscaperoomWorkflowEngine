@@ -1,5 +1,6 @@
 package de.kernebeck.escaperoom.escaperoomgame.core.service.execution.impl;
 
+import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.definition.RiddleHint;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.definition.WorkflowTransition;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.execution.Game;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.execution.RiddleInstance;
@@ -54,6 +55,17 @@ public class GameExecutionServiceBean implements GameExecutionService {
         try {
             gameLockingService.lockGame(gameId);
             return riddleExecutionService.checkSolution(riddleInstance, solution);
+        }
+        finally {
+            gameLockingService.unlockGame(gameId);
+        }
+    }
+
+    @Override
+    public RiddleHint getNextRiddleHintForRiddleInstance(Long gameId, RiddleInstance riddleInstance) {
+        try {
+            gameLockingService.lockGame(gameId);
+            return riddleExecutionService.getNextRiddleHint(riddleInstance);
         }
         finally {
             gameLockingService.unlockGame(gameId);

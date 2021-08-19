@@ -24,10 +24,10 @@ public class RiddleInstance extends BasicEntity {
 
     @ManyToMany
     @JoinTable(name = "riddleinstance_riddlehint",
-            joinColumns = @JoinColumn(name = "fk_riddlehint", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "fk_riddleinstance", referencedColumnName = "id")
+            joinColumns = @JoinColumn(name = "fk_riddleinstance"),
+            inverseJoinColumns = @JoinColumn(name = "fk_riddlehint")
     )
-    private List<RiddleHint> usedHints;
+    private List<RiddleHint> usedHints = new ArrayList<>();
 
     @ManyToOne(targetEntity = WorkflowPartInstance.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "fk_workflowpartinstance")
