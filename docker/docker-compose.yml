@@ -8,6 +8,7 @@ services:
     container_name: escaperoomgame-mariadb
     environment:
       - MYSQL_ROOT_PASSWORD=escaperoomdb
+      - TZ=Europe/Berlin
     volumes:
       - C:\Users\dkern\Softwareprojekte\Docker\db\escaperoomgame:/var/lib/mariadb
     ports:

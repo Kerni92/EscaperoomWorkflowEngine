@@ -177,6 +177,7 @@ public class GameExecutionServiceBean implements GameExecutionService {
         final long elapsedGameTime = time.getTime() - game.getLastStartTime().getTime();
         game.setTotalTime(game.getTotalTime() == null ? elapsedGameTime : game.getTotalTime() + elapsedGameTime);
         game.setLastStartTime(null);
+        game.setEndTime(time);
         game.setFinished(finished);
         gameService.save(game);
 

@@ -5,16 +5,23 @@ import java.util.List;
 
 public class WorkflowPartResultDTO implements Serializable {
 
+    private Long id;
+
     private String name;
 
     private long elapsedTimeInMinutes;
 
     private List<RiddleResultDTO> riddleInformations;
 
-    public WorkflowPartResultDTO(String name, long elapsedTimeInMinutes, List<RiddleResultDTO> riddleInformations) {
+    public WorkflowPartResultDTO(Long id, String name, long elapsedTimeInMinutes, List<RiddleResultDTO> riddleInformations) {
+        this.id = id;
         this.name = name;
         this.elapsedTimeInMinutes = elapsedTimeInMinutes;
         this.riddleInformations = riddleInformations;
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public String getName() {

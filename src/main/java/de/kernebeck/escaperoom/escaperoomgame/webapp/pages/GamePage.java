@@ -105,10 +105,13 @@ public class GamePage extends WebPage {
 
         //add header to content container
         final String gameName = gameModel != null && gameModel.getObject() != null ? gameModel.getObject().getWorkflow().getName() : "Kein Spiel ausgewählt";
+        final String gameId = gameModel != null && gameModel.getObject() != null ? gameModel.getObject().getGameId() : "";
         final List<String> playerNames = gameModel != null && gameModel.getObject() != null ? gameModel.getObject().getUsernames() : Collections.emptyList();
 
         final Label workflowName = new Label("workflowName", Model.of(gameName));
+        final Label gameIdLabel = new Label("gameId", Model.of(gameId));
         content.add(workflowName);
+        content.add(gameIdLabel);
         final RepeatingView playerNamesList = new RepeatingView("playerNames");
         for (final String player : playerNames) {
             playerNamesList.add(new Label(playerNamesList.newChildId(), Model.of(player)));

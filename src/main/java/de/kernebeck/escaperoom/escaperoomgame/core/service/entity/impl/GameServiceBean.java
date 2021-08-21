@@ -9,10 +9,9 @@ import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.execution.Ri
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.execution.WorkflowPartInstance;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.repository.execution.GameRepository;
 import de.kernebeck.escaperoom.escaperoomgame.core.service.entity.GameService;
-import de.kernebeck.escaperoom.escaperoomgame.core.service.entity.RiddleInstanceService;
+import de.kernebeck.escaperoom.escaperoomgame.core.service.entity.RiddleHintService;
 import de.kernebeck.escaperoom.escaperoomgame.core.service.entity.WorkflowPartInstanceService;
 import de.kernebeck.escaperoom.escaperoomgame.core.service.entity.WorkflowService;
-import de.kernebeck.escaperoom.escaperoomgame.core.service.execution.WorkflowExecutionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -33,10 +32,8 @@ public class GameServiceBean implements GameService {
     private WorkflowPartInstanceService workflowPartInstanceService;
 
     @Autowired
-    private WorkflowExecutionService workflowExecutionService;
+    private RiddleHintService riddleHintService;
 
-    @Autowired
-    private RiddleInstanceService riddleInstanceService;
 
     @Override
     public Game createGame(Long workflowId, List<String> usernames) {
@@ -66,10 +63,10 @@ public class GameServiceBean implements GameService {
             for (final WorkflowPartInstance wpi : game.getExecutedWorkflowParts()) {
                 final List<RiddleResultDTO> riddleResultDTOS = new ArrayList<>();
                 for (final RiddleInstance ri : wpi.getRiddleInstanceList()) {
-                    riddleResultDTOS.add(new RiddleResultDTO(ri.getRiddle().getName(), ri.getRiddle().getSortIndex(), ri.getAttempts()));
+                    riddleResultDTOS.add(new RiddleResultDTO(ri.getRiddle().getName(), ri.getRiddle().getSortIndex(), ri.getAttempts(), riddleHintService.findUsedRiddleHintsForRiddleInstance(ri).size()));
                 }
                 final long elapsedTimeInMinutesForWorkflowPartInstance = wpi.getTotalTime() / (1000 * 60); //1000ms = 1sek * 60 sek pro minute
-                workflowPartResultDTOS.add(new WorkflowPartResultDTO(wpi.getWorkflowPart().getName(), elapsedTimeInMinutesForWorkflowPartInstance, riddleResultDTOS));
+                workflowPartResultDTOS.add(new WorkflowPartResultDTO(wpi.getId(), wpi.getWorkflowPart().getName(), elapsedTimeInMinutesForWorkflowPartInstance, riddleResultDTOS));
             }
 
             final long elapsedTimeForGameInMinutes = game.getTotalTime() / (1000 * 60);

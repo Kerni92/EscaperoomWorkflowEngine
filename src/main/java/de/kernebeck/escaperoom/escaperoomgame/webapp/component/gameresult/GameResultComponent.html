@@ -6,9 +6,30 @@
 </head>
 <body>
 <wicket:panel>
-    <div class="w3-container">
+    <div class="w3-container" wicket:id="content">
 
-        <span wicket:id="placeholder"></span>
+        <div class="w3-panel w3-light-grey w3-border w3-round w3-center w3-margin w3-padding">
+            <h3>Herzlichen Glückwunsch</h3>
+            <span wicket:id="gratulation"></span>
+        </div>
+
+        <div class="w3-panel w3-light-grey w3-border w3-round w3-center w3-margin w3-padding">
+            <span wicket:id="startTime"></span><br/><br/>
+            <span wicket:id="endTime"></span><br/><br/>
+            <span wicket:id="timeInMinutes"></span>
+        </div>
+
+
+        <ul class="w3-ul">
+            <li wicket:id="workflowPartInformations" style="border: none"></li>
+        </ul>
+
+        <div class="w3-container">
+            <form wicket:id="backToHomeForm">
+                <input type="button" wicket:id="backToHomeButton" class="w3-button w3-teal w3-right w3-margin"
+                       value="Zur Startseite"/>
+            </form>
+        </div>
     </div>
 </wicket:panel>
 </body>

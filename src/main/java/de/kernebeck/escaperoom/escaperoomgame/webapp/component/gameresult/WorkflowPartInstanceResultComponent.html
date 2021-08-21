@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:wicket="http://wicket.apache.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<wicket:panel>
+    <div class="w3-container w3-margin w3-padding w3-border" wicket:id="content">
+        <div class="w3-panel w3-left" style="width: 100%">
+            <h3 class="w3-center" wicket:id="partName"></h3>
+            <p wicket:id="neededTime"></p>
+        </div>
+        <table class="w3-table w3-bordered w3-bordered w3-left w3-margin-bottom">
+            <thead>
+            <tr>
+                <th>Rätselname</th>
+                <th>Anzahl Lösungsversuche</th>
+                <th>Anzahl benötigter Hinweise</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr wicket:id="riddles">
+                <td><span wicket:id="riddleName"></span></td>
+                <td><span wicket:id="attempts"></span></td>
+                <td><span wicket:id="usedHints"></span></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</wicket:panel>
+</body>
+</html>

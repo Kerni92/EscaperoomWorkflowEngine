@@ -68,7 +68,7 @@ public abstract class JoinOrContinueGameDialog extends GenericPanel<String> {
                     return;
                 }
 
-                if (game.getLastStartTime() == null) { //if game is stoppend -> continue
+                if (game.getLastStartTime() == null && !game.isFinished()) { //if game is stoppend -> continue
                     gameExecutionService.continueGame(game);
                 }
 
