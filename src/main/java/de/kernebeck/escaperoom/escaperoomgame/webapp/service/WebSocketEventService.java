@@ -1,7 +1,7 @@
 package de.kernebeck.escaperoom.escaperoomgame.webapp.service;
 
 import com.google.common.eventbus.Subscribe;
-import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.event.RiddleSolvedEvent;
+import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.event.UpdateUIEvent;
 import org.apache.wicket.Application;
 import org.apache.wicket.protocol.ws.api.IWebSocketConnection;
 import org.apache.wicket.protocol.ws.api.message.ClosedMessage;
@@ -42,7 +42,7 @@ public class WebSocketEventService {
     }
 
     @Subscribe
-    public void handleRiddleSolvedEvent(RiddleSolvedEvent event) {
+    public void handleRiddleSolvedEvent(UpdateUIEvent event) {
         sendEvent(event.getGameId(), event);
     }
 

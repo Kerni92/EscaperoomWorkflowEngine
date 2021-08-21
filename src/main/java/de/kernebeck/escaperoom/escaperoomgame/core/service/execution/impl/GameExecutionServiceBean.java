@@ -1,10 +1,13 @@
 package de.kernebeck.escaperoom.escaperoomgame.core.service.execution.impl;
 
+import com.google.common.eventbus.EventBus;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.definition.RiddleHint;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.definition.WorkflowTransition;
+import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.definition.enumeration.WorkflowPartType;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.execution.Game;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.execution.RiddleInstance;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.execution.WorkflowPartInstance;
+import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.event.UpdateUIEvent;
 import de.kernebeck.escaperoom.escaperoomgame.core.service.entity.GameService;
 import de.kernebeck.escaperoom.escaperoomgame.core.service.entity.WorkflowPartInstanceService;
 import de.kernebeck.escaperoom.escaperoomgame.core.service.execution.GameExecutionService;
@@ -34,12 +37,19 @@ public class GameExecutionServiceBean implements GameExecutionService {
     @Autowired
     private RiddleExecutionService riddleExecutionService;
 
+    @Autowired
+    private EventBus eventBus;
+
     @Override
     public boolean executeWorkflowTransition(Game game, WorkflowTransition workflowTransition) {
         try {
             gameLockingService.lockGame(game.getId());
             final WorkflowPartInstance workflowPartInstance = workflowExecutionService.executeWorkflowTransition(game, workflowTransition);
             if (workflowPartInstance != null) {
+                if (workflowPartInstance.getWorkflowPart().getPartType() == WorkflowPartType.ENDPART) {
+                    pauseOrFinishGameInternal(game, Boolean.TRUE);
+                }
+
                 return true;
             }
         }
@@ -51,10 +61,36 @@ public class GameExecutionServiceBean implements GameExecutionService {
     }
 
     @Override
+    public boolean isActiveWorkflowPartInstanceFinished(Long gameId) {
+        final Game game = gameService.load(gameId);
+        if (game != null) {
+            if (game.getActiveWorkflowPartInstance() != null) {
+                return game.getActiveWorkflowPartInstance().getRiddleInstanceList().isEmpty() || game.getActiveWorkflowPartInstance().getRiddleInstanceList().stream().noneMatch(r -> r == null || !r.isResolved());
+            }
+        }
+        return false;
+    }
+
+    @Override
     public boolean checkRiddleSolution(Long gameId, RiddleInstance riddleInstance, String solution) {
         try {
             gameLockingService.lockGame(gameId);
-            return riddleExecutionService.checkSolution(riddleInstance, solution);
+            boolean result = riddleExecutionService.checkSolution(riddleInstance, solution);
+            if (result) {
+                final Game game = gameService.load(gameId);
+                if (game != null) {
+                    //if this riddle is the last riddle to be solved, we can execute automatically the workflowtransition to go to the next
+                    if (isActiveWorkflowPartInstanceFinished(game.getId())) {
+                        final WorkflowTransition nextWorkflowTransition = game.getActiveWorkflowPartInstance().getWorkflowPart().getOutgoingTransitions().iterator().next();
+                        executeWorkflowTransition(game, nextWorkflowTransition);
+                    }
+
+                    //inform ui that riddle is solved and that the content of page has to be rerendered
+                    eventBus.post(new UpdateUIEvent(game.getGameId(), riddleInstance.getRiddle().getId()));
+                }
+
+            }
+            return result;
         }
         finally {
             gameLockingService.unlockGame(gameId);
@@ -74,32 +110,64 @@ public class GameExecutionServiceBean implements GameExecutionService {
 
     @Override
     public void startGame(Game game) {
-        final Timestamp time = new Timestamp(System.currentTimeMillis());
-        game.setStarttime(time);
-        game.setLastStartTime(time);
-        game.getActiveWorkflowPartInstance().setStartTime(time);
-        game.getActiveWorkflowPartInstance().setLastStartTime(time);
-        gameService.save(game);
+        if (game != null) {
+            try {
+                gameLockingService.lockGame(game.getId());
+                final Timestamp time = new Timestamp(System.currentTimeMillis());
+                game.setStarttime(time);
+                game.setLastStartTime(time);
+                game.getActiveWorkflowPartInstance().setStartTime(time);
+                game.getActiveWorkflowPartInstance().setLastStartTime(time);
+                gameService.save(game);
+            }
+            finally {
+                gameLockingService.unlockGame(game.getId());
+            }
+        }
     }
 
     @Override
     public void pauseGame(Game game) {
-        pauseOrFinishGameInternal(game, Boolean.FALSE);
+        if (game != null) {
+            try {
+                gameLockingService.lockGame(game.getId());
+                pauseOrFinishGameInternal(game, Boolean.FALSE);
+            }
+            finally {
+                gameLockingService.unlockGame(game.getId());
+            }
+        }
     }
 
     @Override
     public void continueGame(Game game) {
-        final Timestamp time = new Timestamp(System.currentTimeMillis());
-        game.setLastStartTime(time);
-        gameService.save(game);
+        if (game != null) {
+            try {
+                gameLockingService.lockGame(game.getId());
+                final Timestamp time = new Timestamp(System.currentTimeMillis());
+                game.setLastStartTime(time);
+                gameService.save(game);
 
-        game.getActiveWorkflowPartInstance().setLastStartTime(time);
-        workflowPartInstanceService.save(game.getActiveWorkflowPartInstance());
+                game.getActiveWorkflowPartInstance().setLastStartTime(time);
+                workflowPartInstanceService.save(game.getActiveWorkflowPartInstance());
+            }
+            finally {
+                gameLockingService.unlockGame(game.getId());
+            }
+        }
     }
 
     @Override
     public void finishGame(Game game) {
-        pauseOrFinishGameInternal(game, Boolean.TRUE);
+        if (game != null) {
+            try {
+                gameLockingService.lockGame(game.getId());
+                pauseOrFinishGameInternal(game, Boolean.TRUE);
+            }
+            finally {
+                gameLockingService.unlockGame(game.getId());
+            }
+        }
     }
 
     private void pauseOrFinishGameInternal(Game game, Boolean finished) {

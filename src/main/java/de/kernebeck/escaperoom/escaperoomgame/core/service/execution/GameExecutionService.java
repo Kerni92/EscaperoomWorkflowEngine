@@ -9,6 +9,8 @@ public interface GameExecutionService {
 
     boolean executeWorkflowTransition(Game game, WorkflowTransition workflowTransition);
 
+    boolean isActiveWorkflowPartInstanceFinished(Long gameId);
+
     boolean checkRiddleSolution(Long gameId, RiddleInstance riddleInstance, String solution);
 
     RiddleHint getNextRiddleHintForRiddleInstance(Long gameId, RiddleInstance riddleInstance);

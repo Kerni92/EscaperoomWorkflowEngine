@@ -10,6 +10,6 @@ public class GameResultComponent extends GenericPanel<Game> {
     public GameResultComponent(String id, IModel<Game> model) {
         super(id, model);
 
-        add(new Label("placeholder", "blub"));
+        add(new Label("placeholder", "Game finished"));
     }
 }

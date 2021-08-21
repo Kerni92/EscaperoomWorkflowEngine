@@ -1,9 +1,10 @@
 package de.kernebeck.escaperoom.escaperoomgame.webapp.pages;
 
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.definition.WorkflowTransition;
+import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.definition.enumeration.WorkflowPartType;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.execution.Game;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.execution.WorkflowPartInstance;
-import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.event.RiddleSolvedEvent;
+import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.event.UpdateUIEvent;
 import de.kernebeck.escaperoom.escaperoomgame.core.service.execution.GameExecutionService;
 import de.kernebeck.escaperoom.escaperoomgame.webapp.component.gameresult.GameResultComponent;
 import de.kernebeck.escaperoom.escaperoomgame.webapp.component.workflowpartinstance.WorkflowPartInstanceComponent;
@@ -64,13 +65,14 @@ public class GamePage extends WebPage {
             gameModel = new GameModel(gameId);
         }
 
-        this.workflowPartFinishedModel = new WorkflowPartFinishedModel(gameId);
+        final Long technicalGameId = gameModel != null ? gameModel.getObject() != null ? gameModel.getObject().getId() : null : null;
+        this.workflowPartFinishedModel = new WorkflowPartFinishedModel(technicalGameId);
         this.workflowPartInstanceModel = new WorkflowPartInstanceModel(gameId);
 
         add(new WebSocketBehavior() {
             @Override
             protected void onPush(WebSocketRequestHandler handler, IWebSocketPushMessage message) {
-                if (message instanceof RiddleSolvedEvent) {
+                if (message instanceof UpdateUIEvent) {
                     workflowPartFinishedModel.detach();
                     workflowPartInstanceModel.detach();
                     buildContent(true);
@@ -130,35 +132,20 @@ public class GamePage extends WebPage {
             final Game game = gameModel.getObject();
             this.messageLabel.setVisible(false);
             Component contentComponent;
-            if (game.isFinished()) {
+            if (game.isFinished() || workflowPartInstanceModel.getObject().getWorkflowPart().getPartType() == WorkflowPartType.ENDPART) {
                 contentComponent = new GameResultComponent(CONTENTCOMPONENT_ID, gameModel);
             }
             else {
-                if (workflowPartFinishedModel.getObject()) {
+                if (workflowPartInstanceModel.getObject().getWorkflowPart().getPartType() == WorkflowPartType.DECISION) {
                     final ValidWorkflowTransitionListModel model = new ValidWorkflowTransitionListModel(workflowPartInstanceModel.getObject().getId());
-                    if (model.getObject().size() > 1) {
-                        contentComponent = new SelectWorkflowTransitionComponent(CONTENTCOMPONENT_ID, Model.of("Placeholder"), model) {
+                    contentComponent = new SelectWorkflowTransitionComponent(CONTENTCOMPONENT_ID, Model.of(workflowPartInstanceModel.getObject().getWorkflowPart().getDescription()), model) {
 
-                            @Override
-                            public void onSubmit(AjaxRequestTarget target, WorkflowTransition transition) {
-                                GamePage.this.submitWorkflowTransitionSelection(target, transition);
-                            }
+                        @Override
+                        public void onSubmit(AjaxRequestTarget target, WorkflowTransition transition) {
+                            GamePage.this.submitWorkflowTransitionSelection(target, transition);
+                        }
 
-                        };
-                    }
-                    else {
-                        GamePage.this.submitWorkflowTransitionSelection(null, model.getObject().get(0));
-                        contentComponent = new WorkflowPartInstanceComponent(CONTENTCOMPONENT_ID, workflowPartInstanceModel, workflowPartFinishedModel,
-                                (SerializableBiFunction<AjaxRequestTarget, WebMarkupContainer, String>) (target, components) -> {
-                                    GamePage.this.showDialog(dialog, target);
-                                    return null;
-                                },
-                                (SerializableFunction<AjaxRequestTarget, String>) target -> {
-                                    GamePage.this.hideDialog(target);
-                                    return null;
-                                }
-                        );
-                    }
+                    };
                 }
                 else {
                     contentComponent = new WorkflowPartInstanceComponent(CONTENTCOMPONENT_ID, workflowPartInstanceModel, workflowPartFinishedModel,
@@ -189,6 +176,7 @@ public class GamePage extends WebPage {
     }
 
     private void submitWorkflowTransitionSelection(AjaxRequestTarget target, WorkflowTransition transition) {
+        gameModel.detach(); //reload game always if to assure that the active workflowpartinstance is corretly loaded
         final boolean success = gameExecutionService.executeWorkflowTransition(gameModel.getObject(), transition);
         if (success) {
             gameModel.detach();

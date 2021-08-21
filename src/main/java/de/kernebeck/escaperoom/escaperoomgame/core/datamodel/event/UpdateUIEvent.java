@@ -5,7 +5,7 @@ import org.apache.wicket.protocol.ws.api.message.IWebSocketPushMessage;
 import java.io.Serializable;
 import java.util.Objects;
 
-public class RiddleSolvedEvent implements Serializable, IWebSocketPushMessage {
+public class UpdateUIEvent implements Serializable, IWebSocketPushMessage {
 
     private static final long serialVersionUID = 673667055344485724L;
 
@@ -13,7 +13,7 @@ public class RiddleSolvedEvent implements Serializable, IWebSocketPushMessage {
 
     private Long riddleId;
 
-    public RiddleSolvedEvent(String gameId, Long riddleId) {
+    public UpdateUIEvent(String gameId, Long riddleId) {
         this.gameId = gameId;
         this.riddleId = riddleId;
     }
@@ -30,7 +30,7 @@ public class RiddleSolvedEvent implements Serializable, IWebSocketPushMessage {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        RiddleSolvedEvent that = (RiddleSolvedEvent) o;
+        UpdateUIEvent that = (UpdateUIEvent) o;
         return Objects.equals(gameId, that.gameId) && Objects.equals(riddleId, that.riddleId);
     }
 

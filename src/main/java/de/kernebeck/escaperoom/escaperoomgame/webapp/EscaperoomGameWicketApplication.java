@@ -1,6 +1,7 @@
 package de.kernebeck.escaperoom.escaperoomgame.webapp;
 
 import com.google.common.eventbus.EventBus;
+import de.kernebeck.escaperoom.escaperoomgame.core.service.authorisation.UserService;
 import de.kernebeck.escaperoom.escaperoomgame.webapp.pages.GamePage;
 import de.kernebeck.escaperoom.escaperoomgame.webapp.pages.HomePage;
 import de.kernebeck.escaperoom.escaperoomgame.webapp.service.WebSocketEventService;
@@ -20,6 +21,9 @@ public class EscaperoomGameWicketApplication extends WebApplication {
 
     @Autowired
     private ApplicationContext applicationContext;
+
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private EventBus eventBus;
@@ -60,9 +64,14 @@ public class EscaperoomGameWicketApplication extends WebApplication {
 
         this.mountPage("/game", GamePage.class);
 
-
         eventBus.register(WebSocketEventService.getInstance());
+
+        //create and log default user if not existing
+        if (!userService.existsUser("admin")) {
+            userService.createUser("admin", "admin", "admin", "testpassword", true);
+        }
     }
+
 
     @Override
     public Class<? extends Page> getHomePage() {

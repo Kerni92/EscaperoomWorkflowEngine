@@ -2,6 +2,7 @@ package de.kernebeck.escaperoom.escaperoomgame.webapp.pages;
 
 import de.kernebeck.escaperoom.escaperoomgame.webapp.dialog.CreateGameDialog;
 import de.kernebeck.escaperoom.escaperoomgame.webapp.dialog.JoinOrContinueGameDialog;
+import de.kernebeck.escaperoom.escaperoomgame.webapp.dialog.UploadWorkflowDialog;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -54,6 +55,22 @@ public class HomePage extends WebPage {
                 };
                 joinOrContinueGameDialog.setOutputMarkupId(true);
                 dialog.replace(joinOrContinueGameDialog);
+                dialog.setVisible(true);
+                target.add(dialog);
+            }
+        });
+
+        form.add(new AjaxButton("uploadGame", new ResourceModel("homepage.button.uploadGame", "homepage.button.uploadGame")) {
+            @Override
+            protected void onSubmit(AjaxRequestTarget target) {
+                final UploadWorkflowDialog uploadWorkflowDialog = new UploadWorkflowDialog("dialogContent", new ResourceModel("homepage.button.uploadGame", "homepage.button.uploadGame")) {
+                    @Override
+                    public void closeDialog(AjaxRequestTarget target) {
+                        HomePage.this.hideDialog(target);
+                    }
+                };
+                uploadWorkflowDialog.setOutputMarkupId(true);
+                dialog.replace(uploadWorkflowDialog);
                 dialog.setVisible(true);
                 target.add(dialog);
             }

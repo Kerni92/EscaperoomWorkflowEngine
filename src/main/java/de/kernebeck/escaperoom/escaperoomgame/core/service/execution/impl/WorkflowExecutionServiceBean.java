@@ -1,6 +1,7 @@
 package de.kernebeck.escaperoom.escaperoomgame.core.service.execution.impl;
 
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.definition.WorkflowTransition;
+import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.definition.enumeration.WorkflowPartType;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.execution.Game;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.execution.WorkflowPartInstance;
 import de.kernebeck.escaperoom.escaperoomgame.core.service.entity.GameService;
@@ -10,6 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -48,10 +52,21 @@ public class WorkflowExecutionServiceBean implements WorkflowExecutionService {
             workflowPartInstanceService.save(activeWorkflowPart);
 
             //second create new one for next workflowpart
-            final WorkflowPartInstance nextActive = workflowPartInstanceService.createWorkflowPartInstanceFromWorkflowPart(game, workflowTransition.getDestinationPart(), new Timestamp(System.currentTimeMillis()));
+            WorkflowPartInstance nextActive = workflowPartInstanceService.createWorkflowPartInstanceFromWorkflowPart(game, workflowTransition.getDestinationPart(), new Timestamp(System.currentTimeMillis()));
 
             game.setCurrentWorkflowpart(nextActive);
             gameService.save(game);
+
+            //if next workflowpart is of type part and has no riddles active, we should execute directly the first next one, because no interaction is required to do anything here
+            if (nextActive.getWorkflowPart().getPartType() == WorkflowPartType.PART && nextActive.getRiddleInstanceList().isEmpty()) {
+                final List<WorkflowTransition> outgoingTransitions = new ArrayList<>(nextActive.getWorkflowPart().getOutgoingTransitions());
+                outgoingTransitions.sort(Comparator.comparingInt(WorkflowTransition::getSortIndex));
+
+                nextActive = executeWorkflowTransition(game, outgoingTransitions.get(0));
+                if (nextActive == null) {
+                    return null;
+                }
+            }
 
             return workflowPartInstanceService.findWorkflowPartInstanceById(nextActive.getId()); //should never be null
         }

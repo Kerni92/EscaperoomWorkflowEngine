@@ -109,6 +109,12 @@ public class GameServiceBean implements GameService {
     }
 
     @Override
+    public Game load(Long id) {
+        final Optional<Game> game = gameRepository.findById(id);
+        return game.orElse(null);
+    }
+
+    @Override
     public Game save(Game game) {
         if (game != null) {
             return gameRepository.save(game);

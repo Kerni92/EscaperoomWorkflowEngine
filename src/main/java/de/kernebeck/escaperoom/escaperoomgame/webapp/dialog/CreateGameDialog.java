@@ -76,7 +76,12 @@ public abstract class CreateGameDialog extends GenericPanel<String> {
                 return choices.getObject().stream().filter(w -> w.getId().toString().equals(id)).findFirst().orElse(null);
             }
 
-        }));
+        }) {
+            @Override
+            protected CharSequence getDefaultChoice(String selectedValue) {
+                return CreateGameDialog.this.getString("default.please.choose");
+            }
+        });
         form.add(new TextField<String>("player1", new PropertyModel<>(this, "player1")));
         form.add(new TextField<String>("player2", new PropertyModel<>(this, "player2")));
         form.add(new TextField<String>("player3", new PropertyModel<>(this, "player3")));
