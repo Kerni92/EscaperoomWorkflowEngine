@@ -3,11 +3,10 @@ package de.kernebeck.escaperoom.escaperoomgame.webapp.dialog;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.dto.imports.WorkflowImportResult;
 import de.kernebeck.escaperoom.escaperoomgame.core.service.authorisation.UserService;
 import de.kernebeck.escaperoom.escaperoomgame.core.service.definition.imports.EscaperoomGameImportService;
-import de.kernebeck.escaperoom.escaperoomgame.core.service.entity.GameService;
-import de.kernebeck.escaperoom.escaperoomgame.core.service.entity.WorkflowService;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
+import org.apache.wicket.injection.Injector;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
@@ -24,12 +23,6 @@ import java.io.File;
 
 public abstract class UploadWorkflowDialog extends GenericPanel<String> {
     private static final long serialVersionUID = 1L;
-
-    @SpringBean
-    private WorkflowService workflowService;
-
-    @SpringBean
-    private GameService gameService;
 
     @SpringBean
     private UserService userService;
@@ -70,6 +63,7 @@ public abstract class UploadWorkflowDialog extends GenericPanel<String> {
             @Override
             protected void onSubmit(AjaxRequestTarget target) {
                 errorMessage = "";
+                Injector.get().inject(UploadWorkflowDialog.this);
                 if (username == null || username.isEmpty()) {
                     errorMessage = "Es wurde kein Benutzername angegeben.";
                 }

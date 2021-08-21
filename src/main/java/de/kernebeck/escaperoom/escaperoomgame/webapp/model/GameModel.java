@@ -3,13 +3,12 @@ package de.kernebeck.escaperoom.escaperoomgame.webapp.model;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.execution.Game;
 import de.kernebeck.escaperoom.escaperoomgame.core.service.entity.GameService;
 import org.apache.wicket.injection.Injector;
-import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
-public class GameModel extends LoadableDetachableModel<Game> {
+public class GameModel extends AbstractEscaperoomLoadableDetachableModel<Game> {
 
     @SpringBean
-    private GameService gameService;
+    private transient GameService gameService;
 
     private String gameId;
 
@@ -25,7 +24,7 @@ public class GameModel extends LoadableDetachableModel<Game> {
     }
 
     @Override
-    protected Game load() {
+    protected Game loadInternal() {
         return gameService.findByGameId(gameId);
     }
 }

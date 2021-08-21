@@ -7,6 +7,7 @@ import de.kernebeck.escaperoom.escaperoomgame.webapp.pages.GamePage;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
+import org.apache.wicket.injection.Injector;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
@@ -22,10 +23,10 @@ public abstract class JoinOrContinueGameDialog extends GenericPanel<String> {
     private static final long serialVersionUID = 1L;
 
     @SpringBean
-    private GameService gameService;
+    private transient GameService gameService;
 
     @SpringBean
-    private GameExecutionService gameExecutionService;
+    private transient GameExecutionService gameExecutionService;
 
     private String gameId;
     private String errorMessage = "";
@@ -58,6 +59,7 @@ public abstract class JoinOrContinueGameDialog extends GenericPanel<String> {
                     handleError(target, "Es wurde kein Spiel ID eingegeben.");
                     return;
                 }
+                Injector.get().inject(JoinOrContinueGameDialog.this);
                 final Game game = gameService.findByGameId(gameId);
                 if (game == null) {
                     handleError(target, "Das angegebene Spiel konnte nicht in der Datenbank gefunden werden. Bitte prüfen Sie ihre Eingabe");

@@ -3,13 +3,12 @@ package de.kernebeck.escaperoom.escaperoomgame.webapp.model;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.definition.WorkflowTransition;
 import de.kernebeck.escaperoom.escaperoomgame.core.service.entity.WorkflowTransitionService;
 import org.apache.wicket.injection.Injector;
-import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
-public class WorkflowTransitionModel extends LoadableDetachableModel<WorkflowTransition> {
+public class WorkflowTransitionModel extends AbstractEscaperoomLoadableDetachableModel<WorkflowTransition> {
 
     @SpringBean
-    private WorkflowTransitionService workflowTransitionService;
+    private transient WorkflowTransitionService workflowTransitionService;
 
     private Long id = null;
 
@@ -34,7 +33,7 @@ public class WorkflowTransitionModel extends LoadableDetachableModel<WorkflowTra
     }
 
     @Override
-    protected WorkflowTransition load() {
+    protected WorkflowTransition loadInternal() {
         if (id != null) {
             return workflowTransitionService.findById(id);
         }

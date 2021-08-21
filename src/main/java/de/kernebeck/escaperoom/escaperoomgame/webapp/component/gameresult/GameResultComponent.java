@@ -7,6 +7,7 @@ import de.kernebeck.escaperoom.escaperoomgame.core.service.entity.GameService;
 import de.kernebeck.escaperoom.escaperoomgame.webapp.pages.HomePage;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.injection.Injector;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
@@ -24,7 +25,7 @@ import java.util.List;
 public class GameResultComponent extends GenericPanel<Game> {
 
     @SpringBean
-    private GameService gameService;
+    private transient GameService gameService;
 
     public GameResultComponent(String id, IModel<Game> model) {
         super(id, model);
@@ -34,6 +35,7 @@ public class GameResultComponent extends GenericPanel<Game> {
     protected void onInitialize() {
         super.onInitialize();
 
+        Injector.get().inject(this);
         final GameResultDTO resultDTO = gameService.calculateGameResultInformationForGame(getModelObject().getId());
         final SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy HH:mm");
         final WebMarkupContainer content = new WebMarkupContainer("content");

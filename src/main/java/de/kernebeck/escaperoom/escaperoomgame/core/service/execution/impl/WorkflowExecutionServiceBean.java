@@ -1,9 +1,11 @@
 package de.kernebeck.escaperoom.escaperoomgame.core.service.execution.impl;
 
+import com.google.common.eventbus.EventBus;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.definition.WorkflowTransition;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.definition.enumeration.WorkflowPartType;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.execution.Game;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.execution.WorkflowPartInstance;
+import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.event.UpdateUIEvent;
 import de.kernebeck.escaperoom.escaperoomgame.core.service.entity.GameService;
 import de.kernebeck.escaperoom.escaperoomgame.core.service.entity.WorkflowPartInstanceService;
 import de.kernebeck.escaperoom.escaperoomgame.core.service.execution.WorkflowExecutionService;
@@ -28,6 +30,8 @@ public class WorkflowExecutionServiceBean implements WorkflowExecutionService {
     @Autowired
     private WorkflowPartInstanceService workflowPartInstanceService;
 
+    @Autowired
+    private EventBus eventBus;
 
     @Override
     public boolean isTransitionExecutionPossible(Game game, WorkflowTransition workflowTransition) {
@@ -68,6 +72,7 @@ public class WorkflowExecutionServiceBean implements WorkflowExecutionService {
                 }
             }
 
+            eventBus.post(new UpdateUIEvent(game.getGameId(), null));
             return workflowPartInstanceService.findWorkflowPartInstanceById(nextActive.getId()); //should never be null
         }
 

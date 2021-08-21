@@ -2,13 +2,12 @@ package de.kernebeck.escaperoom.escaperoomgame.webapp.model;
 
 import de.kernebeck.escaperoom.escaperoomgame.core.service.execution.GameExecutionService;
 import org.apache.wicket.injection.Injector;
-import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
-public class WorkflowPartFinishedModel extends LoadableDetachableModel<Boolean> {
+public class WorkflowPartFinishedModel extends AbstractEscaperoomLoadableDetachableModel<Boolean> {
 
     @SpringBean
-    private GameExecutionService gameExecutionService;
+    private transient GameExecutionService gameExecutionService;
 
     private Long gameId = null;
 
@@ -24,7 +23,7 @@ public class WorkflowPartFinishedModel extends LoadableDetachableModel<Boolean> 
     }
 
     @Override
-    protected Boolean load() {
+    protected Boolean loadInternal() {
         if (gameId != null) {
             return gameExecutionService.isActiveWorkflowPartInstanceFinished(gameId);
         }

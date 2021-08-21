@@ -3,13 +3,12 @@ package de.kernebeck.escaperoom.escaperoomgame.webapp.model;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.definition.RiddleHint;
 import de.kernebeck.escaperoom.escaperoomgame.core.service.entity.RiddleHintService;
 import org.apache.wicket.injection.Injector;
-import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
-public class RiddleHintModel extends LoadableDetachableModel<RiddleHint> {
+public class RiddleHintModel extends AbstractEscaperoomLoadableDetachableModel<RiddleHint> {
 
     @SpringBean
-    private RiddleHintService riddleHintService;
+    private transient RiddleHintService riddleHintService;
 
     private Long riddleHintId;
 
@@ -26,7 +25,7 @@ public class RiddleHintModel extends LoadableDetachableModel<RiddleHint> {
     }
 
     @Override
-    protected RiddleHint load() {
+    protected RiddleHint loadInternal() {
         if (riddleHintId != null) {
             return riddleHintService.load(riddleHintId);
         }

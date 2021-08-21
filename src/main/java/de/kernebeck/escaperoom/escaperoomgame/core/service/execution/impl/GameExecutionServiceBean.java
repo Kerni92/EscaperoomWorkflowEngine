@@ -101,7 +101,12 @@ public class GameExecutionServiceBean implements GameExecutionService {
     public RiddleHint getNextRiddleHintForRiddleInstance(Long gameId, RiddleInstance riddleInstance) {
         try {
             gameLockingService.lockGame(gameId);
-            return riddleExecutionService.getNextRiddleHint(riddleInstance);
+            final Game game = gameService.load(gameId);
+            final RiddleHint hint = riddleExecutionService.getNextRiddleHint(riddleInstance);
+            if (hint != null) {
+                eventBus.post(new UpdateUIEvent(game.getGameId(), null));
+            }
+            return hint;
         }
         finally {
             gameLockingService.unlockGame(gameId);

@@ -3,12 +3,12 @@ package de.kernebeck.escaperoom.escaperoomgame.webapp.dialog;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.definition.Workflow;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.execution.Game;
 import de.kernebeck.escaperoom.escaperoomgame.core.service.entity.GameService;
-import de.kernebeck.escaperoom.escaperoomgame.core.service.entity.WorkflowService;
 import de.kernebeck.escaperoom.escaperoomgame.webapp.model.WorkflowListModel;
 import de.kernebeck.escaperoom.escaperoomgame.webapp.pages.GamePage;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
+import org.apache.wicket.injection.Injector;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.DropDownChoice;
@@ -29,10 +29,7 @@ public abstract class CreateGameDialog extends GenericPanel<String> {
     private static final long serialVersionUID = 1L;
 
     @SpringBean
-    private WorkflowService workflowService;
-
-    @SpringBean
-    private GameService gameService;
+    private transient GameService gameService;
 
     private Workflow selectedGame = null;
     private String player1 = null;
@@ -114,6 +111,7 @@ public abstract class CreateGameDialog extends GenericPanel<String> {
                 if (player4 != null && !player4.isEmpty()) {
                     users.add(player4);
                 }
+                Injector.get().inject(CreateGameDialog.this);
                 final Game game = gameService.createGame(selectedGame.getId(), users);
 
                 final PageParameters pageParameters = new PageParameters();

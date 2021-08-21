@@ -4,13 +4,12 @@ import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.execution.Ga
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.execution.WorkflowPartInstance;
 import de.kernebeck.escaperoom.escaperoomgame.core.service.entity.GameService;
 import org.apache.wicket.injection.Injector;
-import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
-public class WorkflowPartInstanceModel extends LoadableDetachableModel<WorkflowPartInstance> {
+public class WorkflowPartInstanceModel extends AbstractEscaperoomLoadableDetachableModel<WorkflowPartInstance> {
 
     @SpringBean
-    private GameService gameService;
+    private transient GameService gameService;
 
     private String gameId;
 
@@ -27,7 +26,7 @@ public class WorkflowPartInstanceModel extends LoadableDetachableModel<WorkflowP
     }
 
     @Override
-    protected WorkflowPartInstance load() {
+    protected WorkflowPartInstance loadInternal() {
         if (gameId != null) {
             final Game game = gameService.findByGameId(gameId);
             if (game != null) {

@@ -16,6 +16,7 @@ import de.kernebeck.escaperoom.escaperoomgame.webapp.model.WorkflowPartInstanceM
 import de.kernebeck.escaperoom.escaperoomgame.webapp.service.WebSocketEventService;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.injection.Injector;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
@@ -41,7 +42,7 @@ public class GamePage extends WebPage {
     private static final String CONTENTCOMPONENT_ID = "contentComponent";
 
     @SpringBean
-    private GameExecutionService gameExecutionService;
+    private transient GameExecutionService gameExecutionService;
 
     private IModel<Game> gameModel = null;
 
@@ -77,6 +78,7 @@ public class GamePage extends WebPage {
                     workflowPartInstanceModel.detach();
                     buildContent(true);
                     handler.add(content);
+                    handler.add(dialog);
                 }
             }
 
@@ -180,6 +182,7 @@ public class GamePage extends WebPage {
 
     private void submitWorkflowTransitionSelection(AjaxRequestTarget target, WorkflowTransition transition) {
         gameModel.detach(); //reload game always if to assure that the active workflowpartinstance is corretly loaded
+        Injector.get().inject(this);
         final boolean success = gameExecutionService.executeWorkflowTransition(gameModel.getObject(), transition);
         if (success) {
             gameModel.detach();

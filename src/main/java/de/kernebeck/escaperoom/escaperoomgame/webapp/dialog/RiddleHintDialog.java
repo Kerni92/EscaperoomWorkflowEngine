@@ -2,7 +2,6 @@ package de.kernebeck.escaperoom.escaperoomgame.webapp.dialog;
 
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.definition.RiddleHint;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.execution.RiddleInstance;
-import de.kernebeck.escaperoom.escaperoomgame.core.service.entity.GameService;
 import de.kernebeck.escaperoom.escaperoomgame.core.service.entity.RiddleHintService;
 import de.kernebeck.escaperoom.escaperoomgame.core.service.execution.GameExecutionService;
 import de.kernebeck.escaperoom.escaperoomgame.webapp.component.workflowpartinstance.RiddleHintComponent;
@@ -10,6 +9,7 @@ import de.kernebeck.escaperoom.escaperoomgame.webapp.model.RiddleHintModel;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
+import org.apache.wicket.injection.Injector;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
@@ -26,13 +26,10 @@ public abstract class RiddleHintDialog extends GenericPanel<RiddleInstance> {
     private static final long serialVersionUID = 1L;
 
     @SpringBean
-    private GameService gameService;
+    private transient GameExecutionService gameExecutionService;
 
     @SpringBean
-    private GameExecutionService gameExecutionService;
-
-    @SpringBean
-    private RiddleHintService riddleHintService;
+    private transient RiddleHintService riddleHintService;
 
     private Long gameId;
     private String errorMessage = "";
@@ -73,6 +70,7 @@ public abstract class RiddleHintDialog extends GenericPanel<RiddleInstance> {
         final AjaxSubmitLink showNextHintButton = new AjaxSubmitLink("showNextHint") {
             @Override
             protected void onSubmit(AjaxRequestTarget target) {
+                Injector.get().inject(RiddleHintDialog.this);
                 final RiddleHint nextHint = gameExecutionService.getNextRiddleHintForRiddleInstance(gameId, getModelObject());
                 if (nextHint != null) {
                     riddleHints.add(new RiddleHintComponent(riddleHints.newChildId(), new RiddleHintModel(nextHint)));

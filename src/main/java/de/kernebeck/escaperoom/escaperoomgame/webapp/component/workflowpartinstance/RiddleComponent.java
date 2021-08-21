@@ -7,6 +7,7 @@ import de.kernebeck.escaperoom.escaperoomgame.webapp.dialog.RiddleHintDialog;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.injection.Injector;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
@@ -21,7 +22,7 @@ import org.danekja.java.util.function.serializable.SerializableFunction;
 public class RiddleComponent extends GenericPanel<RiddleInstance> {
 
     @SpringBean
-    private GameExecutionService gameExecutionService;
+    private transient GameExecutionService gameExecutionService;
 
     private String solution = "";
     private Boolean isResolved;
@@ -62,6 +63,7 @@ public class RiddleComponent extends GenericPanel<RiddleInstance> {
             @Override
             protected void onSubmit(AjaxRequestTarget target) {
                 super.onSubmit(target);
+                Injector.get().inject(RiddleComponent.this);
                 boolean result = gameExecutionService.checkRiddleSolution(RiddleComponent.this.gameIdModel.getObject(), RiddleComponent.this.getModelObject(), solution);
                 if (result) {
                     solutionInput.setEnabled(false);
