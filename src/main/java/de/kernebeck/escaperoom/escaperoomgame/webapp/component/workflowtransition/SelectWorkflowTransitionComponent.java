@@ -19,7 +19,7 @@ public abstract class SelectWorkflowTransitionComponent extends GenericPanel<Lis
         super(id, model);
 
 
-        add(new Label("workflowPartDescription", descriptionText));
+        add(new Label("workflowPartDescription", descriptionText).setEscapeModelStrings(false));
         final Form form = new Form("form");
         final RepeatingView view = new RepeatingView("transitions");
         for (final WorkflowTransition transition : model.getObject()) {

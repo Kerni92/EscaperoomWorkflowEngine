@@ -13,6 +13,7 @@ public abstract class WorkflowTransitionComponent extends GenericPanel<WorkflowT
         super(id, model);
 
         final Label description = new Label("description", model.getObject().getDescription());
+        description.setEscapeModelStrings(false);
         final AjaxButton submitLink = new AjaxButton("submitLink") {
             @Override
             protected void onSubmit(AjaxRequestTarget target) {

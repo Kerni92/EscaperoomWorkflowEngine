@@ -21,7 +21,7 @@ public class WorkflowPartInstanceComponent extends GenericPanel<WorkflowPartInst
         super(id, model);
         this.workflowPartFinishedModel = workflowPartFinishedModel;
         final WorkflowPartInstance workflowPartInstance = getModelObject();
-        add(new Label("workflowPartDescription", Model.of(workflowPartInstance.getWorkflowPart().getDescription())));
+        add(new Label("workflowPartDescription", Model.of(workflowPartInstance.getWorkflowPart().getDescription())).setEscapeModelStrings(false));
         final RepeatingView riddles = new RepeatingView("riddles");
         if (workflowPartInstance.getRiddleInstanceList() != null && !workflowPartInstance.getRiddleInstanceList().isEmpty()) {
             for (RiddleInstance ri : workflowPartInstance.getRiddleInstanceList()) {
