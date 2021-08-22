@@ -89,6 +89,7 @@ public class RiddleComponent extends GenericPanel<RiddleInstance> {
                     public void closeDialog(AjaxRequestTarget target) {
                         closeDialogFunction.apply(target);
                     }
+
                 });
             }
         };

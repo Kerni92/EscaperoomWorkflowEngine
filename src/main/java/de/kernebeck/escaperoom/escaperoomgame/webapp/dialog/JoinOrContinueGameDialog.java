@@ -12,14 +12,13 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
-import org.apache.wicket.markup.html.panel.GenericPanel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
-public abstract class JoinOrContinueGameDialog extends GenericPanel<String> {
+public abstract class JoinOrContinueGameDialog extends AbstractDialog<String> {
     private static final long serialVersionUID = 1L;
 
     @SpringBean
@@ -100,8 +99,6 @@ public abstract class JoinOrContinueGameDialog extends GenericPanel<String> {
         });
         this.add(form);
     }
-
-    public abstract void closeDialog(AjaxRequestTarget target);
 
     private void handleError(AjaxRequestTarget target, String errorMessage) {
         this.errorMessage = errorMessage;

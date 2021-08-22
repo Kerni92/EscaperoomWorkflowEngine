@@ -7,6 +7,7 @@ import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.definition.e
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.execution.Game;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.execution.RiddleInstance;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.execution.WorkflowPartInstance;
+import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.event.UpdateDialogEvent;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.event.UpdateUIEvent;
 import de.kernebeck.escaperoom.escaperoomgame.core.service.entity.GameService;
 import de.kernebeck.escaperoom.escaperoomgame.core.service.entity.WorkflowPartInstanceService;
@@ -104,7 +105,7 @@ public class GameExecutionServiceBean implements GameExecutionService {
             final Game game = gameService.load(gameId);
             final RiddleHint hint = riddleExecutionService.getNextRiddleHint(riddleInstance);
             if (hint != null) {
-                eventBus.post(new UpdateUIEvent(game.getGameId(), null));
+                eventBus.post(new UpdateDialogEvent(game.getGameId()));
             }
             return hint;
         }

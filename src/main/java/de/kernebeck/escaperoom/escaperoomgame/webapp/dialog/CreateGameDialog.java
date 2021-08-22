@@ -15,7 +15,6 @@ import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.IChoiceRenderer;
 import org.apache.wicket.markup.html.form.TextField;
-import org.apache.wicket.markup.html.panel.GenericPanel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
@@ -25,7 +24,7 @@ import org.apache.wicket.spring.injection.annot.SpringBean;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class CreateGameDialog extends GenericPanel<String> {
+public abstract class CreateGameDialog extends AbstractDialog<String> {
     private static final long serialVersionUID = 1L;
 
     @SpringBean
@@ -140,7 +139,5 @@ public abstract class CreateGameDialog extends GenericPanel<String> {
         });
         this.add(form);
     }
-
-    public abstract void closeDialog(AjaxRequestTarget target);
 
 }

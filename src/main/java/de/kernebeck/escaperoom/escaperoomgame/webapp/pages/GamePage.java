@@ -4,11 +4,13 @@ import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.definition.W
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.definition.enumeration.WorkflowPartType;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.execution.Game;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.execution.WorkflowPartInstance;
+import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.event.UpdateDialogEvent;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.event.UpdateUIEvent;
 import de.kernebeck.escaperoom.escaperoomgame.core.service.execution.GameExecutionService;
 import de.kernebeck.escaperoom.escaperoomgame.webapp.component.gameresult.GameResultComponent;
 import de.kernebeck.escaperoom.escaperoomgame.webapp.component.workflowpartinstance.WorkflowPartInstanceComponent;
 import de.kernebeck.escaperoom.escaperoomgame.webapp.component.workflowtransition.SelectWorkflowTransitionComponent;
+import de.kernebeck.escaperoom.escaperoomgame.webapp.dialog.AbstractDialog;
 import de.kernebeck.escaperoom.escaperoomgame.webapp.model.GameModel;
 import de.kernebeck.escaperoom.escaperoomgame.webapp.model.ValidWorkflowTransitionListModel;
 import de.kernebeck.escaperoom.escaperoomgame.webapp.model.WorkflowPartFinishedModel;
@@ -77,8 +79,21 @@ public class GamePage extends WebPage {
                     workflowPartFinishedModel.detach();
                     workflowPartInstanceModel.detach();
                     buildContent(true);
+
+                    //close dialog because a transition could be executed
+                    dialog.setVisible(false);
+                    dialog.replace(new WebMarkupContainer("dialogContent"));
+
                     handler.add(content);
                     handler.add(dialog);
+                }
+
+                if (message instanceof UpdateDialogEvent && dialog.isVisible()) {
+                    final Component dialogContent = dialog.get("dialogContent");
+                    if (dialogContent instanceof AbstractDialog) {
+                        final AbstractDialog cDialog = (AbstractDialog) dialogContent;
+                        cDialog.updateDialog(handler);
+                    }
                 }
             }
 

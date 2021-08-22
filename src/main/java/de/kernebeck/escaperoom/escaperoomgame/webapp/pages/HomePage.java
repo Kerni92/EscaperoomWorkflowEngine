@@ -5,6 +5,7 @@ import de.kernebeck.escaperoom.escaperoomgame.webapp.dialog.JoinOrContinueGameDi
 import de.kernebeck.escaperoom.escaperoomgame.webapp.dialog.UploadWorkflowDialog;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.core.request.handler.IPartialPageRequestHandler;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.form.Form;
@@ -36,6 +37,11 @@ public class HomePage extends WebPage {
                     public void closeDialog(AjaxRequestTarget target) {
                         HomePage.this.hideDialog(target);
                     }
+
+                    @Override
+                    public void updateDialog(IPartialPageRequestHandler target) {
+                        //nothing todo
+                    }
                 };
                 createGameDialog.setOutputMarkupId(true);
                 dialog.replace(createGameDialog);
@@ -52,6 +58,11 @@ public class HomePage extends WebPage {
                     public void closeDialog(AjaxRequestTarget target) {
                         HomePage.this.hideDialog(target);
                     }
+
+                    @Override
+                    public void updateDialog(IPartialPageRequestHandler target) {
+                        //nothing todo
+                    }
                 };
                 joinOrContinueGameDialog.setOutputMarkupId(true);
                 dialog.replace(joinOrContinueGameDialog);
@@ -67,6 +78,11 @@ public class HomePage extends WebPage {
                     @Override
                     public void closeDialog(AjaxRequestTarget target) {
                         HomePage.this.hideDialog(target);
+                    }
+
+                    @Override
+                    public void updateDialog(IPartialPageRequestHandler target) {
+                        //nothing todo
                     }
                 };
                 uploadWorkflowDialog.setOutputMarkupId(true);
