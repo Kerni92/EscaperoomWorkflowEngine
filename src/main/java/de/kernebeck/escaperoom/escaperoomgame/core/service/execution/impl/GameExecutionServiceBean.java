@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 @Service
 public class GameExecutionServiceBean implements GameExecutionService {
@@ -177,6 +178,14 @@ public class GameExecutionServiceBean implements GameExecutionService {
             finally {
                 gameLockingService.unlockGame(game.getId());
             }
+        }
+    }
+
+    @Override
+    public void stopRunningGames() {
+        final List<Game> runningGames = gameService.findRunningGames();
+        for (final Game g : runningGames) {
+            pauseOrFinishGameInternal(g, false);
         }
     }
 

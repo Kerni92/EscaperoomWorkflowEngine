@@ -106,6 +106,23 @@ public class GameServiceBean implements GameService {
     }
 
     @Override
+    public List<Game> findRunningGames() {
+        final List<Game> notFinishedGames = gameRepository.findGamesByFinishedFalse();
+        final List<Game> result = new ArrayList<>();
+
+        for (final Game game : notFinishedGames) {
+            if (game.getStarttime() != null && game.getEndTime() == null) {
+                result.add(game);
+            }
+            else if (game.getEndTime().before(game.getLastStartTime())) {
+                result.add(game);
+            }
+        }
+
+        return result;
+    }
+
+    @Override
     public Game load(Long id) {
         final Optional<Game> game = gameRepository.findById(id);
         return game.orElse(null);

@@ -135,6 +135,11 @@ public class GamePage extends WebPage {
     protected void onInitialize() {
         super.onInitialize();
 
+        //check if we have to continue game and continue if required
+        if (gameModel.getObject() != null && gameModel.getObject().getLastStartTime().before(gameModel.getObject().getEndTime())) {
+            gameExecutionService.continueGame(gameModel.getObject());
+        }
+
         //build dialog container
         initDialog();
 

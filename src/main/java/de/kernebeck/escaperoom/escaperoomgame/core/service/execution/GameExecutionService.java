@@ -22,4 +22,6 @@ public interface GameExecutionService {
     void continueGame(Game game);
 
     void finishGame(Game game);
+
+    void stopRunningGames();
 }
