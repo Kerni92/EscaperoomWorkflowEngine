@@ -203,7 +203,7 @@ public class GameExecutionServiceBean implements GameExecutionService {
 
         final WorkflowPartInstance activeWorkflowPartInstance = game.getActiveWorkflowPartInstance();
         final long elapsedWorkflowPartTime = time.getTime() - activeWorkflowPartInstance.getLastStartTime().getTime();
-        activeWorkflowPartInstance.setTotalTime(activeWorkflowPartInstance.getTotalTime() == null ? elapsedGameTime : activeWorkflowPartInstance.getTotalTime() + elapsedWorkflowPartTime);
+        activeWorkflowPartInstance.setTotalTime(activeWorkflowPartInstance.getTotalTime() == null ? elapsedWorkflowPartTime : activeWorkflowPartInstance.getTotalTime() + elapsedWorkflowPartTime);
         activeWorkflowPartInstance.setEndTime(time);
         activeWorkflowPartInstance.setLastStartTime(null);
         workflowPartInstanceService.save(activeWorkflowPartInstance);
