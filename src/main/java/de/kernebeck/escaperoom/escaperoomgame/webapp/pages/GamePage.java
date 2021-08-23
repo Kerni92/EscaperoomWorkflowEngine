@@ -176,6 +176,7 @@ public class GamePage extends WebPage {
             @Override
             protected void onSubmit(AjaxRequestTarget target) {
                 Injector.get().inject(this);
+                GamePage.this.gameModel.detach();//assure gamemodel is reloaded
                 gameExecutionService.pauseGame(GamePage.this.gameModel.getObject());
             }
         };

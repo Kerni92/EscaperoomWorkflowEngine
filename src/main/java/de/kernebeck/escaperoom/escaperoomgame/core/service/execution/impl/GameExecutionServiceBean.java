@@ -128,6 +128,7 @@ public class GameExecutionServiceBean implements GameExecutionService {
                 game.getActiveWorkflowPartInstance().setStartTime(time);
                 game.getActiveWorkflowPartInstance().setLastStartTime(time);
                 gameService.save(game);
+                workflowPartInstanceService.save(game.getActiveWorkflowPartInstance());
             }
             finally {
                 gameLockingService.unlockGame(game.getId());
