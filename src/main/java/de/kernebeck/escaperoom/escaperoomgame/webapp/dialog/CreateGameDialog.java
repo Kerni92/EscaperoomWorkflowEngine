@@ -3,6 +3,7 @@ package de.kernebeck.escaperoom.escaperoomgame.webapp.dialog;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.definition.Workflow;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.execution.Game;
 import de.kernebeck.escaperoom.escaperoomgame.core.service.entity.GameService;
+import de.kernebeck.escaperoom.escaperoomgame.core.service.execution.GameExecutionService;
 import de.kernebeck.escaperoom.escaperoomgame.webapp.model.WorkflowListModel;
 import de.kernebeck.escaperoom.escaperoomgame.webapp.pages.GamePage;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -29,6 +30,9 @@ public abstract class CreateGameDialog extends AbstractDialog<String> {
 
     @SpringBean
     private transient GameService gameService;
+
+    @SpringBean
+    private transient GameExecutionService gameExecutionService;
 
     private Workflow selectedGame = null;
     private String player1 = null;
@@ -112,7 +116,7 @@ public abstract class CreateGameDialog extends AbstractDialog<String> {
                 }
                 Injector.get().inject(CreateGameDialog.this);
                 final Game game = gameService.createGame(selectedGame.getId(), users);
-
+                gameExecutionService.startGame(game);
                 final PageParameters pageParameters = new PageParameters();
                 pageParameters.add("gameId", game.getGameId());
                 closeDialog(target);

@@ -27,7 +27,7 @@ public class Game extends BasicEntity {
     @Column(name = "endtime")
     private Timestamp endTime;
 
-    @Column(name = "laststarttime")
+    @Column(name = "laststarttime", nullable = true)
     private Timestamp lastStartTime;
 
     @Column(name = "totaltime")

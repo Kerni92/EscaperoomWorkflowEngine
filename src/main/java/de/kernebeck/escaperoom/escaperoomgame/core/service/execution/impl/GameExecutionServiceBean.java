@@ -125,6 +125,7 @@ public class GameExecutionServiceBean implements GameExecutionService {
                 final Timestamp time = new Timestamp(System.currentTimeMillis());
                 game.setStarttime(time);
                 game.setLastStartTime(time);
+                game.setEndTime(null);
                 game.getActiveWorkflowPartInstance().setStartTime(time);
                 game.getActiveWorkflowPartInstance().setLastStartTime(time);
                 gameService.save(game);

@@ -169,8 +169,6 @@ public class GamePage extends WebPage {
         this.messageLabel.setVisible(false);
         add(this.messageLabel);
 
-        buildContent(false);
-
         final Form<Void> pauseGameForm = new Form<>("pauseGameForm");
         pauseGameBtn = new AjaxButton("pauseGameBtn") {
             @Override
@@ -183,6 +181,9 @@ public class GamePage extends WebPage {
         pauseGameBtn.setVisible(!gameModel.getObject().isFinished());
         pauseGameForm.add(pauseGameBtn);
         content.add(pauseGameForm);
+
+        buildContent(false);
+
         add(content);
     }
 
@@ -191,9 +192,11 @@ public class GamePage extends WebPage {
         if (gameModel != null) {
             final Game game = gameModel.getObject();
             this.messageLabel.setVisible(false);
+            pauseGameBtn.setVisible(true);
             Component contentComponent;
             if (game.isFinished() || workflowPartInstanceModel.getObject().getWorkflowPart().getPartType() == WorkflowPartType.ENDPART) {
                 contentComponent = new GameResultComponent(CONTENTCOMPONENT_ID, gameModel);
+                pauseGameBtn.setVisible(false);
             }
             else {
                 if (workflowPartInstanceModel.getObject().getWorkflowPart().getPartType() == WorkflowPartType.DECISION) {

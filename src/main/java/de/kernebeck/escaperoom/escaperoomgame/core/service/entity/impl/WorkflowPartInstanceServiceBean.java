@@ -36,7 +36,7 @@ public class WorkflowPartInstanceServiceBean implements WorkflowPartInstanceServ
     @Override
     public WorkflowPartInstance createWorkflowPartInstanceFromWorkflowPart(Game game, WorkflowPart workflowPart, Timestamp start) {
         if (workflowPart != null) {
-            final WorkflowPartInstance instance = workflowPartInstanceRepository.save(new WorkflowPartInstance(workflowPart, null, start, null, null, game));
+            final WorkflowPartInstance instance = workflowPartInstanceRepository.save(new WorkflowPartInstance(workflowPart, null, start, start, null, game));
             //create riddle instances
             for (final Riddle r : workflowPart.getRiddles()) {
                 riddleInstanceService.createRiddleInstanceByRiddle(r, instance);
