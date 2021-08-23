@@ -53,7 +53,7 @@ public class WorkflowExecutionServiceBean implements WorkflowExecutionService {
             activeWorkflowPart.setEndTime(new Timestamp(currentTime));
             activeWorkflowPart.setTotalTime((activeWorkflowPart.getTotalTime() != null ? activeWorkflowPart.getTotalTime() : 0) + (currentTime - startTime));
 
-            workflowPartInstanceService.save(activeWorkflowPart);
+            workflowPartInstanceService.save(activeWorkflowPart); //sinnloser kommentar
 
             //second create new one for next workflowpart
             WorkflowPartInstance nextActive = workflowPartInstanceService.createWorkflowPartInstanceFromWorkflowPart(game, workflowTransition.getDestinationPart(), new Timestamp(System.currentTimeMillis()));
