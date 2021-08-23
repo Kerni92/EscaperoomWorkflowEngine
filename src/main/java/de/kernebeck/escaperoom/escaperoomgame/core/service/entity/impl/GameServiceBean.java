@@ -65,7 +65,8 @@ public class GameServiceBean implements GameService {
                 for (final RiddleInstance ri : wpi.getRiddleInstanceList()) {
                     riddleResultDTOS.add(new RiddleResultDTO(ri.getRiddle().getName(), ri.getRiddle().getSortIndex(), ri.getAttempts(), riddleHintService.findUsedRiddleHintsForRiddleInstance(ri).size()));
                 }
-                final long elapsedTimeInMinutesForWorkflowPartInstance = wpi.getTotalTime() / (1000 * 60); //1000ms = 1sek * 60 sek pro minute
+                final long totalTime = wpi.getTotalTime() != null ? wpi.getTotalTime() : 0;
+                final long elapsedTimeInMinutesForWorkflowPartInstance = totalTime / (1000 * 60); //1000ms = 1sek * 60 sek pro minute
                 workflowPartResultDTOS.add(new WorkflowPartResultDTO(wpi.getId(), wpi.getWorkflowPart().getName(), elapsedTimeInMinutesForWorkflowPartInstance, riddleResultDTOS));
             }
 
@@ -97,7 +98,6 @@ public class GameServiceBean implements GameService {
         }
         return null;
     }
-
 
     @Override
     public Game findNotFinishedByGameId(String gameId) {

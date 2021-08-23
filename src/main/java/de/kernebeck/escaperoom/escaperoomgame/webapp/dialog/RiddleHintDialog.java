@@ -135,11 +135,4 @@ public abstract class RiddleHintDialog extends AbstractDialog<RiddleInstance> {
 
         return riddleHints;
     }
-
-    private void handleError(AjaxRequestTarget target, String errorMessage) {
-        this.errorMessage = errorMessage;
-        feedback.setVisible(true);
-        target.add(feedback);
-    }
-
 }

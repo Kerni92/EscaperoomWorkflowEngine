@@ -7,6 +7,8 @@ import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.definition.e
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.execution.Game;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.execution.RiddleInstance;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.execution.WorkflowPartInstance;
+import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.event.ContinueGameEvent;
+import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.event.PauseGameEvent;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.event.UpdateDialogEvent;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.event.UpdateUIEvent;
 import de.kernebeck.escaperoom.escaperoomgame.core.service.entity.GameService;
@@ -138,6 +140,7 @@ public class GameExecutionServiceBean implements GameExecutionService {
             try {
                 gameLockingService.lockGame(game.getId());
                 pauseOrFinishGameInternal(game, Boolean.FALSE);
+                eventBus.post(new PauseGameEvent(game.getGameId()));
             }
             finally {
                 gameLockingService.unlockGame(game.getId());
@@ -156,6 +159,7 @@ public class GameExecutionServiceBean implements GameExecutionService {
 
                 game.getActiveWorkflowPartInstance().setLastStartTime(time);
                 workflowPartInstanceService.save(game.getActiveWorkflowPartInstance());
+                eventBus.post(new ContinueGameEvent(game.getGameId()));
             }
             finally {
                 gameLockingService.unlockGame(game.getId());

@@ -4,6 +4,8 @@ import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.definition.W
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.definition.enumeration.WorkflowPartType;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.execution.Game;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.execution.WorkflowPartInstance;
+import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.event.ContinueGameEvent;
+import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.event.PauseGameEvent;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.event.UpdateDialogEvent;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.event.UpdateUIEvent;
 import de.kernebeck.escaperoom.escaperoomgame.core.service.execution.GameExecutionService;
@@ -11,6 +13,7 @@ import de.kernebeck.escaperoom.escaperoomgame.webapp.component.gameresult.GameRe
 import de.kernebeck.escaperoom.escaperoomgame.webapp.component.workflowpartinstance.WorkflowPartInstanceComponent;
 import de.kernebeck.escaperoom.escaperoomgame.webapp.component.workflowtransition.SelectWorkflowTransitionComponent;
 import de.kernebeck.escaperoom.escaperoomgame.webapp.dialog.AbstractDialog;
+import de.kernebeck.escaperoom.escaperoomgame.webapp.dialog.PauseGameDialog;
 import de.kernebeck.escaperoom.escaperoomgame.webapp.model.GameModel;
 import de.kernebeck.escaperoom.escaperoomgame.webapp.model.ValidWorkflowTransitionListModel;
 import de.kernebeck.escaperoom.escaperoomgame.webapp.model.WorkflowPartFinishedModel;
@@ -18,10 +21,13 @@ import de.kernebeck.escaperoom.escaperoomgame.webapp.model.WorkflowPartInstanceM
 import de.kernebeck.escaperoom.escaperoomgame.webapp.service.WebSocketEventService;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.core.request.handler.IPartialPageRequestHandler;
 import org.apache.wicket.injection.Injector;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.repeater.RepeatingView;
 import org.apache.wicket.model.IModel;
@@ -56,6 +62,8 @@ public class GamePage extends WebPage {
 
     private WebMarkupContainer dialog;
     private WebMarkupContainer content;
+
+    private AjaxButton pauseGameBtn;
 
     public GamePage() {
         super();
@@ -94,6 +102,20 @@ public class GamePage extends WebPage {
                         final AbstractDialog cDialog = (AbstractDialog) dialogContent;
                         cDialog.updateDialog(handler);
                     }
+                }
+
+                if (message instanceof PauseGameEvent) {
+                    final PauseGameDialog dialogContent = new PauseGameDialog("dialogContent", new GameModel(gameModel.getObject().getGameId())) {
+                        @Override
+                        public void closeDialog(AjaxRequestTarget target) {
+                            GamePage.this.hideDialog(target);
+                        }
+                    };
+                    showDialog(dialogContent, handler);
+                }
+
+                if (message instanceof ContinueGameEvent) {
+                    hideDialog(handler);
                 }
             }
 
@@ -143,6 +165,18 @@ public class GamePage extends WebPage {
         add(this.messageLabel);
 
         buildContent(false);
+
+        final Form<Void> pauseGameForm = new Form<>("pauseGameForm");
+        pauseGameBtn = new AjaxButton("pauseGameBtn") {
+            @Override
+            protected void onSubmit(AjaxRequestTarget target) {
+                Injector.get().inject(this);
+                gameExecutionService.pauseGame(GamePage.this.gameModel.getObject());
+            }
+        };
+        pauseGameBtn.setVisible(!gameModel.getObject().isFinished());
+        pauseGameForm.add(pauseGameBtn);
+        content.add(pauseGameForm);
         add(content);
     }
 
@@ -229,14 +263,14 @@ public class GamePage extends WebPage {
         add(dialog);
     }
 
-    private void showDialog(WebMarkupContainer dialogContent, AjaxRequestTarget target) {
+    private void showDialog(WebMarkupContainer dialogContent, IPartialPageRequestHandler target) {
         dialogContent.setOutputMarkupId(true);
         dialog.replace(dialogContent);
         dialog.setVisible(true);
         target.add(dialog);
     }
 
-    private void hideDialog(AjaxRequestTarget target) {
+    private void hideDialog(IPartialPageRequestHandler target) {
         dialog.replace(new WebMarkupContainer("dialogContent"));
         dialog.setVisible(false);
         target.add(dialog);

@@ -1,6 +1,8 @@
 package de.kernebeck.escaperoom.escaperoomgame.webapp.service;
 
 import com.google.common.eventbus.Subscribe;
+import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.event.ContinueGameEvent;
+import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.event.PauseGameEvent;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.event.UpdateDialogEvent;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.event.UpdateUIEvent;
 import org.apache.wicket.Application;
@@ -49,6 +51,16 @@ public class WebSocketEventService {
 
     @Subscribe
     public void handleUpdateDialogEvent(UpdateDialogEvent event) {
+        sendEvent(event.getGameId(), event);
+    }
+
+    @Subscribe
+    public void handlePauseGameEvent(PauseGameEvent event) {
+        sendEvent(event.getGameId(), event);
+    }
+
+    @Subscribe
+    public void handleContinueGameEvent(ContinueGameEvent event) {
         sendEvent(event.getGameId(), event);
     }
 
