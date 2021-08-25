@@ -38,7 +38,14 @@ dependencies {
     runtimeOnly("org.mariadb.jdbc:mariadb-java-client")
     providedRuntime("org.springframework.boot:spring-boot-starter-tomcat")
 
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("org.springframework.boot:spring-boot-starter-test") {
+        exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
+    }
+    testImplementation("org.mockito:mockito-core:3.12.2")
+    testImplementation("org.mockito:mockito-junit-jupiter:3.12.2")
+    testImplementation("org.testcontainers:testcontainers:1.16.0")
+    testImplementation("org.testcontainers:mariadb:1.16.0")
+    testImplementation("org.assertj:assertj-core:3.20.2")
 }
 
 sourceSets {
