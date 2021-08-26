@@ -8,7 +8,7 @@ import org.springframework.test.context.TestPropertySource;
 
 @DataJpaTest(excludeAutoConfiguration = {EscaperoomgameWebappConfiguration.class, EscaperoomGameWebsecurityConfiguration.class, TestDatabaseAutoConfiguration.class})
 @TestPropertySource(locations = "classpath:integrationtest_application.properties")
-public abstract class AbstractIntegrationTest {
+public abstract class AbstractDatabaseIntegrationTest {
 
     @ClassRule
     public static MariaDBTestContainer mariaDBTestContainer = MariaDBTestContainer.getInstance();

@@ -1,6 +1,6 @@
 package de.kernebeck.escaperoom.escaperoomgame.core.service.definition.imports.impl;
 
-import de.kernebeck.escaperoom.escaperoomgame.AbstractIntegrationTest;
+import de.kernebeck.escaperoom.escaperoomgame.AbstractDatabaseIntegrationTest;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.dto.imports.WorkflowImportResult;
 import de.kernebeck.escaperoom.escaperoomgame.core.service.definition.imports.EscaperoomGameImportService;
 import org.junit.jupiter.api.Test;
@@ -11,7 +11,7 @@ import java.net.URISyntaxException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class EscaperoomGameImportServiceBeanIntegrationTest extends AbstractIntegrationTest {
+class EscaperoomGameImportServiceBeanIntegrationTest extends AbstractDatabaseIntegrationTest {
 
 
     @Autowired

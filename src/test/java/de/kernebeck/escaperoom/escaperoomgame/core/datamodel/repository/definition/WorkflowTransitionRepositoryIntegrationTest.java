@@ -1,6 +1,6 @@
 package de.kernebeck.escaperoom.escaperoomgame.core.datamodel.repository.definition;
 
-import de.kernebeck.escaperoom.escaperoomgame.AbstractIntegrationTest;
+import de.kernebeck.escaperoom.escaperoomgame.AbstractDatabaseIntegrationTest;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.definition.Workflow;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.definition.WorkflowPart;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.definition.WorkflowTransition;
@@ -19,7 +19,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class WorkflowTransitionRepositoryIntegrationTest extends AbstractIntegrationTest {
+class WorkflowTransitionRepositoryIntegrationTest extends AbstractDatabaseIntegrationTest {
 
     @Autowired
     private WorkflowTransitionRepository workflowTransitionRepository;
