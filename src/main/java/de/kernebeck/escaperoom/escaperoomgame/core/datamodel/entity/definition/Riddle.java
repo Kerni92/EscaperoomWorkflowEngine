@@ -26,7 +26,7 @@ public class Riddle extends BasicEntity {
     @JoinColumn(name = "fk_workflowpart")
     private WorkflowPart workflowPart;
 
-    @OneToMany(targetEntity = RiddleHint.class, cascade = CascadeType.DETACH)
+    @OneToMany(targetEntity = RiddleHint.class)
     private List<RiddleHint> hints;
 
     public Riddle() {
