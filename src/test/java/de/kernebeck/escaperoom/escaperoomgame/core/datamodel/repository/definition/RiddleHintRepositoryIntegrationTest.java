@@ -1,6 +1,6 @@
 package de.kernebeck.escaperoom.escaperoomgame.core.datamodel.repository.definition;
 
-import de.kernebeck.escaperoom.escaperoomgame.AbstractDatabaseIntegrationTest;
+import de.kernebeck.escaperoom.escaperoomgame.AbstractIntegrationTest;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.definition.Riddle;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.definition.RiddleHint;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.definition.Workflow;
@@ -21,7 +21,7 @@ import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class RiddleHintRepositoryIntegrationTest extends AbstractDatabaseIntegrationTest {
+class RiddleHintRepositoryIntegrationTest extends AbstractIntegrationTest {
 
     @Autowired
     private RiddleHintRepository riddleHintRepository;
@@ -82,20 +82,7 @@ class RiddleHintRepositoryIntegrationTest extends AbstractDatabaseIntegrationTes
 
     @AfterEach
     public void tearDown() {
-        riddleInstanceRepository.deleteAll();
-        workflowPartInstanceRepository.deleteAll();
-        gameRepository.deleteAll();
-        riddleHintRepository.deleteAll();
-        riddleRepository.deleteAll();
-        workflowPartRepository.deleteAll();
         workflowRepository.deleteAll();
-
-        riddleInstanceRepository.flush();
-        workflowPartInstanceRepository.flush();
-        gameRepository.flush();
-        riddleHintRepository.flush();
-        riddleRepository.flush();
-        workflowPartRepository.flush();
         workflowRepository.flush();
     }
 }

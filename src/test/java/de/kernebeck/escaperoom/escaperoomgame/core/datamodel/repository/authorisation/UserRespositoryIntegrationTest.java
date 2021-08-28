@@ -1,6 +1,6 @@
 package de.kernebeck.escaperoom.escaperoomgame.core.datamodel.repository.authorisation;
 
-import de.kernebeck.escaperoom.escaperoomgame.AbstractDatabaseIntegrationTest;
+import de.kernebeck.escaperoom.escaperoomgame.AbstractIntegrationTest;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.authorisation.User;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class UserRespositoryIntegrationTest extends AbstractDatabaseIntegrationTest {
+class UserRespositoryIntegrationTest extends AbstractIntegrationTest {
 
     @Autowired
     private UserRespository userRespository;

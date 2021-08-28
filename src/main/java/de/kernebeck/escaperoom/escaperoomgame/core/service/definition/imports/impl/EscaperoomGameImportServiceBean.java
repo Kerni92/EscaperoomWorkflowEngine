@@ -14,7 +14,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 @Service
@@ -49,9 +53,9 @@ public class EscaperoomGameImportServiceBean implements EscaperoomGameImportServ
     @Override
     public WorkflowImportResult createEscaperoomgameFromFile(File file) {
         try {
-            return createEscaperoomGameFromReader(new FileReader(file));
+            return createEscaperoomGameFromReader(new FileReader(file, StandardCharsets.UTF_8));
         }
-        catch (FileNotFoundException e) {
+        catch (IOException e) {
             return new WorkflowImportResult(false, Collections.singletonList("Die angegebene Datei " + file.getAbsolutePath() + " zum importieren existiert auf dem Dateisystem nicht!"));
         }
     }
@@ -66,15 +70,16 @@ public class EscaperoomGameImportServiceBean implements EscaperoomGameImportServ
             //first create workflowobject
             workflow = new Workflow();
             workflow.setName(importGame.getName());
-            workflow = workflowRepository.save(workflow);
+            workflow = workflowRepository.saveAndFlush(workflow);
 
             final Map<String, WorkflowPart> linkIdentifierToWorkflowpartMap = new LinkedHashMap<>();
             final List<WorkflowPart> allWorkflowParts = new ArrayList<>();
             boolean hasEndPart = false;
             //second create workflowparts
             for (final WorkflowPartDTO workflowPartDTO : importGame.getWorkflowParts()) {
-                final WorkflowPartType partType = WorkflowPartType.fromEnumerationValue(workflowPartDTO.getType());
+                WorkflowPartType partType = WorkflowPartType.fromEnumerationValue(workflowPartDTO.getType());
                 if (partType == null) {
+                    partType = WorkflowPartType.PART;
                     errorMessages.add("Es ist kein WorkflowPart Typ angegeben worden oder Wert ist ungültig. Gültige Werte: part, decision, endpart");
                 }
                 if (partType == WorkflowPartType.ENDPART) {
@@ -83,13 +88,13 @@ public class EscaperoomGameImportServiceBean implements EscaperoomGameImportServ
 
                 WorkflowPart wp = new WorkflowPart(workflowPartDTO.getName(), workflowPartDTO.getDescription(), partType,
                         workflow, Collections.emptyList(), Collections.emptySet(), Collections.emptySet());
-                wp = workflowPartRepository.save(wp);
+                wp = workflowPartRepository.saveAndFlush(wp);
                 linkIdentifierToWorkflowpartMap.put(workflowPartDTO.getLinkIdentifier(), wp);
                 allWorkflowParts.add(wp);
 
                 if (importGame.getStartPartLinkId().equalsIgnoreCase(workflowPartDTO.getLinkIdentifier())) {
                     workflow.setWorkflowStart(wp);
-                    workflowRepository.save(workflow);
+                    workflowRepository.saveAndFlush(workflow);
                 }
 
                 //create riddles and riddle hints
@@ -97,13 +102,13 @@ public class EscaperoomGameImportServiceBean implements EscaperoomGameImportServ
                     for (final RiddleDTO riddleDTO : workflowPartDTO.getRiddles()) {
                         Riddle riddle = new Riddle(riddleDTO.getName(), riddleDTO.getSortIndex(), riddleDTO.getContent(), Collections.emptyList());
                         riddle.setWorkflowPart(wp);
-                        riddle = riddleRepository.save(riddle);
+                        riddle = riddleRepository.saveAndFlush(riddle);
 
                         //create riddle hints if existing
                         if (riddleDTO.getHints() != null && !riddleDTO.getHints().isEmpty()) {
                             for (final RiddleHintDTO riddleHintDTO : riddleDTO.getHints()) {
                                 final RiddleHint riddleHint = new RiddleHint(riddleHintDTO.getName(), riddleHintDTO.getContent(), riddleHintDTO.getSortIndex(), riddle);
-                                riddleHintRepository.save(riddleHint);
+                                riddleHintRepository.saveAndFlush(riddleHint);
                             }
                         }
 
@@ -112,7 +117,7 @@ public class EscaperoomGameImportServiceBean implements EscaperoomGameImportServ
                             for (final SolutionDTO solutionDTO : riddleDTO.getSolutions()) {
                                 final Solution solution = new Solution(solutionDTO.getName(), solutionDTO.getDescription(), SolutionType.fromEnumerationValue(solutionDTO.getType()), solutionDTO.getSolution(), riddle);
                                 solution.setSolutionOptions(solutionDTO.getSolutionOptions());
-                                solutionRepository.save(solution);
+                                solutionRepository.saveAndFlush(solution);
                             }
                         }
                     }
@@ -147,7 +152,7 @@ public class EscaperoomGameImportServiceBean implements EscaperoomGameImportServ
 
                 //create and save
                 final WorkflowTransition transition = new WorkflowTransition(transitionDTO.getName(), transitionDTO.getDescription(), transitionDTO.getSortIndex(), linkIdentifierToWorkflowpartMap.get(transitionDTO.getLinkIdentifierSourceWorkflowPart()), linkIdentifierToWorkflowpartMap.get(transitionDTO.getLinkIdentifierTargetWorkflowPart()));
-                workflowTransitionRepository.save(transition);
+                workflowTransitionRepository.saveAndFlush(transition);
 
                 //count how many outoging transitions the sourceworkflowpart has
                 workflowPartToOutgoingTransitionCountMap.putIfAbsent(sourceWorkflowPart, 0);

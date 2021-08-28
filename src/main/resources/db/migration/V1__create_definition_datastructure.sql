@@ -30,7 +30,7 @@ create table if not exists workflowpart
 
 -- add constraint to fk_workflowpart to table workflow
 alter table workflow
-    ADD CONSTRAINT workflow_fk_workflowstartpart FOREIGN KEY (fk_workflowstartpart) REFERENCES workflowpart (id);
+    ADD CONSTRAINT workflow_fk_workflowstartpart FOREIGN KEY (fk_workflowstartpart) REFERENCES workflowpart (id) ON DELETE SET NULL;
 
 -- create entity workflowtransition
 create table if not exists workflowtransition

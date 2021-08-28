@@ -2,7 +2,10 @@ package de.kernebeck.escaperoom.escaperoomgame.basic.database;
 
 import org.testcontainers.containers.MariaDBContainer;
 
-public class MariaDBTestContainer extends MariaDBContainer<MariaDBTestContainer> {
+import javax.security.auth.DestroyFailedException;
+import javax.security.auth.Destroyable;
+
+public class MariaDBTestContainer extends MariaDBContainer<MariaDBTestContainer> implements Destroyable {
 
     private static MariaDBTestContainer INSTANCE;
 
@@ -18,16 +21,16 @@ public class MariaDBTestContainer extends MariaDBContainer<MariaDBTestContainer>
         System.setProperty("DB_PASSWORD", INSTANCE.getPassword());
     }
 
-    @Override
-    public void stop() {
-        //do nothing, JVM handles shut down
-    }
-
     public static MariaDBTestContainer getInstance() {
         if (INSTANCE == null) {
             INSTANCE = new MariaDBTestContainer();
             INSTANCE.start();
         }
         return INSTANCE;
+    }
+
+    @Override
+    public void destroy() throws DestroyFailedException {
+        super.stop();
     }
 }

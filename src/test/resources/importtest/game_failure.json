@@ -1,0 +1,232 @@
+{
+  "name": "Flucht aus dem Nimmerland",
+  "startPartLinkId": "Start",
+  "workflowParts": [
+    {
+      "name": "Start",
+      "description": "Du wurdest in einer Wüste ausgesetzt. Wie finden wir einige Hinweistafeln die uns doch weiterhelfen müssen..",
+      "type": "part",
+      "linkIdentifier": "Start",
+      "riddles": [
+        {
+          "name": "Wohin gehts?",
+          "sortIndex": 0,
+          "content": "In welche Himmelsrichtungs müssen wir gehen? Der Kreis spielt eine Rolle. Welche Richtung lässt einen Kreis beginnen?",
+          "solutions": [
+            {
+              "name": "Lösung 1",
+              "description": "In welche Richtung muss gegangen werden?",
+              "type": "text",
+              "solution": "Osten",
+              "solutionOptions": null
+            }
+          ],
+          "hints": [
+            {
+              "name": "1. Hinweis",
+              "content": "Welche Vier Himmelsrichtungen gibt es? Welche beinhaltet am Anfang einen Kreis?",
+              "sortIndex": 0
+            },
+            {
+              "name": "Lösung",
+              "content": "Osten ist dir richtige Lösung. Nur die Himmelsrichtung beinhaltet das O am Anfang.",
+              "sortIndex": 1
+            }
+          ]
+        },
+        {
+          "name": "Wo steht die Sonne?",
+          "sortIndex": 0,
+          "content": "Es gibt eine Eselsbrücke welche den Verlauf der Sonne beschreibt. Auf welcher Seite zeigt Sie sich niemals?",
+          "solutions": [
+            {
+              "name": "Startlösung",
+              "description": "Wo geht die Sonne unter?",
+              "type": "text",
+              "solution": "Norden",
+              "solutionOptions": null
+            }
+          ],
+          "hints": [
+            {
+              "name": "1. Hinweis",
+              "content": "Erinnere dich an die Eselsbrücke.. Wo versteckt sich die Sonne immer?",
+              "sortIndex": 0
+            },
+            {
+              "name": "Lösung",
+              "content": "Die Eselsbrücke: Im Osten geht die Sonne auf, im Süden ist ihr Mittagslauf, im Westen will sie untergehn, im Norden ist sie nie zu sehn. Die Lösung sollte nun klar sein.",
+              "sortIndex": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "2ter Abschnitt",
+      "description": "Du bist in einer Wüste angekommen. In weiter Ferne eine Oase und auf dem Boden vor dir tauchen merkwürdige Karten auf. Was ist zu tun?",
+      "type": "",
+      "linkIdentifier": "2ter Abschnitt",
+      "riddles": [
+        {
+          "name": "Wo ist das Wasser?",
+          "sortIndex": 0,
+          "content": "Dort ist ein Krug der 5 Liter fasst, mit einem mehrwürdigen Zeichen drauf. Es erinnert die an ein bekannte Animeserie in der sich Kämpfer nach harten Training transformieren. Das Symbol erinnert an eine Zahl. Wieviel Liter Wasser müssen in den Krug?",
+          "solutions": [
+            {
+              "name": "Lösung 1",
+              "description": "Wieviel Wasser muss in das Gefäß um den Durchgang zu öffnen?",
+              "type": "text",
+              "solution": "2L",
+              "solutionOptions": null
+            }
+          ],
+          "hints": [
+            {
+              "name": "1. Hinweis",
+              "content": "In der Serie gibt es einen Feind, der heißt übersetzt Zelle..",
+              "sortIndex": 0
+            },
+            {
+              "name": "Lösung",
+              "content": "Zelle übersetzt heißt Cell. Kombiniert mit den ersten Hinweisen bleibt nur Dragonball Z als Serie. Man nehme das Z aus Dragenball und siehe eine 2. Die richtige Antwort lautet 2L",
+              "sortIndex": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Wahlpart",
+      "description": "Du bist an einer Kreuzung. Der linke Weg scheint dunkler aber es ist ein Licht zu erkennen. Der rechte scheint kurz und einfach zu sein. Welchen wählst du?",
+      "type": "decision",
+      "linkIdentifier": "wahlpart",
+      "riddles": null
+    },
+    {
+      "name": "Links",
+      "description": "Da vorne ist ein Portal, es erwartet einen Zahlencode. Netterweise hat jemand eine Notiz hinterlassen.",
+      "type": "part",
+      "linkIdentifier": "shortWay",
+      "riddles": [
+        {
+          "name": "Zahlenrätsel",
+          "sortIndex": 0,
+          "content": "Du liest die Notiz. Wähle aufsteigend drei einzelne Ziffern die glatt durch drei teilbar sind.",
+          "solutions": [
+            {
+              "name": "zahlencode",
+              "description": "",
+              "type": "text",
+              "solution": "369",
+              "solutionOptions": null
+            }
+          ],
+          "hints": [
+            {
+              "name": "Hinweie 1",
+              "content": "Lies den Text genau und überlege was berechnet werden muss. Hinweis: es wird von einstelligen Ziffern gesprochen!",
+              "sortIndex": 0
+            },
+            {
+              "name": "Lösung",
+              "content": "Dort steht drei Ziffern die glatt durch drei Teilbar sind. Welche sind das im Bereich 0-9? die Lösung lautet 369",
+              "sortIndex": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Rechts",
+      "description": "Noch mehr überlegen",
+      "type": "part",
+      "linkIdentifier": "longWay",
+      "riddles": [
+        {
+          "name": "Zahlenrätsel",
+          "sortIndex": 0,
+          "content": "Du liest die Notiz. Wähle aufsteigend drei einzelne Ziffern die glatt durch drei teilbar sind.",
+          "solutions": [
+            {
+              "name": "zahlencode",
+              "description": "",
+              "type": "text",
+              "solution": "369",
+              "solutionOptions": null
+            }
+          ],
+          "hints": [
+            {
+              "name": "Hinweie 1",
+              "content": "Lies den Text genau und überlege was berechnet werden muss. Hinweis: es wird von einstelligen Ziffern gesprochen!",
+              "sortIndex": 0
+            },
+            {
+              "name": "Lösung",
+              "content": "Dort steht drei Ziffern die glatt durch drei Teilbar sind. Welche sind das im Bereich 0-9? die Lösung lautet 369",
+              "sortIndex": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Ende",
+      "description": "Du hast es geschafft zu fliehen. Herzlichen Glückwunsch!",
+      "type": "endpart",
+      "linkIdentifier": "ende",
+      "riddles": null
+    }
+  ],
+  "workflowTransitions": [
+    {
+      "name": "Laufe Richtung Osten",
+      "description": "blub",
+      "sortIndex": 0,
+      "linkIdentifier": "t1",
+      "linkIdentifierSourceWorkflowPart": "Start",
+      "linkIdentifierTargetWorkflowPart": "2ter Abschnitt"
+    },
+    {
+      "name": "starttosecond",
+      "description": "blub",
+      "sortIndex": 0,
+      "linkIdentifier": "t1",
+      "linkIdentifierSourceWorkflowPart": "2ter Abschnitt",
+      "linkIdentifierTargetWorkflowPart": "wahlpart"
+    },
+    {
+      "name": "starttosecond",
+      "description": "blub",
+      "sortIndex": 0,
+      "linkIdentifier": "t1",
+      "linkIdentifierSourceWorkflowPart": "wahlpart",
+      "linkIdentifierTargetWorkflowPart": "shortWay"
+    },
+    {
+      "name": "starttosecond",
+      "description": "blub",
+      "sortIndex": 1,
+      "linkIdentifier": "t1",
+      "linkIdentifierSourceWorkflowPart": "wahlpart",
+      "linkIdentifierTargetWorkflowPart": "longWay"
+    },
+    {
+      "name": "starttosecond",
+      "description": "blub",
+      "sortIndex": 0,
+      "linkIdentifier": "t1",
+      "linkIdentifierSourceWorkflowPart": "shortWay",
+      "linkIdentifierTargetWorkflowPart": "ende"
+    },
+    {
+      "name": "starttosecond",
+      "description": "blub",
+      "sortIndex": 1,
+      "linkIdentifier": "t1",
+      "linkIdentifierSourceWorkflowPart": "ende",
+      "linkIdentifierTargetWorkflowPart": "longway"
+    }
+  ]
+}
