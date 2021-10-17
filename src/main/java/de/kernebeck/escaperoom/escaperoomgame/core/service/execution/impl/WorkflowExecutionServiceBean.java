@@ -16,13 +16,9 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class WorkflowExecutionServiceBean implements WorkflowExecutionService {
-
-    private static final Map<Long, String> BLOCKEDITEMS = new ConcurrentHashMap<>();
 
     @Autowired
     private GameService gameService;
@@ -35,10 +31,7 @@ public class WorkflowExecutionServiceBean implements WorkflowExecutionService {
 
     @Override
     public boolean isTransitionExecutionPossible(Game game, WorkflowTransition workflowTransition) {
-        if (game != null && workflowTransition != null && game.getActiveWorkflowPartInstance().getWorkflowPart().getOutgoingTransitions().stream().map(WorkflowTransition::getId).anyMatch(id -> id.equals(workflowTransition.getId()))) {
-            return true;
-        }
-        return false;
+        return game != null && workflowTransition != null && game.getActiveWorkflowPartInstance().getWorkflowPart().getOutgoingTransitions().stream().map(WorkflowTransition::getId).anyMatch(id -> id.equals(workflowTransition.getId()));
     }
 
     @Override
@@ -53,7 +46,7 @@ public class WorkflowExecutionServiceBean implements WorkflowExecutionService {
             activeWorkflowPart.setEndTime(new Timestamp(currentTime));
             activeWorkflowPart.setTotalTime((activeWorkflowPart.getTotalTime() != null ? activeWorkflowPart.getTotalTime() : 0) + (currentTime - startTime));
 
-            workflowPartInstanceService.save(activeWorkflowPart); //sinnloser kommentar
+            workflowPartInstanceService.save(activeWorkflowPart);
 
             //second create new one for next workflowpart
             WorkflowPartInstance nextActive = workflowPartInstanceService.createWorkflowPartInstanceFromWorkflowPart(game, workflowTransition.getDestinationPart(), new Timestamp(System.currentTimeMillis()));

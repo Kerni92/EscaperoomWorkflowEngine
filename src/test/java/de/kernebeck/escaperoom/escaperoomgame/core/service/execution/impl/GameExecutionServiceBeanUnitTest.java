@@ -10,6 +10,8 @@ import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.definition.e
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.execution.Game;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.execution.RiddleInstance;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.execution.WorkflowPartInstance;
+import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.event.ContinueGameEvent;
+import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.event.PauseGameEvent;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.event.UpdateDialogEvent;
 import de.kernebeck.escaperoom.escaperoomgame.core.service.entity.GameService;
 import de.kernebeck.escaperoom.escaperoomgame.core.service.entity.WorkflowPartInstanceService;
@@ -265,6 +267,7 @@ class GameExecutionServiceBeanUnitTest extends AbstractUnitTest {
     @Test
     public void testStartGame() {
         final Game game = mock(Game.class);
+        when(game.getId()).thenReturn(1L);
         final WorkflowPartInstance workflowPartInstance = mock(WorkflowPartInstance.class);
         when(game.getActiveWorkflowPartInstance()).thenReturn(workflowPartInstance);
 
@@ -280,6 +283,72 @@ class GameExecutionServiceBeanUnitTest extends AbstractUnitTest {
 
         verify(gameLockingService).lockGame(1L);
         verify(gameLockingService).unlockGame(1L);
+    }
+
+    @Test
+    public void testPauseGame() {
+        final Game game = mock(Game.class);
+        when(game.getId()).thenReturn(1L);
+        when(game.getGameId()).thenReturn("gameID");
+        when(game.getLastStartTime()).thenReturn(new Timestamp(System.currentTimeMillis() - 1000000));
+        final WorkflowPartInstance workflowPartInstance = mock(WorkflowPartInstance.class);
+        when(game.getActiveWorkflowPartInstance()).thenReturn(workflowPartInstance);
+        when(workflowPartInstance.getLastStartTime()).thenReturn(new Timestamp(System.currentTimeMillis() - 2000000));
+
+        gameExecutionServiceBean.pauseGame(game);
+        verify(gameLockingService).lockGame(1L);
+        verify(gameLockingService).unlockGame(1L);
+        verify(workflowPartInstance).setLastStartTime(null);
+        verify(workflowPartInstance).setTotalTime(any(Long.class));
+        verify(workflowPartInstance).setEndTime(any(Timestamp.class));
+        verify(game).setFinished(false);
+        verify(game).setLastStartTime(null);
+        verify(game).setTotalTime(any(Long.class));
+        verify(game).setEndTime(any(Timestamp.class));
+        verify(eventBus).post(new PauseGameEvent("gameID"));
+        verify(gameService).save(game);
+        verify(workflowPartInstanceService).save(workflowPartInstance);
+    }
+
+    @Test
+    public void testContinueGame() {
+        final Game game = mock(Game.class);
+        when(game.getId()).thenReturn(1L);
+        when(game.getGameId()).thenReturn("gameID");
+        final WorkflowPartInstance workflowPartInstance = mock(WorkflowPartInstance.class);
+        when(game.getActiveWorkflowPartInstance()).thenReturn(workflowPartInstance);
+
+        gameExecutionServiceBean.continueGame(game);
+        verify(gameLockingService).lockGame(1L);
+        verify(gameLockingService).unlockGame(1L);
+        verify(workflowPartInstance).setLastStartTime(any(Timestamp.class));
+        verify(game).setLastStartTime(any(Timestamp.class));
+        verify(eventBus).post(new ContinueGameEvent("gameID"));
+        verify(gameService).save(game);
+        verify(workflowPartInstanceService).save(workflowPartInstance);
+    }
+
+    @Test
+    public void testFinishGame() {
+        final Game game = mock(Game.class);
+        when(game.getId()).thenReturn(1L);
+        when(game.getLastStartTime()).thenReturn(new Timestamp(System.currentTimeMillis() - 1000000));
+        final WorkflowPartInstance workflowPartInstance = mock(WorkflowPartInstance.class);
+        when(game.getActiveWorkflowPartInstance()).thenReturn(workflowPartInstance);
+        when(workflowPartInstance.getLastStartTime()).thenReturn(new Timestamp(System.currentTimeMillis() - 2000000));
+
+        gameExecutionServiceBean.finishGame(game);
+        verify(gameLockingService).lockGame(1L);
+        verify(gameLockingService).unlockGame(1L);
+        verify(workflowPartInstance).setLastStartTime(null);
+        verify(workflowPartInstance).setTotalTime(any(Long.class));
+        verify(workflowPartInstance).setEndTime(any(Timestamp.class));
+        verify(game).setFinished(true);
+        verify(game).setLastStartTime(null);
+        verify(game).setTotalTime(any(Long.class));
+        verify(game).setEndTime(any(Timestamp.class));
+        verify(gameService).save(game);
+        verify(workflowPartInstanceService).save(workflowPartInstance);
     }
 
 }
