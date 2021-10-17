@@ -81,18 +81,16 @@ public class GameExecutionServiceBean implements GameExecutionService {
             gameLockingService.lockGame(gameId);
             boolean result = riddleExecutionService.checkSolution(riddleInstance, solution);
             if (result) {
+                //game could not be null - otherwise checkSolution would return false
                 final Game game = gameService.load(gameId);
-                if (game != null) {
-                    //if this riddle is the last riddle to be solved, we can execute automatically the workflowtransition to go to the next
-                    if (isActiveWorkflowPartInstanceFinished(game.getId())) {
-                        final WorkflowTransition nextWorkflowTransition = game.getActiveWorkflowPartInstance().getWorkflowPart().getOutgoingTransitions().iterator().next();
-                        executeWorkflowTransition(game, nextWorkflowTransition);
-                    }
-
-                    //inform ui that riddle is solved and that the content of page has to be rerendered
-                    eventBus.post(new UpdateUIEvent(game.getGameId(), riddleInstance.getRiddle().getId()));
+                //if this riddle is the last riddle to be solved, we can execute automatically the workflowtransition to go to the next
+                if (isActiveWorkflowPartInstanceFinished(game.getId())) {
+                    final WorkflowTransition nextWorkflowTransition = game.getActiveWorkflowPartInstance().getWorkflowPart().getOutgoingTransitions().iterator().next();
+                    executeWorkflowTransition(game, nextWorkflowTransition);
                 }
 
+                //inform ui that riddle is solved and that the content of page has to be rerendered
+                eventBus.post(new UpdateUIEvent(game.getGameId(), riddleInstance.getRiddle().getId()));
             }
             return result;
         }
