@@ -50,6 +50,7 @@ public class GameExecutionServiceBean implements GameExecutionService {
             gameLockingService.lockGame(game.getId());
             final WorkflowPartInstance workflowPartInstance = workflowExecutionService.executeWorkflowTransition(game, workflowTransition);
             if (workflowPartInstance != null) {
+                //if workflowpart ist of type endpart -> its the end of the game so we should stop everything and finish it
                 if (workflowPartInstance.getWorkflowPart().getPartType() == WorkflowPartType.ENDPART) {
                     pauseOrFinishGameInternal(game, Boolean.TRUE);
                 }
@@ -69,6 +70,7 @@ public class GameExecutionServiceBean implements GameExecutionService {
         final Game game = gameService.load(gameId);
         if (game != null) {
             if (game.getActiveWorkflowPartInstance() != null) {
+                //active workflowpart is finished when all linked riddles are resolved
                 return game.getActiveWorkflowPartInstance().getRiddleInstanceList().isEmpty() || game.getActiveWorkflowPartInstance().getRiddleInstanceList().stream().noneMatch(r -> r == null || !r.isResolved());
             }
         }
@@ -105,6 +107,7 @@ public class GameExecutionServiceBean implements GameExecutionService {
             gameLockingService.lockGame(gameId);
             final Game game = gameService.load(gameId);
             final RiddleHint hint = riddleExecutionService.getNextRiddleHint(riddleInstance);
+            //null is here a valid return value because it is valid that all riddle hints were already shown
             if (hint != null) {
                 eventBus.post(new UpdateDialogEvent(game.getGameId()));
             }

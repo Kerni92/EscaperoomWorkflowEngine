@@ -28,7 +28,7 @@ public class UserServiceBean implements UserService {
             return;
         }
 
-        final User user = new User("admin", "admin", "admin", passwordEncoder.encode(password), isEnabled);
+        final User user = new User(firstname, lastname, username, passwordEncoder.encode(password), isEnabled);
         userRespository.save(user);
     }
 

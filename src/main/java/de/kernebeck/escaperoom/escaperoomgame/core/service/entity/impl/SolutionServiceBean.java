@@ -24,7 +24,7 @@ public class SolutionServiceBean implements SolutionService {
     public List<Solution> findByRiddleId(Long riddleId) {
         final Riddle r = riddleService.findById(riddleId);
         if (r != null) {
-            List<Solution> result = solutionRepository.findByRiddle(r);
+            final List<Solution> result = solutionRepository.findByRiddle(r);
             return result != null ? result : Collections.emptyList();
         }
         return Collections.emptyList();

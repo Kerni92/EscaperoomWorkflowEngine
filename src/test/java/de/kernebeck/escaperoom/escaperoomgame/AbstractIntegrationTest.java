@@ -2,7 +2,6 @@ package de.kernebeck.escaperoom.escaperoomgame;
 
 
 import de.kernebeck.escaperoom.escaperoomgame.basic.database.MariaDBTestContainer;
-import org.junit.ClassRule;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 
@@ -10,7 +9,6 @@ import org.springframework.test.context.TestPropertySource;
 @TestPropertySource(locations = "classpath:integrationtest_application.properties")
 public class AbstractIntegrationTest {
 
-    @ClassRule
     public static MariaDBTestContainer mariaDBTestContainer = MariaDBTestContainer.getInstance();
 
 }

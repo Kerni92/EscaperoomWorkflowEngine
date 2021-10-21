@@ -3,6 +3,7 @@ package de.kernebeck.escaperoom.escaperoomgame.core.service.entity.impl;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.entity.definition.Workflow;
 import de.kernebeck.escaperoom.escaperoomgame.core.datamodel.repository.definition.WorkflowRepository;
 import de.kernebeck.escaperoom.escaperoomgame.core.service.entity.WorkflowService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -13,11 +14,8 @@ import java.util.Optional;
 @Service
 public class WorkflowServiceBean implements WorkflowService {
 
-    private final WorkflowRepository workflowRepository;
-
-    public WorkflowServiceBean(WorkflowRepository workflowRepository) {
-        this.workflowRepository = workflowRepository;
-    }
+    @Autowired
+    private WorkflowRepository workflowRepository;
 
     @Override
     public List<Workflow> findAll() {

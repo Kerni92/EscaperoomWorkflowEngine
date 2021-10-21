@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
-import java.util.Optional;
 
 @Service
 public class WorkflowPartInstanceServiceBean implements WorkflowPartInstanceService {
@@ -25,17 +24,14 @@ public class WorkflowPartInstanceServiceBean implements WorkflowPartInstanceServ
     @Override
     public WorkflowPartInstance findWorkflowPartInstanceById(Long id) {
         if (id != null) {
-            Optional<WorkflowPartInstance> WorkflowPartInstance = workflowPartInstanceRepository.findById(id);
-            if (WorkflowPartInstance.isPresent()) {
-                return WorkflowPartInstance.get();
-            }
+            return workflowPartInstanceRepository.findById(id).orElse(null);
         }
         return null;
     }
 
     @Override
     public WorkflowPartInstance createWorkflowPartInstanceFromWorkflowPart(Game game, WorkflowPart workflowPart, Timestamp start) {
-        if (workflowPart != null) {
+        if (workflowPart != null && game != null) {
             final WorkflowPartInstance instance = workflowPartInstanceRepository.save(new WorkflowPartInstance(workflowPart, null, start, start, null, game));
             //create riddle instances
             for (final Riddle r : workflowPart.getRiddles()) {

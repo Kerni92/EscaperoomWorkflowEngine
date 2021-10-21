@@ -25,10 +25,7 @@ public class WorkflowTransitionServiceBean implements WorkflowTransitionService 
     @Override
     public WorkflowTransition findById(Long id) {
         final Optional<WorkflowTransition> transition = workflowTransitionRepository.findById(id);
-        if (transition.isPresent()) {
-            return transition.get();
-        }
-        return null;
+        return transition.orElse(null);
     }
 
     @Override

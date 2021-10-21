@@ -114,7 +114,8 @@ public class GameServiceBean implements GameService {
             if (game.getStarttime() != null && game.getEndTime() == null) {
                 result.add(game);
             }
-            else if (game.getEndTime().before(game.getLastStartTime())) {
+            //Das Spiel war pausiert und wurde dann fortgesetzt. beim Fortsetzen wird die temporäre Endzeit nicht zurückgesetzt
+            else if (game.getEndTime() != null && game.getLastStartTime() != null && game.getEndTime().before(game.getLastStartTime())) {
                 result.add(game);
             }
         }
