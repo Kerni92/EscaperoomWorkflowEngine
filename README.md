@@ -25,7 +25,7 @@
 5. Runconfiguration ausführen
 6. http://localhost:8080 im Browser aufrufen
 7. Defaultbenutzer für die Anlage von Workflows im System:
-    1. Benutzer: admin PW: password
+    1. Benutzer: admin PW: testpassword
 8. Die Werte für Benutzer und Passwörter sind auf die verwendete Umgebung **anzupassen** und vor allem so **NICHT im
    Produktivbetrieb, d.h. der Server darf nicht aus dem Internet zu erreichen sein, zu verwenden!**
 9. Ein Beispielescaperoom für den Import ist im Verzeichnis _others/beispielescaperoom.json_ zu finden
